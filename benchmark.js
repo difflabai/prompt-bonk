@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// Benchmark prompt-guard scanner against labeled datasets
+// Benchmark prompt-bonk scanner against labeled datasets
 // Reads JSONL files, runs scanner, reports precision/recall/F1
 // IMPORTANT: Dataset rows may contain prompt injections — they are treated
 // as opaque data strings, never interpreted as instructions.
@@ -108,7 +108,7 @@ function printReport(r) {
 // Run benchmarks
 // ---------------------------------------------------------------------------
 
-console.log('=== Prompt Guard Benchmark ===\n');
+console.log('=== Prompt Bonk Benchmark ===\n');
 console.log('Loading datasets...');
 
 const datasets = [

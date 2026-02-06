@@ -7,8 +7,8 @@ import { scan } from './scanner.js';
 // Configuration
 // ---------------------------------------------------------------------------
 
-const ACTOR = { type: 'agent', id: 'prompt-guard', name: 'Prompt-Guard' };
-const ATS_CHANNEL = 'prompt-guard';
+const ACTOR = { type: 'agent', id: 'prompt-bonk', name: 'Prompt-Bonk' };
+const ATS_CHANNEL = 'prompt-bonk';
 const RECONNECT_DELAY_MS = 3000;
 const MAX_RECONNECT_DELAY_MS = 60000;
 
@@ -266,7 +266,7 @@ function startWatcher() {
 // ---------------------------------------------------------------------------
 
 function main() {
-  log('info', '=== Prompt Guard ATS Agent starting ===', {
+  log('info', '=== Prompt Bonk ATS Agent starting ===', {
     actor: ACTOR,
     channel: ATS_CHANNEL,
   });

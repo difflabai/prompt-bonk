@@ -14,7 +14,7 @@ const DATASETS_DIR = path.join(import.meta.dirname, 'datasets');
 function fetch(url) {
   return new Promise((resolve, reject) => {
     const mod = url.startsWith('https') ? https : http;
-    mod.get(url, { headers: { 'User-Agent': 'prompt-guard-ats/1.0' } }, (res) => {
+    mod.get(url, { headers: { 'User-Agent': 'prompt-bonk/1.0' } }, (res) => {
       if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
         return fetch(res.headers.location).then(resolve, reject);
       }

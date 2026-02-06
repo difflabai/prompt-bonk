@@ -23,12 +23,12 @@ for (let i = 0; i < args.length; i++) {
   } else if (args[i] === '--file') {
     flags.file = args[++i];
   } else if (args[i] === '--help' || args[i] === '-h') {
-    console.log(`prompt-guard — Scan text for prompt injection attempts
+    console.log(`prompt-bonk — Scan text for prompt injection attempts
 
 Usage:
-  echo "text" | prompt-guard [options]
-  prompt-guard --file input.txt [options]
-  prompt-guard "text to scan" [options]
+  echo "text" | prompt-bonk [options]
+  prompt-bonk --file input.txt [options]
+  prompt-bonk "text to scan" [options]
 
 Options:
   --threshold, -t <n>  Score threshold (0-1, default: 0.50)

@@ -21,7 +21,7 @@ function testScan(text, expectSafe, label) {
   return result;
 }
 
-console.log('\n=== Prompt Guard Tests ===\n');
+console.log('\n=== Prompt Bonk Tests ===\n');
 
 // --- Should be BLOCKED (injections) ---
 console.log('-- Injection detection (should block) --');
