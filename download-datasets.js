@@ -126,9 +126,35 @@ async function main() {
     label: r.output_is_access_granted ? 1 : 0,
   })));
 
-  // 8. InjecAgent — semantic tool-abuse attacks (downloaded from GitHub separately)
+  // 8. protectai/prompt-injection-validation — mixed validation set (7 sources)
+  console.log('Downloading protectai/prompt-injection-validation...');
+  const protectaiRows = [];
+  for (const split of ['InjecGuard_valid', 'spikee', 'bipia_code', 'bipia_text', 'not_inject', 'wildguard', 'deepset']) {
+    raw = await downloadHF('protectai/prompt-injection-validation', split);
+    for (const r of raw) protectaiRows.push({ text: r.text, label: r.label });
+  }
+  writeJsonl(path.join(DATASETS_DIR, 'protectai.jsonl'), protectaiRows);
+
+  // 9. ai-safety-institute/AgentHarm — harmful agent tool-use scenarios
+  console.log('Downloading ai-safety-institute/AgentHarm...');
+  const agentRows = [];
+  for (const split of ['test_public', 'validation']) {
+    raw = await downloadHF('ai-safety-institute/AgentHarm', split, 100, Infinity);
+    for (const r of raw) agentRows.push({ text: r.detailed_prompt || r.prompt, label: 1 });
+  }
+  writeJsonl(path.join(DATASETS_DIR, 'agentharm.jsonl'), agentRows);
+
+  // 10. facebook/cyberseceval3-visual-prompt-injection — visual injection text
+  console.log('Downloading facebook/cyberseceval3-visual-prompt-injection...');
+  raw = await downloadHF('facebook/cyberseceval3-visual-prompt-injection', 'test');
+  writeJsonl(path.join(DATASETS_DIR, 'cyberseceval3.jsonl'), raw.map(r => ({
+    text: [r.user_input_text, r.image_text].filter(Boolean).join(' '),
+    label: 1,
+  })));
+
+  // 11. InjecAgent + BIPIA — downloaded from GitHub separately
   // See: https://github.com/uiuc-kang-lab/InjecAgent
-  // These are purely semantic attacks that look like normal requests.
+  // See: https://github.com/microsoft/BIPIA
 
   console.log('\nAll datasets downloaded.');
 }

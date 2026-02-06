@@ -111,7 +111,7 @@ function printReport(r) {
 console.log('=== Prompt Bonk Benchmark ===\n');
 console.log('Loading datasets...');
 
-// Core datasets — labels cleanly separate injection from benign
+// Direct injection — explicit attack language, clean benign/injection labels
 const datasets = [
   { name: 'deepset-train', file: 'deepset-train.jsonl' },
   { name: 'deepset-test', file: 'deepset-test.jsonl' },
@@ -119,9 +119,14 @@ const datasets = [
   { name: 'notinject', file: 'notinject.jsonl' },
   { name: 'jailbreak-prompts', file: 'jailbreak-prompts.jsonl' },
   { name: 'spml-5k', file: 'spml-5k.jsonl' },
-  // Agent-security focused
+  { name: 'protectai', file: 'protectai.jsonl' },
+  // Indirect injection — attacks embedded in real-world content
   { name: 'browsesafe-test', file: 'browsesafe-test.jsonl' },
+  { name: 'bipia', file: 'bipia.jsonl' },
+  // Semantic attacks — look like normal text, unsolvable with regex
   { name: 'injecagent', file: 'injecagent.jsonl' },
+  { name: 'agentharm', file: 'agentharm.jsonl' },
+  { name: 'cyberseceval3', file: 'cyberseceval3.jsonl' },
   // Labels measure attack success, not injection presence (all entries are attacks):
   // { name: 'tensor-trust', file: 'tensor-trust.jsonl' },
   // { name: 'hackaprompt', file: 'hackaprompt.jsonl' },

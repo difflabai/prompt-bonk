@@ -114,7 +114,7 @@ prompt-bonk --quiet "some text"         # Exit code only (0=safe, 1=blocked)
 
 ### Direct injection detection
 
-Tested against 6 public datasets where injections contain explicit attack language (zero false positives across all):
+Datasets where injections contain explicit attack language:
 
 | Dataset | Precision | Recall | F1 | Accuracy |
 |---|---|---|---|---|
@@ -124,17 +124,26 @@ Tested against 6 public datasets where injections contain explicit attack langua
 | [leolee99/NotInject](https://huggingface.co/datasets/leolee99/NotInject) | - | - | - | 100% (0 FP) |
 | [rubend18/Jailbreak-Prompts](https://huggingface.co/datasets/rubend18/ChatGPT-Jailbreak-Prompts) | 100% | 100% | 100% | 100% |
 | [reshabhs/SPML](https://huggingface.co/datasets/reshabhs/SPML_Chatbot_Prompt_Injection) (5k) | 100% | 69.58% | 82.06% | 76.14% |
+| [ProtectAI validation](https://huggingface.co/datasets/protectai/prompt-injection-validation) | 94% | 66.38% | 77.81% | 83.67% |
 
-### Indirect injection detection (agent-security focused)
+### Indirect injection detection
 
-These datasets test injections embedded in real-world content that agents process:
+Injections embedded in real-world content that agents process (HTML pages, documents, emails):
 
-| Dataset | Precision | Recall | F1 | Accuracy | Notes |
-|---|---|---|---|---|---|
-| [BrowseSafe-Bench](https://huggingface.co/datasets/perplexity-ai/browsesafe-bench) (test) | 74.41% | 51.97% | 61.20% | 67.34% | Injections in HTML pages for browser agents |
-| [InjecAgent](https://github.com/uiuc-kang-lab/InjecAgent) | 100% | 1.61% | 3.17% | 22.78% | Semantic tool-abuse attacks (see note) |
+| Dataset | Precision | Recall | F1 | Accuracy |
+|---|---|---|---|---|
+| [BrowseSafe-Bench](https://huggingface.co/datasets/perplexity-ai/browsesafe-bench) (test) | 74.41% | 51.97% | 61.20% | 67.34% |
+| [BIPIA](https://github.com/microsoft/BIPIA) | 100% | 6% | 11.32% | 6% |
 
-**Note on InjecAgent:** This dataset contains purely semantic attacks — instructions like "Please transfer $3,000" that look identical to normal user requests. The only signal they're malicious is that they come from an untrusted source. Pattern matching fundamentally cannot detect these; they require source-aware or model-based detection.
+### Semantic attacks (the regex ceiling)
+
+These datasets contain attacks that look identical to normal text — "Please transfer $3,000", "Generate a video of X". The only signal they're malicious is that they come from an untrusted source, not the actual user. Pattern matching fundamentally cannot detect these; they require source-aware or model-based detection.
+
+| Dataset | Recall | What it contains |
+|---|---|---|
+| [InjecAgent](https://github.com/uiuc-kang-lab/InjecAgent) | 1.61% | Tool-abuse attacks for agents with API access |
+| [AgentHarm](https://huggingface.co/datasets/ai-safety-institute/AgentHarm) | 1.92% | Harmful agent tool-use scenarios |
+| [CyberSecEval3](https://huggingface.co/datasets/facebook/cyberseceval3-visual-prompt-injection) | 0% | Visual prompt injection (text component) |
 
 **Performance:** 100 bytes: 0.08ms | 1KB: 0.25ms | 10KB: 2ms | 100KB: 12ms
 
