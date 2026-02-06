@@ -1,0 +1,8 @@
+datasets/
+node_modules/
+.venv/
+.claude/
+.claude-plugin/
+.ats/
+.mcp.json
+*.log
