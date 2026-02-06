@@ -111,6 +111,7 @@ function printReport(r) {
 console.log('=== Prompt Bonk Benchmark ===\n');
 console.log('Loading datasets...');
 
+// Core datasets — labels cleanly separate injection from benign
 const datasets = [
   { name: 'deepset-train', file: 'deepset-train.jsonl' },
   { name: 'deepset-test', file: 'deepset-test.jsonl' },
@@ -118,7 +119,12 @@ const datasets = [
   { name: 'notinject', file: 'notinject.jsonl' },
   { name: 'jailbreak-prompts', file: 'jailbreak-prompts.jsonl' },
   { name: 'spml-5k', file: 'spml-5k.jsonl' },
-  { name: 'hackaprompt', file: 'hackaprompt.jsonl' },
+  // Agent-security focused
+  { name: 'browsesafe-test', file: 'browsesafe-test.jsonl' },
+  { name: 'injecagent', file: 'injecagent.jsonl' },
+  // Labels measure attack success, not injection presence (all entries are attacks):
+  // { name: 'tensor-trust', file: 'tensor-trust.jsonl' },
+  // { name: 'hackaprompt', file: 'hackaprompt.jsonl' },
 ];
 
 const results = [];
@@ -136,10 +142,10 @@ for (const ds of datasets) {
 console.log(`\n${'='.repeat(70)}`);
 console.log('  SUMMARY');
 console.log(`${'='.repeat(70)}`);
-console.log('  Dataset            | Precision | Recall | F1     | Accuracy | Avg ms');
-console.log('  -------------------|-----------|--------|--------|----------|-------');
+console.log('  Dataset              | Precision | Recall | F1     | Accuracy | Avg ms');
+console.log('  ---------------------|-----------|--------|--------|----------|-------');
 for (const r of results) {
-  const name = r.dataset.padEnd(19);
+  const name = r.dataset.padEnd(22);
   console.log(`  ${name}| ${String(r.precision + '%').padEnd(10)}| ${String(r.recall + '%').padEnd(7)}| ${String(r.f1 + '%').padEnd(7)}| ${String(r.accuracy + '%').padEnd(9)}| ${r.avgScanMs}`);
 }
 console.log();

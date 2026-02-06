@@ -112,7 +112,9 @@ prompt-bonk --quiet "some text"         # Exit code only (0=safe, 1=blocked)
 
 ## Benchmark results
 
-Tested against 6 public prompt injection datasets (zero false positives across all):
+### Direct injection detection
+
+Tested against 6 public datasets where injections contain explicit attack language (zero false positives across all):
 
 | Dataset | Precision | Recall | F1 | Accuracy |
 |---|---|---|---|---|
@@ -122,6 +124,17 @@ Tested against 6 public prompt injection datasets (zero false positives across a
 | [leolee99/NotInject](https://huggingface.co/datasets/leolee99/NotInject) | - | - | - | 100% (0 FP) |
 | [rubend18/Jailbreak-Prompts](https://huggingface.co/datasets/rubend18/ChatGPT-Jailbreak-Prompts) | 100% | 100% | 100% | 100% |
 | [reshabhs/SPML](https://huggingface.co/datasets/reshabhs/SPML_Chatbot_Prompt_Injection) (5k) | 100% | 69.58% | 82.06% | 76.14% |
+
+### Indirect injection detection (agent-security focused)
+
+These datasets test injections embedded in real-world content that agents process:
+
+| Dataset | Precision | Recall | F1 | Accuracy | Notes |
+|---|---|---|---|---|---|
+| [BrowseSafe-Bench](https://huggingface.co/datasets/perplexity-ai/browsesafe-bench) (test) | 74.41% | 51.97% | 61.20% | 67.34% | Injections in HTML pages for browser agents |
+| [InjecAgent](https://github.com/uiuc-kang-lab/InjecAgent) | 100% | 1.61% | 3.17% | 22.78% | Semantic tool-abuse attacks (see note) |
+
+**Note on InjecAgent:** This dataset contains purely semantic attacks — instructions like "Please transfer $3,000" that look identical to normal user requests. The only signal they're malicious is that they come from an untrusted source. Pattern matching fundamentally cannot detect these; they require source-aware or model-based detection.
 
 **Performance:** 100 bytes: 0.08ms | 1KB: 0.25ms | 10KB: 2ms | 100KB: 12ms
 

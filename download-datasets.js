@@ -106,6 +106,30 @@ async function main() {
     degree: r['Degree'],
   })));
 
+  // --- Agent-security focused datasets ---
+
+  // 6. perplexity-ai/browsesafe-bench — indirect injection in HTML (browser agents)
+  console.log('Downloading perplexity-ai/browsesafe-bench (test)...');
+  raw = await downloadHF('perplexity-ai/browsesafe-bench', 'test');
+  writeJsonl(path.join(DATASETS_DIR, 'browsesafe-test.jsonl'), raw.map(r => ({
+    text: r.content,
+    label: r.label === 'yes' ? 1 : 0,
+  })));
+
+  // 7. qxcv/tensor-trust — instruction hijacking attacks (sample 10K)
+  // Note: label=1 means attack succeeded at extracting access code, label=0 means it failed.
+  // Both are injection attempts — labels measure success, not injection presence.
+  console.log('Downloading qxcv/tensor-trust (10000 rows)...');
+  raw = await downloadHF('qxcv/tensor-trust', 'standard', 100, 10000);
+  writeJsonl(path.join(DATASETS_DIR, 'tensor-trust.jsonl'), raw.map(r => ({
+    text: r.attacker_input,
+    label: r.output_is_access_granted ? 1 : 0,
+  })));
+
+  // 8. InjecAgent — semantic tool-abuse attacks (downloaded from GitHub separately)
+  // See: https://github.com/uiuc-kang-lab/InjecAgent
+  // These are purely semantic attacks that look like normal requests.
+
   console.log('\nAll datasets downloaded.');
 }
 
