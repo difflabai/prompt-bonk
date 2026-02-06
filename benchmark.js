@@ -118,6 +118,7 @@ const datasets = [
   { name: 'notinject', file: 'notinject.jsonl' },
   { name: 'jailbreak-prompts', file: 'jailbreak-prompts.jsonl' },
   { name: 'spml-5k', file: 'spml-5k.jsonl' },
+  { name: 'hackaprompt', file: 'hackaprompt.jsonl' },
 ];
 
 const results = [];
