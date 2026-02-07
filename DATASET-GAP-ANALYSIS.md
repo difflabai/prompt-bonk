@@ -250,8 +250,6 @@ This gives us ~30K diverse benign samples across three content types (email, web
 
 ---
 
----
-
 ## Integration Specs (Ready to Implement)
 
 ### Dataset #16: microsoft/llmail-inject-challenge
@@ -266,14 +264,29 @@ The repo contains `data/labelled_unique_submissions_phase1.json` — 160K dedupl
 The key of each dict entry IS the scan text (format: `"Subject of the email: {subject}.   Body: {body}"`).
 
 **download-datasets.js addition:**
+
+**WARNING:** The labelled file is 448MB. Naive `fetch()` + `JSON.parse()` will use ~1.3GB peak memory (buffer + string + parsed object). Node's default heap is 1.7GB. Two options:
+
+- **Option A (simple):** Run with `node --max-old-space-size=4096 download-datasets.js`
+- **Option B (robust):** Stream download to disk first, then parse from file
+
 ```js
 // 16. microsoft/llmail-inject-challenge — email-based indirect injection (SaTML 2025)
 // Direct download of labelled file (not rows API) — has ground-truth attack_attempt labels
-// 448MB file, will spike memory on parse. One-time download cost.
+// MEMORY: 448MB file requires --max-old-space-size=4096 or stream-to-disk approach
 console.log('Downloading microsoft/llmail-inject-challenge (labelled Phase1)...');
 const labelledUrl = 'https://huggingface.co/datasets/microsoft/llmail-inject-challenge/resolve/main/data/labelled_unique_submissions_phase1.json';
+
+// Option A: Direct parse (requires --max-old-space-size=4096)
 const labelledRes = await fetch(labelledUrl);
 const labelled = JSON.parse(labelledRes.body);
+
+// Option B: Stream to disk first (more robust)
+// const tmpPath = path.join(DATASETS_DIR, '.llmail-tmp.json');
+// await streamToFile(labelledUrl, tmpPath);  // implement streaming download
+// const labelled = JSON.parse(fs.readFileSync(tmpPath, 'utf8'));
+// fs.unlinkSync(tmpPath);
+
 const llmailRows = [];
 for (const [text, meta] of Object.entries(labelled)) {
   if (meta.attack_attempt === 'True') llmailRows.push({ text, label: 1 });
@@ -390,6 +403,8 @@ No. Tested against 38,491 real-world content samples with zero false positives:
 
 **Design principle:** Lead with the user's fear (will this break my app?), then prove detection capability. Use content categories, not dataset names.
 
+**NOTE:** The 0 FP numbers above are aspirational targets based on our 100% precision on existing datasets. Actual numbers must be measured after integration. If any FPs surface, fix the patterns before publishing.
+
 ---
 
 ## Status: Research Complete — Entering Integration Phase
@@ -406,5 +421,5 @@ Research phase (iterations 1-7) identified 21 candidate datasets, validated form
 - [ ] Add "Will it block my content?" section to README
 - [ ] Update attack detection tables with new results
 
-*Generated: 2026-02-07 | Updated through iteration 8 of dataset research loop*
-*Feedback from: CTO (Nova x3), Product Lead (Nathan x2), Partnerships (Zorblax), Customer Success (Samantha), UX (Pierre)*
+*Generated: 2026-02-07 | Updated through iteration 9 of dataset research loop*
+*Feedback from: CTO (Nova x4), Product Lead (Nathan x2), Partnerships (Zorblax), Customer Success (Samantha), UX (Pierre)*
