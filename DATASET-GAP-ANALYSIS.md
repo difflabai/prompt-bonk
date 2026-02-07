@@ -53,12 +53,12 @@
 - **License**: MIT
 - **Overlap**: None — unique email-based format
 
-#### 4. Lakera/gandalf_ignore_instructions
+#### 4. ~~Lakera/gandalf_ignore_instructions~~ SKIP — LOW VALUE
 - **Source**: https://huggingface.co/datasets/Lakera/gandalf_ignore_instructions
-- **Size**: ~millions of prompts (filtered by semantic similarity to "ignore instructions")
-- **What**: Real-world prompt injection attempts from Gandalf CTF game, filtered to ignore-instructions style attacks
-- **Why add**: Massive corpus of real human creativity in prompt injection. These are actual attack attempts, not synthetic.
-- **Regex-testable**: YES - explicitly filtered for instruction-override patterns
+- **Size**: 1,000 rows (777 train, 111 val, 112 test) — NOT millions as initially reported
+- **What**: Gandalf prompts filtered by semantic similarity (>0.825) to "ignore all previous instructions"
+- **Why skip**: All prompts are instruction-override variants — will score ~100% recall since we already catch this pattern perfectly. Smaller than deepset-test. Zero diagnostic value.
+- **License**: MIT
 
 #### 5. Lakera/mosscap_prompt_injection
 - **Source**: https://huggingface.co/datasets/Lakera/mosscap_prompt_injection
@@ -67,13 +67,15 @@
 - **Why add**: DEF CON crowd produces creative, adversarial attacks. Mix of actual injections and benign queries.
 - **Regex-testable**: YES
 
-#### 6. TrustAIRLab/in-the-wild-jailbreak-prompts
+#### 4b. TrustAIRLab/in-the-wild-jailbreak-prompts  <<<< PRIORITY #2
 - **Source**: https://huggingface.co/datasets/TrustAIRLab/in-the-wild-jailbreak-prompts
-- **Size**: 15,140 prompts (1,405 jailbreak)
-- **What**: Real jailbreak prompts from Reddit, Discord, websites. CCS 2024 paper.
-- **Why add**: In-the-wild distribution vs synthetic. Binary jailbreak/benign labels.
-- **Overlap**: Some with rubend18/Jailbreak-Prompts but much larger with benign baseline
-- **Regex-testable**: YES
+- **Size**: ~15,110 (1,410 jailbreak + 13,700 benign)
+- **Format**: Two HF configs: `jailbreak_2023_12_25` (1,410 jailbreaks) and `regular_2023_12_25` (13,700 benign). Fields: `prompt` (text), `jailbreak` (boolean), `platform`, `source`, `created_at`
+- **What**: Real jailbreak prompts from Reddit, Discord, websites + organic benign prompts from same platforms. ACM CCS 2024 paper (arXiv: 2308.03825).
+- **Why #2 priority**: (1) 13,700 real benign prompts — 40x our current FP test set (NotInject: 339). (2) In-the-wild distribution, not synthetic. (3) 1:10 jailbreak-to-benign ratio mirrors real-world traffic. (4) Stress-tests false positive rate against organic user prompts. (5) ACM CCS 2024 citation for credibility.
+- **Integration plan**: Download both configs. Map: `text: row.prompt`, `label: row.jailbreak ? 1 : 0`. Output: `datasets/trustailab-wild.jsonl`
+- **License**: MIT (confirmed)
+- **Overlap**: Some jailbreaks may overlap rubend18, but the 13,700 benign samples are unique and invaluable
 
 #### 7. jackhhao/jailbreak-classification
 - **Source**: https://huggingface.co/datasets/jackhhao/jailbreak-classification
@@ -194,8 +196,8 @@
 | Gap | Recommended Dataset | License | Priority |
 |-----|-------------------|---------|----------|
 | **Email-based indirect injection** | microsoft/llmail-inject-challenge | MIT | HIGH |
-| **Large-scale real human attacks** | Lakera/gandalf_ignore_instructions | MIT | HIGH |
-| **In-the-wild jailbreaks** with benign baseline | TrustAIRLab/in-the-wild-jailbreak-prompts | VERIFY | HIGH |
+| **In-the-wild FP stress test** (13.7K benign) | TrustAIRLab/in-the-wild-jailbreak-prompts | MIT | HIGH |
+| **DEF CON security community attacks** | Lakera/mosscap_prompt_injection | MIT | MEDIUM |
 | **DEF CON / security community attacks** | Lakera/mosscap_prompt_injection | MIT | MEDIUM |
 | **Multi-turn attacks** | SaTML LLM CTF 2024 | VERIFY | MEDIUM |
 | **Independent benchmark** (different source) | qualifire/prompt-injections-benchmark | VERIFY | MEDIUM |
@@ -209,15 +211,19 @@
 
 ### Recommended Priority Additions (Top 5):
 
-1. **microsoft/llmail-inject-challenge** - 160K+ email injection attacks, fills our email blind spot (enterprise attack vector #1). Human-crafted adversarial attacks from SaTML 2025 competition. Includes 203 FP test emails. Start with 10K sample.
-2. **TrustAIRLab/in-the-wild-jailbreak-prompts** - 15K real-world prompts with labels from Reddit/Discord/websites. Different distribution than synthetic datasets.
-3. **Lakera/gandalf_ignore_instructions** - Massive real attack corpus from CTF game. Millions of creative human attempts.
-4. **Lakera/mosscap_prompt_injection** - DEF CON 31 security community attacks. High adversarial quality.
-5. **qualifire/prompt-injections-benchmark** - 5K independent benchmark from different source
+1. **microsoft/llmail-inject-challenge** (MIT) - 160K+ email injection attacks, fills our email blind spot. SaTML 2025 competition. Start with 10K sample.
+2. **TrustAIRLab/in-the-wild-jailbreak-prompts** (MIT) - 1.4K jailbreaks + 13.7K benign from Reddit/Discord. 40x our current FP test coverage. ACM CCS 2024.
+3. **Lakera/mosscap_prompt_injection** (MIT) - DEF CON 31 security community attacks. High adversarial quality.
+4. **qualifire/prompt-injections-benchmark** (VERIFY) - 5K independent benchmark from different source.
+5. **Lakera/gandalf_summarization** (MIT) - Indirect injection via summarization task.
 
-**Deprioritized:** hendzh/PromptShield (43K) — composite of existing open-source datasets. We already score 95-100% precision on direct injection. Adding more direct injection samples provides volume, not signal. Our gap is in *indirect injection coverage*, not direct.
+**Dropped from priority list:**
+- ~~Lakera/gandalf_ignore_instructions~~ — Only 1,000 rows (not millions), all "ignore instructions" variants. Would score ~100% recall, zero diagnostic value.
+- ~~hendzh/PromptShield~~ — Composite of existing datasets. More direct injection volume doesn't help.
+- ~~Lakera/gandalf-rct~~ — Non-commercial license, commercially blocked.
+- ~~ScaleAI/mhj~~ — CC BY-NC 4.0, commercially blocked.
 
 ---
 
-*Generated: 2026-02-07 | Updated through iteration 3 of dataset research loop*
-*Feedback from: CTO (Nova), Product Lead (Nathan), Head of Partnerships (Zorblax)*
+*Generated: 2026-02-07 | Updated through iteration 4 of dataset research loop*
+*Feedback from: CTO (Nova x2), Product Lead (Nathan), Head of Partnerships (Zorblax)*
