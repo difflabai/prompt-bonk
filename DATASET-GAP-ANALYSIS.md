@@ -199,7 +199,6 @@
 | **Email-based indirect injection** | microsoft/llmail-inject-challenge | MIT | HIGH |
 | **In-the-wild FP stress test** (13.7K benign) | TrustAIRLab/in-the-wild-jailbreak-prompts | MIT | HIGH |
 | **DEF CON security community attacks** | Lakera/mosscap_prompt_injection | MIT | MEDIUM |
-| **DEF CON / security community attacks** | Lakera/mosscap_prompt_injection | MIT | MEDIUM |
 | **Multi-turn attacks** | SaTML LLM CTF 2024 | VERIFY | MEDIUM |
 | **Independent benchmark** (different source) | qualifire/prompt-injections-benchmark | VERIFY | MEDIUM |
 | **Summarization-based indirect** | Lakera/gandalf_summarization | MIT | LOW |
@@ -226,5 +225,77 @@
 
 ---
 
-*Generated: 2026-02-07 | Updated through iteration 5 of dataset research loop*
-*Feedback from: CTO (Nova x2), Product Lead (Nathan), Partnerships (Zorblax), Customer Success (Samantha)*
+---
+
+## Integration Specs (Ready to Implement)
+
+### Dataset #16: microsoft/llmail-inject-challenge
+
+**download-datasets.js addition:**
+```js
+// 16. microsoft/llmail-inject-challenge — email-based indirect injection (SaTML 2025)
+// Note: Dataset is Parquet on HuggingFace. Use rows API with Phase1 split.
+// All entries are attack attempts (label=1). Separate FP test file available.
+console.log('Downloading microsoft/llmail-inject-challenge (10000 rows from Phase1)...');
+raw = await downloadHF('microsoft/llmail-inject-challenge', 'Phase1', 100, 10000);
+writeJsonl(path.join(DATASETS_DIR, 'llmail-inject.jsonl'), raw.map(r => ({
+  text: [r.subject, r.body].filter(Boolean).join(' '),
+  label: 1,
+  scenario: r.scenario,
+})));
+```
+
+**benchmark.js addition:**
+```js
+{ name: 'llmail-inject', file: 'llmail-inject.jsonl' },
+```
+
+**Expected behavior:** All 10K entries are attacks (label=1). This measures recall on email-based indirect injection. Place in "Indirect injection detection" table in README alongside browsesafe, bipia, injecagent.
+
+### Dataset #17: TrustAIRLab/in-the-wild-jailbreak-prompts
+
+**download-datasets.js addition:**
+```js
+// 17. TrustAIRLab/in-the-wild-jailbreak-prompts — real jailbreaks + benign from Reddit/Discord
+// Two configs: jailbreak_2023_12_25 (1,410 jailbreaks) and regular prompts (~13,700 benign)
+// CCS 2024 paper: "Do Anything Now" (arXiv: 2308.03825)
+console.log('Downloading TrustAIRLab/in-the-wild-jailbreak-prompts...');
+const wildRows = [];
+raw = await downloadHF('TrustAIRLab/in-the-wild-jailbreak-prompts', 'train', 100, Infinity,
+  'jailbreak_2023_12_25');
+for (const r of raw) wildRows.push({ text: r.prompt, label: 1 });
+raw = await downloadHF('TrustAIRLab/in-the-wild-jailbreak-prompts', 'train', 100, Infinity,
+  'regular_2023_12_25');
+for (const r of raw) wildRows.push({ text: r.prompt, label: 0 });
+writeJsonl(path.join(DATASETS_DIR, 'trustailab-wild.jsonl'), wildRows);
+```
+
+**Note:** `downloadHF()` currently hardcodes `config=default`. Need to add optional `config` parameter:
+```js
+async function downloadHF(dataset, split, pageSize = 100, maxRows = Infinity, config = 'default') {
+  // ... url includes config=${config} instead of config=default
+}
+```
+
+**benchmark.js addition:**
+```js
+{ name: 'trustailab-wild', file: 'trustailab-wild.jsonl' },
+```
+
+**Expected behavior:** ~15K rows (1.4K injection, 13.7K benign). Tests both recall on real jailbreaks AND false positive rate on 13,700 organic benign prompts. Place in "Direct injection detection" table.
+
+---
+
+## Status: Research Complete — Entering Integration Phase
+
+Research phase (iterations 1-6) is complete. The gap analysis identified 21 candidate datasets, validated formats and licenses, and produced integration specs for the top 2 priorities.
+
+**Remaining work:**
+- [ ] Implement download for llmail-inject (10K sample)
+- [ ] Implement download for TrustAIRLab (full dataset)
+- [ ] Run benchmarks on both new datasets
+- [ ] Update README with new results
+- [ ] Investigate mosscap format if time permits (priority #3)
+
+*Generated: 2026-02-07 | Updated through iteration 6 of dataset research loop*
+*Feedback from: CTO (Nova x2), Product Lead (Nathan x2), Partnerships (Zorblax), Customer Success (Samantha)*
