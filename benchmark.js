@@ -136,6 +136,9 @@ const datasets = [
   // Labels measure attack success, not injection presence (all entries are attacks):
   // { name: 'tensor-trust', file: 'tensor-trust.jsonl' },
   // { name: 'hackaprompt', file: 'hackaprompt.jsonl' },
+  // Benign content — real-world FP testing (all label=0)
+  { name: 'enron-benign', file: 'enron-benign.jsonl' },
+  { name: 'openwebtext-benign', file: 'openwebtext-benign.jsonl' },
 ];
 
 const results = [];

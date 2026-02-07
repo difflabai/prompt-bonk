@@ -178,6 +178,26 @@ async function main() {
   for (const r of raw) wildRows.push({ text: r.prompt, label: 0 });
   writeJsonl(path.join(DATASETS_DIR, 'trustailab-wild.jsonl'), wildRows);
 
+  // --- Benign content datasets (FP testing) ---
+
+  // 14. corbt/enron-emails — real corporate email bodies for FP testing
+  // Public domain (Enron corpus). Sample 5K ham emails.
+  console.log('Downloading corbt/enron-emails (5000 rows)...');
+  raw = await downloadHF('corbt/enron-emails', 'train', 100, 5000);
+  writeJsonl(path.join(DATASETS_DIR, 'enron-benign.jsonl'), raw.map(r => ({
+    text: [r.subject, r.body].filter(Boolean).join(' '),
+    label: 0,
+  })));
+
+  // 15. Skylion007/openwebtext — real web page text for FP testing
+  // OpenAI's WebText recreation. Sample 10K pages. Config: plain_text.
+  console.log('Downloading Skylion007/openwebtext (10000 rows)...');
+  raw = await downloadHF('Skylion007/openwebtext', 'train', 100, 10000, 'plain_text');
+  writeJsonl(path.join(DATASETS_DIR, 'openwebtext-benign.jsonl'), raw.map(r => ({
+    text: r.text,
+    label: 0,
+  })));
+
   console.log('\nAll datasets downloaded.');
 }
 

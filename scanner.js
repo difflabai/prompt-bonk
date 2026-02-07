@@ -292,7 +292,7 @@ const PATTERNS = [
   },
   // "ignore rules/restrictions" — bare form without temporal qualifier
   {
-    regex: /\b(?:ignore|disregard|forget)\s+(?:(?:all|any|every|each)\s+)?(?:(?:all\s+)?(?:the|your|my|those|these)\s+)?(?:\w+\s+)?(?:rules?|restrictions?|limitations?|constraints?|boundaries|checks?|safety\s+(?:rules?|checks?|measures?)|regulations?)\b/i,
+    regex: /\b(?:ignore|disregard|forget(?!\s+to\s+))\s+(?:(?:all|any|every|each)\s+)?(?:(?:all\s+)?(?:the|your|my|those|these)\s+)?(?:\w+\s+)?(?:rules?|restrictions?|limitations?|constraints?|boundaries|checks?|safety\s+(?:rules?|checks?|measures?)|regulations?)\b/i,
     weight: 0.72,
     category: 'instruction_override',
     id: 'ignore_bare_rules',
@@ -734,7 +734,7 @@ const PATTERNS = [
   // ===== ROLE HIJACKING =====
   // Attempts to make the model adopt a different persona/role
   {
-    regex: /(?:now\s+you\s+are|you\s+are\s+now)\s+(?:a|an|the|my)?\s*/i,
+    regex: /(?:now\s+you\s+are|you\s+are\s+now)\s+(?!(?:enrolled|connected|registered|subscribed|listed|confirmed|eligible|required|authorized|approved|able|ready|free|welcome|set|done|finished|good|fine|in\s+(?:the|a)|on\s+(?:the|a)|at\s+(?:the|a)|going|being|doubly|officially|also|even|no\s+longer|all\s+set)\b)(?:a|an|the|my)?\s*/i,
     weight: 0.70,
     category: 'role_hijack',
     id: 'you_are_now',
@@ -2420,7 +2420,7 @@ const PATTERNS = [
   // "You are [brand/company/person]. What do you think about X?"
   // Negative lookahead avoids task descriptions and generic role words
   {
-    regex: /\byou\s+are\s+(?!(?:given|asked|shown|provided|presented|supposed|expected|required|allowed|able|going|not|also|on|doing|responsible|known|copying|sitting|working|running|acting|trying|looking|coming|getting|here|there|right|wrong|already|still|just|well|very|being|currently|always|never|now|about|only|one|using|making|having|the\s+(?:one|person|only)|a\s+(?:teacher|student|doctor|lawyer|writer|developer|user|person|member|fan|customer|player|manager|team|group|part|bit|lot|good|great|new))\b)(?:the\s+)?(?:[A-Z][\w]*(?:\s+[A-Z][\w]*){0,3})\s*[.,!]?\s*(?:as\s+(?:the\s+)?|what\s+do\s+you\s+think|tell\s+me\s+what|how\s+do\s+you\s+feel|what\s+(?:is|are)\s+your\s+(?:opinion|view|thought))/i,
+    regex: /\byou\s+are\s+(?!(?:given|asked|shown|provided|presented|supposed|expected|required|allowed|able|going|not|also|on|doing|responsible|known|copying|sitting|working|running|acting|trying|looking|coming|getting|here|there|right|wrong|already|still|just|well|very|being|currently|always|never|now|about|only|one|using|making|having|connected|selected|enrolled|registered|subscribed|listed|described|invited|scheduled|importing|confirmed|assigned|authorized|appointed|the\s+(?:one|person|only)|a\s+(?:teacher|student|doctor|lawyer|writer|developer|user|person|member|fan|customer|player|manager|team|group|part|bit|lot|good|great|new))\b)(?:the\s+)?(?:[A-Z][\w]*(?:\s+[A-Z][\w]*){0,3})\s*[.,!]?\s*(?:as\s+(?:the\s+)?(?!(?:well|follows|of|much|far|long|a\s+result|part|such|if|though|per|soon)\b)|what\s+do\s+you\s+think|tell\s+me\s+what|how\s+do\s+you\s+feel|what\s+(?:is|are)\s+your\s+(?:opinion|view|thought))/i,
     weight: 0.55,
     category: 'role_hijack',
     id: 'entity_impersonation',
@@ -3489,7 +3489,7 @@ function structuralScore(text) {
 
   // Coercion: demand + threat without needing sensitive noun specifically
   const hasCoercionDemand = /\b(?:give|provide|share|send|transfer|disclose|cooperate|comply)\s+(?:me\s+|with\s+me\s+)?/i.test(text);
-  const hasCoercionThreat = /\b(?:or\s+(?:I\s+will|I'll|we\s+will|we'll)\s+(?:leak|expose|release|publish|report|share|reveal|spread|hack|destroy|delete|harm|ruin|tarnish|defame|attack|launch|implicate)|or\s+(?:else|your)\b|or\s+risk\s+being)/i.test(text);
+  const hasCoercionThreat = /\b(?:or\s+(?:I\s+will|I'll|we\s+will|we'll)\s+(?:leak|expose|release|publish|report|share|reveal|spread|hack|destroy|delete|harm|ruin|tarnish|defame|attack|launch|implicate)|or\s+risk\s+being)/i.test(text);
   if (hasCoercionDemand && hasCoercionThreat) {
     score += 0.52;
     signals.push({ id: 'coercion_pattern', score: 0.52, detail: 'Demand paired with threat of harmful action' });
@@ -3549,10 +3549,14 @@ function structuralScore(text) {
 
   // Obfuscated text: single-char fragments separated by hyphens
   // e.g. "i-nstruction", "T-he", "w-ith" — NOT em dashes like "months--and"
-  // Exclude common CSS properties: z-index, x-overflow, y-position, etc.
+  // Exclude common CSS properties and common English hyphenated words (e-mail, T-shirt, X-ray, etc.)
   const _CSS_HYPHEN = /^[xyzXYZ]-(?:index|overflow|hidden|visible|scroll|auto|position|offset|axis|large|small|ms-|webkit-|moz-|o-)/;
+  const _COMMON_HYPHEN = /^(?:e-mail|e-commerce|e-book|e-learning|e-sign|e-bay|e-trade|e-ticket|e-card|t-shirt|t-bone|t-mobile|t-cell|x-ray|x-men|x-box|u-turn|u-boat|u-haul|a-list|a-frame|a-ok|a-team|b-list|b-team|b-roll|c-suite|c-span|c-section|d-day|g-mail|h-bomb|i-beam|i-pad|j-walk|k-pop|k-mart|n-word|o-ring|p-value|r-rated|s-curve|s-corp|v-neck|v-chip|re-do|re-work|re-read|re-use|re-open|re-set|re-write|re-hire|re-cap|co-op|co-pay|co-own|co-sign)s?$/i;
   const singleCharHyphenMatches = text.match(/(?:^|\s)[a-zA-Z]-[a-zA-Z]{2,}\b/g) || [];
-  const singleCharHyphen = singleCharHyphenMatches.filter(m => !_CSS_HYPHEN.test(m.trim())).length;
+  const singleCharHyphen = singleCharHyphenMatches.filter(m => {
+    const trimmed = m.trim();
+    return !_CSS_HYPHEN.test(trimmed) && !_COMMON_HYPHEN.test(trimmed);
+  }).length;
   if (singleCharHyphen >= 3) {
     score += 0.55;
     signals.push({ id: 'obfuscated_words', score: 0.55, detail: `${singleCharHyphen} obfuscated word fragments` });
@@ -3665,11 +3669,15 @@ function structuralScore(text) {
     }
 
     // Hash section markers (###) or separator lines (=====) in long text — typical of structured system prompts
+    // Separators alone are common in emails and articles — only score high when combined with system prompt indicators
     const hasHashSection = /^###\s/m.test(text);
     const hasSeparatorLine = /^(?:={5,}|-{5,}|\*{5,}|~{5,}|_{5,})\s*$/m.test(text);
     if (hasHashSection || hasSeparatorLine) {
-      score += 0.50;
-      signals.push({ id: 'hash_section_long_text', score: 0.50, detail: 'Section markers (###) or separator lines in long text (system prompt structure)' });
+      const hasBehavioralConstraint = /\b(?:you\s+(?:must|should|shall|cannot|can\s*not|will\s+not|won'?t|are\s+not\s+allowed|may\s+not|never)|(?:do\s+not|don'?t|never)\s+(?:provide|share|reveal|disclose|generate|create|discuss|mention))\b/i.test(text);
+      const hasSystemPromptStart = /^(?:you\s+are\s+(?:a|an|the|my)\s+|(?:as|imagine\s+you\s+are)\s+(?:a|an|the)\s+)/im.test(text);
+      const sepScore = (hasBehavioralConstraint || hasSystemPromptStart) ? 0.50 : 0.20;
+      score += sepScore;
+      signals.push({ id: 'hash_section_long_text', score: sepScore, detail: 'Section markers (###) or separator lines in long text (system prompt structure)' });
     }
   }
 
