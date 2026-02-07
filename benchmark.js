@@ -121,6 +121,8 @@ const datasets = [
   { name: 'spml-5k', file: 'spml-5k.jsonl' },
   { name: 'protectai', file: 'protectai.jsonl' },
   // In-the-wild jailbreaks + benign (ACM CCS 2024)
+  // NOTE: ~40% of "benign" labels contain actual jailbreak language (collected by source channel, not content).
+  // High FP rate is expected and reflects labeling methodology, not scanner deficiency.
   { name: 'trustailab-wild', file: 'trustailab-wild.jsonl' },
   // Indirect injection — attacks embedded in real-world content
   { name: 'browsesafe-test', file: 'browsesafe-test.jsonl' },
