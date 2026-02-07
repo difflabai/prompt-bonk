@@ -184,6 +184,31 @@
 - Basic indirect injection (HTML, documents)
 - Over-defense testing (NotInject)
 
+### Critical gap: Real-world benign content (FP stress testing)
+
+Our scanner processes real-world content that agents fetch — websites, emails, comments, articles. We need to verify these pass through clean. Current FP testing is thin:
+- NotInject: 339 benign samples (trigger-word enriched instructions)
+- llmail-inject benign: 9,452 adversarial-adjacent emails (from competition)
+- TrustAIRLab benign: 13,700 organic Reddit/Discord prompts
+
+**Missing: Real-world fetched content** — the actual HTML pages, emails, and documents an agent would process.
+
+| Dataset | Source | Size | Content Type | License |
+|---------|--------|------|-------------|---------|
+| Enron email corpus | HuggingFace (SetFit/enron_spam, corbt/enron-emails) | 500K+ emails | Real corporate emails (ham + spam labelled) | Public domain |
+| OpenWebText | HuggingFace (Skylion007/openwebtext) | 8M documents | Real web page text from Reddit URLs | MIT |
+| stas/openwebtext-10k | HuggingFace | 10K documents | Sampled web pages (manageable size) | MIT |
+| C4 (Colossal Clean Crawled Corpus) | HuggingFace | 365M documents | Cleaned web crawl text | ODC-BY |
+| arielzilber/prompt-injection-benign-evaluation-framework | Kaggle | Unknown | Benign prompts designed for FP testing | Check |
+| CSDMC SPAM corpus | Academic | 2,949 ham emails | Legitimate emails for FP baseline | Academic |
+
+**Recommended approach:** Sample 5-10K from each of:
+1. **Enron ham emails** — real business emails an agent inbox would process
+2. **OpenWebText-10k** — real web pages an agent might fetch/summarize
+3. **TrustAIRLab benign** — real user prompts from social platforms
+
+This gives us ~30K diverse benign samples across three content types (email, web, user prompts) for comprehensive FP testing.
+
 ### Systemic blind spot: Multilingual
 - ALL 15 current datasets are English-only
 - ALL 418 scanner patterns are English regex
@@ -231,18 +256,34 @@
 
 ### Dataset #16: microsoft/llmail-inject-challenge
 
+**IMPORTANT: Use the labelled file, NOT the raw rows API.**
+
+The repo contains `data/labelled_unique_submissions_phase1.json` — 160K deduplicated entries with human+judge ground-truth labels:
+- 127,376 labelled `True` (confirmed attacks)
+- 9,452 labelled `False` (not attacks despite being competition submissions) — **built-in adversarial-benign FP test**
+- 23,911 labelled `Unclear` (skip these)
+
+The key of each dict entry IS the scan text (format: `"Subject of the email: {subject}.   Body: {body}"`).
+
 **download-datasets.js addition:**
 ```js
 // 16. microsoft/llmail-inject-challenge — email-based indirect injection (SaTML 2025)
-// Note: Dataset is Parquet on HuggingFace. Use rows API with Phase1 split.
-// All entries are attack attempts (label=1). Separate FP test file available.
-console.log('Downloading microsoft/llmail-inject-challenge (10000 rows from Phase1)...');
-raw = await downloadHF('microsoft/llmail-inject-challenge', 'Phase1', 100, 10000);
-writeJsonl(path.join(DATASETS_DIR, 'llmail-inject.jsonl'), raw.map(r => ({
-  text: [r.subject, r.body].filter(Boolean).join(' '),
-  label: 1,
-  scenario: r.scenario,
-})));
+// Direct download of labelled file (not rows API) — has ground-truth attack_attempt labels
+// 448MB file, will spike memory on parse. One-time download cost.
+console.log('Downloading microsoft/llmail-inject-challenge (labelled Phase1)...');
+const labelledUrl = 'https://huggingface.co/datasets/microsoft/llmail-inject-challenge/resolve/main/data/labelled_unique_submissions_phase1.json';
+const labelledRes = await fetch(labelledUrl);
+const labelled = JSON.parse(labelledRes.body);
+const llmailRows = [];
+for (const [text, meta] of Object.entries(labelled)) {
+  if (meta.attack_attempt === 'True') llmailRows.push({ text, label: 1 });
+  else if (meta.attack_attempt === 'False') llmailRows.push({ text, label: 0 });
+  // Skip 'Unclear'
+}
+// Sample: 10K attacks + all ~9,452 benign for FP testing
+const attacks = llmailRows.filter(r => r.label === 1).slice(0, 10000);
+const benign = llmailRows.filter(r => r.label === 0);
+writeJsonl(path.join(DATASETS_DIR, 'llmail-inject.jsonl'), [...attacks, ...benign]);
 ```
 
 **benchmark.js addition:**
@@ -250,7 +291,7 @@ writeJsonl(path.join(DATASETS_DIR, 'llmail-inject.jsonl'), raw.map(r => ({
 { name: 'llmail-inject', file: 'llmail-inject.jsonl' },
 ```
 
-**Expected behavior:** All 10K entries are attacks (label=1). This measures recall on email-based indirect injection. Place in "Indirect injection detection" table in README alongside browsesafe, bipia, injecagent.
+**Expected behavior:** ~19.4K rows (10K attacks + 9.4K adversarial-benign). Tests both recall on email injection AND false positive rate on adversarial-adjacent benign content. Place in "Indirect injection detection" table.
 
 ### Dataset #17: TrustAIRLab/in-the-wild-jailbreak-prompts
 
@@ -297,5 +338,5 @@ Research phase (iterations 1-6) is complete. The gap analysis identified 21 cand
 - [ ] Update README with new results
 - [ ] Investigate mosscap format if time permits (priority #3)
 
-*Generated: 2026-02-07 | Updated through iteration 6 of dataset research loop*
+*Generated: 2026-02-07 | Updated through iteration 7 of dataset research loop*
 *Feedback from: CTO (Nova x2), Product Lead (Nathan x2), Partnerships (Zorblax), Customer Success (Samantha)*
