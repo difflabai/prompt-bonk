@@ -124,6 +124,8 @@ const datasets = [
   // NOTE: ~40% of "benign" labels contain actual jailbreak language (collected by source channel, not content).
   // High FP rate is expected and reflects labeling methodology, not scanner deficiency.
   { name: 'trustailab-wild', file: 'trustailab-wild.jsonl' },
+  // Email-based indirect injection (SaTML 2025, all entries are attacks)
+  { name: 'llmail-inject', file: 'llmail-inject.jsonl' },
   // Indirect injection — attacks embedded in real-world content
   { name: 'browsesafe-test', file: 'browsesafe-test.jsonl' },
   { name: 'bipia', file: 'bipia.jsonl' },

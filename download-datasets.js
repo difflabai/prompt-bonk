@@ -156,7 +156,17 @@ async function main() {
   // See: https://github.com/uiuc-kang-lab/InjecAgent
   // See: https://github.com/microsoft/BIPIA
 
-  // 12. TrustAIRLab/in-the-wild-jailbreak-prompts — real jailbreaks + benign from Reddit/Discord
+  // 12. microsoft/llmail-inject-challenge — email-based indirect injection (SaTML 2025)
+  // All entries are attack attempts (label=1). MIT license.
+  // 10K sample from Phase1 (370K total). Format: subject + body email fields.
+  console.log('Downloading microsoft/llmail-inject-challenge (10000 rows from Phase1)...');
+  raw = await downloadHF('microsoft/llmail-inject-challenge', 'Phase1', 100, 10000);
+  writeJsonl(path.join(DATASETS_DIR, 'llmail-inject.jsonl'), raw.map(r => ({
+    text: 'Subject of the email: ' + (r.subject || '') + '.   Body: ' + (r.body || ''),
+    label: 1,
+  })));
+
+  // 13. TrustAIRLab/in-the-wild-jailbreak-prompts — real jailbreaks + benign from Reddit/Discord
   // ACM CCS 2024 paper: "Do Anything Now" (arXiv: 2308.03825). MIT license.
   // Two configs: jailbreak_2023_12_25 (1,405 jailbreaks) + regular_2023_12_25 (13,735 benign)
   console.log('Downloading TrustAIRLab/in-the-wild-jailbreak-prompts...');
