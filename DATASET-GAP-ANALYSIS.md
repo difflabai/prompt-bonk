@@ -91,20 +91,17 @@
 
 ### TIER 2: Valuable but with caveats
 
-#### 9. Lakera/gandalf-rct
+#### 9. ~~Lakera/gandalf-rct~~ COMMERCIALLY BLOCKED
 - **Source**: https://huggingface.co/datasets/Lakera/gandalf-rct
 - **Size**: 279,675 prompts from 15,402 users
-- **What**: Randomized controlled trial of Gandalf prompt attacks (Oct-Nov 2024)
-- **Why add**: Rigorous RCT design, multiple defense setups. Largest controlled prompt injection dataset.
-- **Caveat**: Not labeled as injection/benign (all are attack attempts). Best used as injection-only test set.
+- **License**: Custom non-commercial (academic/research only)
+- **Why blocked**: Cannot publish commercial benchmark results. Lakera is also a direct competitor (Lakera Guard).
 
-#### 10. ScaleAI/mhj (Multi-Turn Human Jailbreaks)
+#### 10. ~~ScaleAI/mhj~~ COMMERCIALLY BLOCKED
 - **Source**: https://huggingface.co/datasets/ScaleAI/mhj
 - **Size**: 2,912 prompts across 537 multi-turn conversations
-- **What**: Professional red team jailbreaks from Scale AI commercial engagements
-- **Why add**: High-quality, professional-grade attacks. >70% ASR against hardened defenses.
-- **Caveat**: Multi-turn format may need flattening. CC BY-NC 4.0 license.
-- **Regex-testable**: PARTIALLY - some use explicit injection, others are pure social engineering
+- **License**: CC BY-NC 4.0
+- **Why blocked**: Non-commercial license. Cannot use for commercial benchmark publishing.
 
 #### 11. walledai/JailbreakHub
 - **Source**: https://huggingface.co/datasets/walledai/JailbreakHub
@@ -194,18 +191,21 @@
 
 ### What we're missing:
 
-| Gap | Recommended Dataset | Priority |
-|-----|-------------------|----------|
-| **Email-based indirect injection** | microsoft/llmail-inject-challenge | HIGH |
-| **Large-scale real human attacks** | Lakera/gandalf_ignore_instructions | HIGH |
-| **Structured prompt format** (system+user) | hendzh/PromptShield | HIGH |
-| **In-the-wild jailbreaks** with benign baseline | TrustAIRLab/in-the-wild-jailbreak-prompts | HIGH |
-| **DEF CON / security community attacks** | Lakera/mosscap_prompt_injection | MEDIUM |
-| **Multi-turn attacks** | SaTML LLM CTF 2024 | MEDIUM |
-| **Independent benchmark** (different source) | qualifire/prompt-injections-benchmark | MEDIUM |
-| **RCT-validated attack corpus** | Lakera/gandalf-rct | MEDIUM |
-| **Professional red team** attacks | ScaleAI/mhj | LOW |
-| **Summarization-based indirect** | Lakera/gandalf_summarization | LOW |
+| Gap | Recommended Dataset | License | Priority |
+|-----|-------------------|---------|----------|
+| **Email-based indirect injection** | microsoft/llmail-inject-challenge | MIT | HIGH |
+| **Large-scale real human attacks** | Lakera/gandalf_ignore_instructions | MIT | HIGH |
+| **In-the-wild jailbreaks** with benign baseline | TrustAIRLab/in-the-wild-jailbreak-prompts | VERIFY | HIGH |
+| **DEF CON / security community attacks** | Lakera/mosscap_prompt_injection | MIT | MEDIUM |
+| **Multi-turn attacks** | SaTML LLM CTF 2024 | VERIFY | MEDIUM |
+| **Independent benchmark** (different source) | qualifire/prompt-injections-benchmark | VERIFY | MEDIUM |
+| **Summarization-based indirect** | Lakera/gandalf_summarization | MIT | LOW |
+| **Structured prompt format** (system+user) | hendzh/PromptShield | VERIFY | DEPRIORITIZED |
+| ~~RCT-validated attack corpus~~ | ~~Lakera/gandalf-rct~~ | NON-COMMERCIAL | BLOCKED |
+| ~~Professional red team attacks~~ | ~~ScaleAI/mhj~~ | CC BY-NC 4.0 | BLOCKED |
+| ~~Private benchmark~~ | ~~Lakera/PINT~~ | PRIVATE | BLOCKED |
+
+**License note:** Only MIT/Apache/permissive-licensed datasets should be integrated for commercial benchmark publishing. Lakera is a direct competitor (Lakera Guard) — use their MIT datasets freely but do not pursue partnership.
 
 ### Recommended Priority Additions (Top 5):
 
@@ -219,4 +219,5 @@
 
 ---
 
-*Generated: 2026-02-07 | Iteration 1 of dataset research loop*
+*Generated: 2026-02-07 | Updated through iteration 3 of dataset research loop*
+*Feedback from: CTO (Nova), Product Lead (Nathan), Head of Partnerships (Zorblax)*
