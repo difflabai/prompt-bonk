@@ -47,6 +47,7 @@
 - **Format**: Parquet. Fields: `subject` (email subject), `body` (email body with injection), `scenario` (40 attack scenarios), `objectives` (13 attack objectives), `output` (JSON with success booleans: email.retrieved, defense.undetected, exfil.sent, exfil.destination, exfil.content)
 - **What**: Indirect prompt injection via email targeting LLM email assistant. SaTML 2025 competition. 224 teams. All entries are attack attempts (label=1).
 - **Why #1 priority**: (1) Only email-based injection dataset — enterprise attack vector #1. (2) Human-crafted adversarial attacks, not synthetic. (3) Exercises our existing email exfiltration patterns. (4) Separate FP test file (203 benign emails). (5) Sales-ready: "tested against 160K email injection attacks from Microsoft SaTML competition."
+- **Market context**: CVE-2025-32711 (EchoLeak) was a CVSS 9.3 zero-click prompt injection in M365 Copilot. OWASP ranks prompt injection #1 risk for LLM apps with email as primary indirect attack surface. Gartner predicts 25% of enterprise breaches will trace to AI agent abuse by 2028. Every CISO evaluating agent security will ask "how does this perform against email injection?" — this dataset is the answer.
 - **Integration plan**: Sample 10K from Phase1. Scan `subject + ' ' + body`. All label=1 (attack-only set). Download separately: `emails_for_fp_tests.jsonl` (203 benign emails, label=0).
 - **Attack techniques observed**: Delimiter injection (`<<...>>`, `</context>`), JSON/XML embedded instructions, multi-message fragmentation, encoding/obfuscation, social engineering, role-play
 - **Language**: Primarily English (competition was English-focused). Minimal non-English.
@@ -225,5 +226,5 @@
 
 ---
 
-*Generated: 2026-02-07 | Updated through iteration 4 of dataset research loop*
-*Feedback from: CTO (Nova x2), Product Lead (Nathan), Head of Partnerships (Zorblax)*
+*Generated: 2026-02-07 | Updated through iteration 5 of dataset research loop*
+*Feedback from: CTO (Nova x2), Product Lead (Nathan), Partnerships (Zorblax), Customer Success (Samantha)*
