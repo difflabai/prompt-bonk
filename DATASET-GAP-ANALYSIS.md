@@ -41,13 +41,17 @@
 - **Why add**: Independent benchmark from Qualifire (Sentinel model creators), likely different distribution than our existing datasets
 - **Regex-testable**: YES
 
-#### 3. microsoft/llmail-inject-challenge
+#### 3. microsoft/llmail-inject-challenge  <<<< TOP PRIORITY
 - **Source**: https://huggingface.co/datasets/microsoft/llmail-inject-challenge
-- **Size**: 160K+ unique labeled prompts (Phase 1: 160,741, Phase 2: 37,303)
-- **What**: Indirect prompt injection via email. Attacks embedded in email body/subject targeting LLM email assistant. From SaTML 2025 competition.
-- **Why add**: Massive, unique dataset of real human-crafted indirect injection attacks. Emails are a primary attack vector for agents. Includes 203 FP test emails.
-- **Overlap**: None - unique email-based injection format
-- **Regex-testable**: PARTIALLY - many will have explicit injection language embedded in email context
+- **Size**: 462K raw (Phase1: 371K, Phase2: 91K). ~160K unique after dedup.
+- **Format**: Parquet. Fields: `subject` (email subject), `body` (email body with injection), `scenario` (40 attack scenarios), `objectives` (13 attack objectives), `output` (JSON with success booleans: email.retrieved, defense.undetected, exfil.sent, exfil.destination, exfil.content)
+- **What**: Indirect prompt injection via email targeting LLM email assistant. SaTML 2025 competition. 224 teams. All entries are attack attempts (label=1).
+- **Why #1 priority**: (1) Only email-based injection dataset — enterprise attack vector #1. (2) Human-crafted adversarial attacks, not synthetic. (3) Exercises our existing email exfiltration patterns. (4) Separate FP test file (203 benign emails). (5) Sales-ready: "tested against 160K email injection attacks from Microsoft SaTML competition."
+- **Integration plan**: Sample 10K from Phase1. Scan `subject + ' ' + body`. All label=1 (attack-only set). Download separately: `emails_for_fp_tests.jsonl` (203 benign emails, label=0).
+- **Attack techniques observed**: Delimiter injection (`<<...>>`, `</context>`), JSON/XML embedded instructions, multi-message fragmentation, encoding/obfuscation, social engineering, role-play
+- **Language**: Primarily English (competition was English-focused). Minimal non-English.
+- **License**: MIT
+- **Overlap**: None — unique email-based format
 
 #### 4. Lakera/gandalf_ignore_instructions
 - **Source**: https://huggingface.co/datasets/Lakera/gandalf_ignore_instructions
@@ -179,6 +183,14 @@
 - System prompt extraction
 - Basic indirect injection (HTML, documents)
 - Over-defense testing (NotInject)
+
+### Systemic blind spot: Multilingual
+- ALL 15 current datasets are English-only
+- ALL 418 scanner patterns are English regex
+- PINT benchmark (private) specifically includes 1,298 non-English inputs because that's where scanners fail
+- Our own project memory confirms: German `\w+` doesn't match umlauts, Cyrillic homoglyph normalization was needed
+- **No public multilingual prompt injection benchmark exists** — this is an industry-wide gap
+- Potential sources: Lakera/gandalf datasets may have non-English submissions, hendzh/PromptShield may contain multilingual prompts
 
 ### What we're missing:
 
