@@ -29,7 +29,7 @@ prompt-bonk focuses on attacks that are **dangerous to agents and systems**:
 
 ## How it works
 
-312 regex patterns organized by attack category, plus 8 structural heuristics. Each pattern has a confidence weight (0-1). The final score combines the highest-weight match with diminishing contributions from additional matches and structural signals.
+418 regex patterns organized by attack category, plus 8 structural heuristics. Each pattern has a confidence weight (0-1). The final score combines the highest-weight match with diminishing contributions from additional matches and structural signals.
 
 **Preprocessing** strips evasion techniques before matching:
 - Null bytes replaced with spaces
@@ -118,13 +118,13 @@ Datasets where injections contain explicit attack language:
 
 | Dataset | Precision | Recall | F1 | Accuracy |
 |---|---|---|---|---|
-| [deepset/prompt-injections](https://huggingface.co/datasets/deepset/prompt-injections) (train) | 100% | 85.22% | 92.02% | 94.51% |
-| [deepset/prompt-injections](https://huggingface.co/datasets/deepset/prompt-injections) (test) | 100% | 76.67% | 86.79% | 87.93% |
-| [xTRam1/safe-guard](https://huggingface.co/datasets/xTRam1/safe-guard-prompt-injection) (test) | 100% | 98% | 98.99% | 99.37% |
+| [deepset/prompt-injections](https://huggingface.co/datasets/deepset/prompt-injections) (train) | 100% | 90.64% | 95.09% | 96.52% |
+| [deepset/prompt-injections](https://huggingface.co/datasets/deepset/prompt-injections) (test) | 100% | 83.33% | 90.91% | 91.38% |
+| [xTRam1/safe-guard](https://huggingface.co/datasets/xTRam1/safe-guard-prompt-injection) (test) | 100% | 98.31% | 99.15% | 99.47% |
 | [leolee99/NotInject](https://huggingface.co/datasets/leolee99/NotInject) | - | - | - | 100% (0 FP) |
 | [rubend18/Jailbreak-Prompts](https://huggingface.co/datasets/rubend18/ChatGPT-Jailbreak-Prompts) | 100% | 100% | 100% | 100% |
-| [reshabhs/SPML](https://huggingface.co/datasets/reshabhs/SPML_Chatbot_Prompt_Injection) (5k) | 100% | 69.58% | 82.06% | 76.14% |
-| [ProtectAI validation](https://huggingface.co/datasets/protectai/prompt-injection-validation) | 94% | 66.38% | 77.81% | 83.67% |
+| [reshabhs/SPML](https://huggingface.co/datasets/reshabhs/SPML_Chatbot_Prompt_Injection) (5k) | 100% | 69.71% | 82.15% | 76.24% |
+| [ProtectAI validation](https://huggingface.co/datasets/protectai/prompt-injection-validation) | 96.24% | 95.69% | 95.97% | 96.53% |
 
 ### Indirect injection detection
 
@@ -132,18 +132,21 @@ Injections embedded in real-world content that agents process (HTML pages, docum
 
 | Dataset | Precision | Recall | F1 | Accuracy |
 |---|---|---|---|---|
-| [BrowseSafe-Bench](https://huggingface.co/datasets/perplexity-ai/browsesafe-bench) (test) | 74.41% | 51.97% | 61.20% | 67.34% |
-| [BIPIA](https://github.com/microsoft/BIPIA) | 100% | 6% | 11.32% | 6% |
+| [BrowseSafe-Bench](https://huggingface.co/datasets/perplexity-ai/browsesafe-bench) (test) | 94.68% | 67.38% | 78.73% | 81.96% |
+| [BIPIA](https://github.com/microsoft/BIPIA) | 100% | 76% | 86.36% | 76% |
+| [InjecAgent](https://github.com/uiuc-kang-lab/InjecAgent) | 100% | 53.23% | 69.47% | 63.29% |
+| [CyberSecEval3](https://huggingface.co/datasets/facebook/cyberseceval3-visual-prompt-injection) | 100% | 50% | 66.67% | 50% |
 
 ### Semantic attacks (the regex ceiling)
 
 These datasets contain attacks that look identical to normal text — "Please transfer $3,000", "Generate a video of X". The only signal they're malicious is that they come from an untrusted source, not the actual user. Pattern matching fundamentally cannot detect these; they require source-aware or model-based detection.
 
-| Dataset | Recall | What it contains |
+| Dataset | Recall | Why regex can't help |
 |---|---|---|
-| [InjecAgent](https://github.com/uiuc-kang-lab/InjecAgent) | 1.61% | Tool-abuse attacks for agents with API access |
-| [AgentHarm](https://huggingface.co/datasets/ai-safety-institute/AgentHarm) | 1.92% | Harmful agent tool-use scenarios |
-| [CyberSecEval3](https://huggingface.co/datasets/facebook/cyberseceval3-visual-prompt-injection) | 0% | Visual prompt injection (text component) |
+| [AgentHarm](https://huggingface.co/datasets/ai-safety-institute/AgentHarm) | 2.88% | 97% of samples are harmful intent, not injection — no attack patterns to match |
+| CyberSecEval3 remaining FN | - | 462/504 missed samples are image-based injections with no scannable text |
+| SPML remaining FN | - | 97% of missed samples are purely semantic rule violations |
+| InjecAgent remaining FN | - | Semantic action requests ("unlock my door") indistinguishable from benign |
 
 **Performance:** 100 bytes: 0.08ms | 1KB: 0.25ms | 10KB: 2ms | 100KB: 12ms
 
