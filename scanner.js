@@ -934,6 +934,22 @@ const PATTERNS = [
     id: 'fake_xml_tag',
     description: 'Uses XML-like tags to fake system messages',
   },
+  // Bracket-delimiter injection (CVE-2025-32711 EchoLeak technique)
+  {
+    regex: /\[(?:END\s+)?(?:USER\s+(?:INPUT|CONTEXT|MESSAGE)|INTERNAL\s+(?:AI\s+)?(?:INSTRUCTIONS?|DIRECTIVES?))\]/i,
+    weight: 0.85,
+    category: 'delimiter_attack',
+    id: 'bracket_delimiter',
+    description: 'Bracket-delimited fake context boundaries (EchoLeak-style)',
+  },
+  // Fake context/session boundary markers (llmail-inject FN recovery)
+  {
+    regex: /(?:NEXT_INSTRUCTION|>>[\}\]\)]{2,}!+\/\/|(?:USER_?QUERY|EXECUTE_USER_?QUERY|PROCESS_USER_?QUERY)\s*=?\s*[{\[("']|<<\/?(?:end_context|start_prompt|end_prompt|user_query|end_user_query|begin_context|end_program)>>|END_EMAIL_CONTEXT|NEW_USER_SESSION|START_USER_SESSION|context_limit_marker|END_PROCESSING)/i,
+    weight: 0.85,
+    category: 'delimiter_attack',
+    id: 'fake_context_boundary',
+    description: 'Fake context/session boundary markers used to inject instructions',
+  },
 
   // ===== SAFETY BYPASS =====
   // Attempts to bypass content filtering or safety measures
