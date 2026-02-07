@@ -26,13 +26,13 @@ function fetch(url) {
   });
 }
 
-async function downloadHF(dataset, split, pageSize = 100, maxRows = Infinity) {
+async function downloadHF(dataset, split, pageSize = 100, maxRows = Infinity, config = 'default') {
   let offset = 0;
   let total = null;
   const rows = [];
 
   while ((total === null || offset < total) && rows.length < maxRows) {
-    const url = `https://datasets-server.huggingface.co/rows?dataset=${encodeURIComponent(dataset)}&config=default&split=${split}&offset=${offset}&length=${pageSize}`;
+    const url = `https://datasets-server.huggingface.co/rows?dataset=${encodeURIComponent(dataset)}&config=${encodeURIComponent(config)}&split=${split}&offset=${offset}&length=${pageSize}`;
     const res = await fetch(url);
 
     if (res.status !== 200) {
@@ -155,6 +155,18 @@ async function main() {
   // 11. InjecAgent + BIPIA — downloaded from GitHub separately
   // See: https://github.com/uiuc-kang-lab/InjecAgent
   // See: https://github.com/microsoft/BIPIA
+
+  // 12. TrustAIRLab/in-the-wild-jailbreak-prompts — real jailbreaks + benign from Reddit/Discord
+  // ACM CCS 2024 paper: "Do Anything Now" (arXiv: 2308.03825). MIT license.
+  // Two configs: jailbreak_2023_12_25 (1,405 jailbreaks) + regular_2023_12_25 (13,735 benign)
+  console.log('Downloading TrustAIRLab/in-the-wild-jailbreak-prompts...');
+  const wildRows = [];
+  raw = await downloadHF('TrustAIRLab/in-the-wild-jailbreak-prompts', 'train', 100, Infinity, 'jailbreak_2023_12_25');
+  for (const r of raw) wildRows.push({ text: r.prompt, label: 1 });
+  console.log(`  ${wildRows.length} jailbreak prompts loaded`);
+  raw = await downloadHF('TrustAIRLab/in-the-wild-jailbreak-prompts', 'train', 100, Infinity, 'regular_2023_12_25');
+  for (const r of raw) wildRows.push({ text: r.prompt, label: 0 });
+  writeJsonl(path.join(DATASETS_DIR, 'trustailab-wild.jsonl'), wildRows);
 
   console.log('\nAll datasets downloaded.');
 }

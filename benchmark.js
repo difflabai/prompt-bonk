@@ -120,6 +120,8 @@ const datasets = [
   { name: 'jailbreak-prompts', file: 'jailbreak-prompts.jsonl' },
   { name: 'spml-5k', file: 'spml-5k.jsonl' },
   { name: 'protectai', file: 'protectai.jsonl' },
+  // In-the-wild jailbreaks + benign (ACM CCS 2024)
+  { name: 'trustailab-wild', file: 'trustailab-wild.jsonl' },
   // Indirect injection — attacks embedded in real-world content
   { name: 'browsesafe-test', file: 'browsesafe-test.jsonl' },
   { name: 'bipia', file: 'bipia.jsonl' },
