@@ -34,11 +34,11 @@
 - **Overlap**: Some sub-data may overlap with deepset/protectai, but the composite and structured format is unique.
 - **Regex-testable**: YES - contains explicit injection language
 
-#### 2. qualifire/prompt-injections-benchmark
-- **Source**: https://huggingface.co/datasets/qualifire/prompt-injections-benchmark
-- **Size**: 5,000 prompts
-- **What**: Balanced jailbreak/benign classification
-- **Why add**: Independent benchmark from Qualifire (Sentinel model creators), likely different distribution than our existing datasets
+#### 2. jackhhao/jailbreak-classification
+- **Source**: https://huggingface.co/datasets/jackhhao/jailbreak-classification
+- **Size**: 1,306 (640 benign, 666 jailbreak)
+- **What**: Balanced binary jailbreak classification dataset
+- **Why add**: Small, well-balanced, independent source. Good for quick regression testing alongside larger datasets.
 - **Regex-testable**: YES
 
 #### 3. microsoft/llmail-inject-challenge  <<<< TOP PRIORITY
@@ -68,7 +68,7 @@
 - **Why add**: DEF CON crowd produces creative, adversarial attacks. Mix of actual injections and benign queries.
 - **Regex-testable**: YES
 
-#### 4b. TrustAIRLab/in-the-wild-jailbreak-prompts  <<<< PRIORITY #2
+#### 6. TrustAIRLab/in-the-wild-jailbreak-prompts  <<<< PRIORITY #2
 - **Source**: https://huggingface.co/datasets/TrustAIRLab/in-the-wild-jailbreak-prompts
 - **Size**: ~15,110 (1,410 jailbreak + 13,700 benign)
 - **Format**: Two HF configs: `jailbreak_2023_12_25` (1,410 jailbreaks) and `regular_2023_12_25` (13,700 benign). Fields: `prompt` (text), `jailbreak` (boolean), `platform`, `source`, `created_at`
@@ -78,21 +78,21 @@
 - **License**: MIT (confirmed)
 - **Overlap**: Some jailbreaks may overlap rubend18, but the 13,700 benign samples are unique and invaluable
 
-#### 7. jackhhao/jailbreak-classification
-- **Source**: https://huggingface.co/datasets/jackhhao/jailbreak-classification
-- **Size**: 1,306 (640 benign, 666 jailbreak)
-- **What**: Balanced binary jailbreak classification dataset
-- **Why add**: Small but well-balanced, good for quick regression testing
-- **Regex-testable**: YES
-
-#### 8. SaTML LLM CTF 2024
+#### 7. SaTML LLM CTF 2024
 - **Source**: https://github.com/ethz-spylab/satml-llm-ctf
 - **Size**: 144,838 adversarial chats + 72 defenses
 - **What**: Multi-turn prompt injection/extraction from SaTML 2024 CTF competition
 - **Why add**: Multi-turn attacks, complex filter bypass attempts, real competition data
+- **License**: MIT (confirmed 2026-02-07)
 - **Regex-testable**: YES - many use explicit injection patterns
 
 ### TIER 2: Valuable but with caveats
+
+#### 8. ~~qualifire/prompt-injections-benchmark~~ COMMERCIALLY BLOCKED
+- **Source**: https://huggingface.co/datasets/qualifire/prompt-injections-benchmark
+- **Size**: 5,000 prompts
+- **License**: CC BY-NC 4.0 (confirmed 2026-02-07)
+- **Why blocked**: Non-commercial license. Cannot use for commercial benchmark publishing.
 
 #### 9. ~~Lakera/gandalf-rct~~ COMMERCIALLY BLOCKED
 - **Source**: https://huggingface.co/datasets/Lakera/gandalf-rct
@@ -224,10 +224,11 @@ This gives us ~30K diverse benign samples across three content types (email, web
 | **Email-based indirect injection** | microsoft/llmail-inject-challenge | MIT | HIGH |
 | **In-the-wild FP stress test** (13.7K benign) | TrustAIRLab/in-the-wild-jailbreak-prompts | MIT | HIGH |
 | **DEF CON security community attacks** | Lakera/mosscap_prompt_injection | MIT | MEDIUM |
-| **Multi-turn attacks** | SaTML LLM CTF 2024 | VERIFY | MEDIUM |
-| **Independent benchmark** (different source) | qualifire/prompt-injections-benchmark | VERIFY | MEDIUM |
+| **Multi-turn attacks** | SaTML LLM CTF 2024 | MIT | MEDIUM |
+| **Balanced regression test** | jackhhao/jailbreak-classification | Apache 2.0 | MEDIUM |
+| ~~Independent benchmark~~ | ~~qualifire/prompt-injections-benchmark~~ | CC BY-NC 4.0 | BLOCKED |
 | **Summarization-based indirect** | Lakera/gandalf_summarization | MIT | LOW |
-| **Structured prompt format** (system+user) | hendzh/PromptShield | VERIFY | DEPRIORITIZED |
+| **Structured prompt format** (system+user) | hendzh/PromptShield | Apache 2.0 | DEPRIORITIZED |
 | ~~RCT-validated attack corpus~~ | ~~Lakera/gandalf-rct~~ | NON-COMMERCIAL | BLOCKED |
 | ~~Professional red team attacks~~ | ~~ScaleAI/mhj~~ | CC BY-NC 4.0 | BLOCKED |
 | ~~Private benchmark~~ | ~~Lakera/PINT~~ | PRIVATE | BLOCKED |
@@ -239,12 +240,13 @@ This gives us ~30K diverse benign samples across three content types (email, web
 1. **microsoft/llmail-inject-challenge** (MIT) - 160K+ email injection attacks, fills our email blind spot. SaTML 2025 competition. Start with 10K sample.
 2. **TrustAIRLab/in-the-wild-jailbreak-prompts** (MIT) - 1.4K jailbreaks + 13.7K benign from Reddit/Discord. 40x our current FP test coverage. ACM CCS 2024.
 3. **Lakera/mosscap_prompt_injection** (MIT) - DEF CON 31 security community attacks. High adversarial quality.
-4. **qualifire/prompt-injections-benchmark** (VERIFY) - 5K independent benchmark from different source.
+4. **jackhhao/jailbreak-classification** - 1.3K balanced binary jailbreak/benign. Quick regression test.
 5. **Lakera/gandalf_summarization** (MIT) - Indirect injection via summarization task.
 
 **Dropped from priority list:**
 - ~~Lakera/gandalf_ignore_instructions~~ — Only 1,000 rows (not millions), all "ignore instructions" variants. Would score ~100% recall, zero diagnostic value.
 - ~~hendzh/PromptShield~~ — Composite of existing datasets. More direct injection volume doesn't help.
+- ~~qualifire/prompt-injections-benchmark~~ — CC BY-NC 4.0, commercially blocked (confirmed 2026-02-07).
 - ~~Lakera/gandalf-rct~~ — Non-commercial license, commercially blocked.
 - ~~ScaleAI/mhj~~ — CC BY-NC 4.0, commercially blocked.
 
@@ -409,7 +411,7 @@ No. Tested against 38,491 real-world content samples with zero false positives:
 
 ## Status: Research Complete — Entering Integration Phase
 
-Research phase (iterations 1-7) identified 21 candidate datasets, validated formats and licenses, and produced integration specs for the top 4 priorities plus 2 benign content datasets.
+Research phase (iterations 1-10) identified 22 candidate datasets, validated formats and licenses (all VERIFY tags resolved), and produced integration specs for the top 4 priorities plus 2 benign content datasets.
 
 **Integration checklist:**
 - [ ] Implement download for llmail-inject (labelled file, 10K attacks + 9.4K benign)
@@ -421,5 +423,5 @@ Research phase (iterations 1-7) identified 21 candidate datasets, validated form
 - [ ] Add "Will it block my content?" section to README
 - [ ] Update attack detection tables with new results
 
-*Generated: 2026-02-07 | Updated through iteration 9 of dataset research loop*
-*Feedback from: CTO (Nova x4), Product Lead (Nathan x2), Partnerships (Zorblax), Customer Success (Samantha), UX (Pierre)*
+*Generated: 2026-02-07 | Final (iteration 10 of 10) — all licenses verified, numbering sequential, ready for implementation*
+*Feedback from: CTO (Nova x4), Product Lead (Nathan x3), Partnerships (Zorblax), Customer Success (Samantha), UX (Pierre)*
