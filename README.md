@@ -176,7 +176,7 @@ These datasets contain attacks that look identical to normal text — "Please tr
 ```bash
 node download-datasets.js   # Download all datasets from HuggingFace
 node benchmark.js            # Run full benchmark suite
-node test.js                 # Run unit tests (86 tests)
+node test.js                 # Run unit tests (97 tests)
 ```
 
 ## Evasion defenses
