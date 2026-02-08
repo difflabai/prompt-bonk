@@ -2811,7 +2811,7 @@ const PATTERNS = [
   },
   // "make an exception" / "just this once" — one-time bypass request
   {
-    regex: /\b(?:make\s+(?:an?\s+)?exception(?!\s+to\s+the\b)|just\s+this\s+(?:once|one\s+time)|one\s+time\s+(?:only|exception)|special\s+case\s+for\s+me|bend\s+the\s+rules?\s+(?:just\s+)?(?:this\s+once|for\s+me))\b/i,
+    regex: /\b(?:make\s+(?:an?\s+)?exception(?!\s+to\s+the\b)|just\s+this\s+(?:once|one\s+time)|one\s+time\s+(?:only|exception)(?!\s+(?:email|invitation|offer|deal|sale|event|fee|payment|charge|purchase)\b)|special\s+case\s+for\s+me|bend\s+the\s+rules?\s+(?:just\s+)?(?:this\s+once|for\s+me))\b/i,
     weight: 0.52,
     category: 'safety_bypass',
     id: 'make_exception',
@@ -3331,11 +3331,11 @@ const PATTERNS = [
   },
   // "No prompt injection detected" — false assurance to bypass detection
   {
-    regex: /\bno\s+prompt\s+injection\s+detected\b/i,
+    regex: /\b(?:no\s+prompt\s+injection\s+detected|(?:does\s+not|doesn't)\s+contain\s+(?:any\s+)?prompt\s+injection)\b/i,
     weight: 0.55,
     category: 'evasion',
     id: 'false_no_injection',
-    description: 'False assurance — no prompt injection detected',
+    description: 'False assurance — no prompt injection detected/contained',
   },
 
   // "with body text confirmation" — email body content injection
@@ -3362,10 +3362,42 @@ const PATTERNS = [
     id: 'summarize_then_send',
     description: 'Multi-step injection — summarize then send',
   },
+  // "every second/other/alternate word" — obfuscation technique
+  {
+    regex: /\bevery\s*\/?\s*(?:second|other|alternate)\s*\/?\s*word/i,
+    weight: 0.55,
+    category: 'obfuscation',
+    id: 'every_second_word',
+    description: 'Every second word obfuscation technique',
+  },
+  // "email reply confirmation" — email reply injection
+  {
+    regex: /\bemail\s+reply\s+["']?confirm/i,
+    weight: 0.55,
+    category: 'action_invocation',
+    id: 'email_reply_confirm',
+    description: 'Email reply with confirmation — action injection',
+  },
+  // "confirmation email to" — send confirmation to specific target
+  {
+    regex: /\bconfirmation\s+email\s+to\b/i,
+    weight: 0.55,
+    category: 'action_invocation',
+    id: 'confirmation_email_to',
+    description: 'Send confirmation email to target',
+  },
+  // "transfer funds" + "or else/your" — coercion with financial threat
+  {
+    regex: /\btransfer\s+funds?\b[^.]{0,60}\bor\s+(?:else|your)\b/i,
+    weight: 0.55,
+    category: 'social_engineering',
+    id: 'transfer_funds_threat',
+    description: 'Transfer funds coercion with threat',
+  },
 
   // "// Subject:" or "// Body:" or "// end body" — comment-style fake message structure
   {
-    regex: /\/\/\s*(?:Subject|Body|end\s+body|end\s+subject)\s*:/i,
+    regex: /\/\/\s*(?:Subject|Body|end\s+(?:of\s+)?(?:body|subject|message|email))\s*:?/i,
     weight: 0.55,
     category: 'delimiter_attack',
     id: 'comment_fake_message',
@@ -3381,11 +3413,11 @@ const PATTERNS = [
   },
   // Chinese tool invocation — requesting AI to call email/tool functions in Chinese
   {
-    regex: /发送电子邮件的工具|调用[^。]{0,20}发送[^。]{0,20}邮件/,
+    regex: /发送电子邮件的工具|调用[^。]{0,20}发送[^。]{0,20}邮件|发送[^。]{0,10}(?:confirmation|确认)/,
     weight: 0.55,
     category: 'action_invocation',
     id: 'chinese_tool_invocation',
-    description: 'Chinese tool invocation — call send email tool',
+    description: 'Chinese tool invocation — call send email/confirmation tool',
   },
   // "decode and execute/run/perform" — base64/encoded payload execution
   {
