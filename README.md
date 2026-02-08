@@ -121,9 +121,11 @@ Tested against 8,542 real-world benign content samples:
 | Trigger-word prompts | [NotInject](https://huggingface.co/datasets/leolee99/NotInject) | 339 | 0 | 100% |
 | Competition emails (non-attacks) | [llmail-inject FP tests](https://huggingface.co/datasets/microsoft/llmail-inject-challenge) | 203 | 0 | 100% |
 | Corporate emails | [Enron corpus](https://huggingface.co/datasets/corbt/enron-emails) | 5,000 | 14 | 99.72% |
-| Web pages & articles | [OpenWebText](https://huggingface.co/datasets/stas/openwebtext-10k) | 3,000 | 42 | 98.60% |
+| Web pages & articles | [OpenWebText-10k](https://huggingface.co/datasets/stas/openwebtext-10k) | 3,000 | 42 | 98.60% |
 
 The 56 false blocks on real-world content are from compound structural signals on long, complex documents (email threads with many forwarding separators, news articles discussing security topics). Short content under 3KB has near-zero false positive rate.
+
+**Note:** TrustAIRLab's in-the-wild dataset shows 2,106 FPs on 3,183 flagged samples (33.8% precision) due to source-based labeling (Reddit/Discord channel origin) rather than content-based labels. The 76.65% recall on genuine jailbreaks is high; the low precision reflects that benign creative writing and roleplay naturally triggers patterns designed for jailbreak detection. Use 0.50 threshold for broad injection catching or 0.70+ for precision-critical applications.
 
 ### Direct injection detection
 
@@ -139,6 +141,7 @@ Datasets where injections contain explicit attack language:
 | [reshabhs/SPML](https://huggingface.co/datasets/reshabhs/SPML_Chatbot_Prompt_Injection) (5k) | 100% | 69.33% | 81.89% | 75.94% |
 | [ProtectAI validation](https://huggingface.co/datasets/protectai/prompt-injection-validation) | 96.45% | 95.69% | 96.07% | 96.62% |
 | [jackhhao/jailbreak-classification](https://huggingface.co/datasets/jackhhao/jailbreak-classification) | 98.33% | 88.29% | 93.04% | 93.26% |
+| [TrustAIRLab/in-the-wild-jailbreak-prompts](https://huggingface.co/datasets/TrustAIRLab/in-the-wild-jailbreak-prompts) | 33.84% | 76.65% | 46.95% | 72.97% |
 
 ### Indirect injection detection
 
@@ -151,6 +154,7 @@ Injections embedded in real-world content that agents process (HTML pages, docum
 | [BIPIA](https://github.com/microsoft/BIPIA) | 100% | 76% | 86.36% | 76% |
 | [InjecAgent](https://github.com/uiuc-kang-lab/InjecAgent) | 100% | 53.23% | 69.47% | 63.29% |
 | [CyberSecEval3](https://huggingface.co/datasets/facebook/cyberseceval3-visual-prompt-injection) | 100% | 50% | 66.67% | 50% |
+| [SaTML LLM CTF 2024](https://huggingface.co/datasets/ethz-spylab/ctf-satml24) | 100% | 39.72% | 56.86% | 39.72% |
 
 ### Semantic attacks (the regex ceiling)
 
