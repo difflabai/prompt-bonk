@@ -76,7 +76,7 @@ const PATTERNS = [
 
   // "Ignore all restrictions/protocols" (no "previous" qualifier needed)
   {
-    regex: /(?:ignore|disregard|forget|skip|delete|remove|drop)\s+(?:all\s+)?(?:the\s+)?(?:previous\s+)?(?:restrictions?|security\s+(?:protocols?|measures?)|privacy\s+(?:policies?|rules?)|formalities|safeguards?)/i,
+    regex: /(?:ignore|disregard|forget|skip|delete|remove|drop)\s+(?:all\s+)?(?:the\s+)?(?:previous\s+)?(?:restrictions?|security\s+(?:protocols?|measures?)|privacy\s+(?:policies?|rules?)|formalities|safeguards?)\b(?!\s+on\s+)/i,
     weight: 0.85,
     category: 'instruction_override',
     id: 'ignore_restrictions',

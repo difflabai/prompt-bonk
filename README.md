@@ -121,9 +121,9 @@ Tested against 8,542 real-world benign content samples:
 | Trigger-word prompts | [NotInject](https://huggingface.co/datasets/leolee99/NotInject) | 339 | 0 | 100% |
 | Competition emails (non-attacks) | [llmail-inject FP tests](https://huggingface.co/datasets/microsoft/llmail-inject-challenge) | 203 | 0 | 100% |
 | Corporate emails | [Enron corpus](https://huggingface.co/datasets/corbt/enron-emails) | 5,000 | 14 | 99.72% |
-| Web pages & articles | [OpenWebText-10k](https://huggingface.co/datasets/stas/openwebtext-10k) | 3,000 | 33 | 98.9% |
+| Web pages & articles | [OpenWebText-10k](https://huggingface.co/datasets/stas/openwebtext-10k) | 3,000 | 32 | 98.93% |
 
-The 47 false blocks on real-world content are from compound structural signals on long, complex documents (email threads with many forwarding separators, news articles discussing security topics). Short content under 3KB has near-zero false positive rate.
+The 46 false blocks on real-world content are from compound structural signals on long, complex documents (email threads with many forwarding separators, news articles discussing security topics). Short content under 3KB has near-zero false positive rate.
 
 **Note:** TrustAIRLab's in-the-wild dataset shows 2,106 FPs on 3,183 flagged samples (33.8% precision) due to source-based labeling (Reddit/Discord channel origin) rather than content-based labels. The 76.65% recall on genuine jailbreaks is high; the low precision reflects that benign creative writing and roleplay naturally triggers patterns designed for jailbreak detection. Use 0.50 threshold for broad injection catching or 0.70+ for precision-critical applications.
 
