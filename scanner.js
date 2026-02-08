@@ -954,7 +954,7 @@ const PATTERNS = [
   // ===== SAFETY BYPASS =====
   // Attempts to bypass content filtering or safety measures
   {
-    regex: /(?:bypass|circumvent|get\s+around|evade|avoid|disable|turn\s+off|remove)\s+(?:all\s+)?(?:your\s+)?(?:the\s+)?(?:safety|content\s+filter|restrictions?|limitations?|guardrails?|moderation|protocols?|policies?)/i,
+    regex: /(?:bypass|circumvent|get\s+around|evade|avoid|disable|turn\s+off|remove)\s+(?:all\s+)?(?:your\s+)?(?:the\s+)?(?:safety|content\s+filters?\b|restrictions?|limitations?|guardrails?|moderation|protocols?|policies?)/i,
     weight: 0.90,
     category: 'safety_bypass',
     id: 'bypass_safety',
