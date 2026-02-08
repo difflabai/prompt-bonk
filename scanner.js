@@ -2385,7 +2385,7 @@ const PATTERNS = [
   // ===== JAILBREAK TECHNIQUE PATTERNS =====
 
   {
-    regex: /\b(?:can\s+)?do\s+anything\s+now\b/i,
+    regex: /\b(?:can\s+)?does?\s+anything\s+now\b/i,
     weight: 0.72,
     category: 'safety_bypass',
     id: 'do_anything_now',
