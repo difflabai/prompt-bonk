@@ -763,7 +763,7 @@ const PATTERNS = [
     description: 'Attempts to make model act as something else',
   },
   {
-    regex: /pretend\s+(?:that\s+)?(?:you\s+are|to\s+be|you['\u2019]re)\s+(?:(?:a|an|the|my)\s+)?/i,
+    regex: /pretend\s+(?:that\s+)?(?:you\s+are|to\s+be|you['\u2019]re)\s+(?:(?:a|an|the|my)\s+)?(?!something|nothing|someone|anyone|somebody|anybody|everything|anything)/i,
     weight: 0.40,
     category: 'role_hijack',
     id: 'pretend_to_be',
@@ -1414,7 +1414,7 @@ const PATTERNS = [
     description: 'Labels new instructions to replace current ones',
   },
   {
-    regex: /(?:we('ll|'ll|\s+will)\s+)?start\s+(?:over|fresh|again|anew|from\s+scratch|from\s+the\s+(?:beginning|front|top))\b/i,
+    regex: /(?:we('ll|'ll|\s+will)\s+)?start\s+(?:over(?!\s+with\b)|fresh|again|anew|from\s+scratch|from\s+the\s+(?:beginning|front|top))\b/i,
     weight: 0.45,
     category: 'context_switch',
     id: 'start_over',
