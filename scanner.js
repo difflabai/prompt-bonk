@@ -492,7 +492,7 @@ const PATTERNS = [
   },
   // "you're not supposed to [verb] but..." — concessive override attempt
   {
-    regex: /\b(?:you(?:'re|\s+are)?\s+)?not\s+(?:supposed|meant|designed|intended|programmed|allowed)\s+to\s+[\w\s,']{1,60}\bbut\b/i,
+    regex: /\b(?:you(?:'re|\s+are)?\s+)?not\s+(?:supposed|meant|designed|programmed|allowed)\s+to\s+[\w\s,']{1,60}\bbut\b/i,
     weight: 0.52,
     category: 'safety_bypass',
     id: 'not_supposed_but',
@@ -2795,7 +2795,7 @@ const PATTERNS = [
   },
   // "make an exception" / "just this once" — one-time bypass request
   {
-    regex: /\b(?:make\s+(?:an?\s+)?exception|just\s+this\s+(?:once|one\s+time)|one\s+time\s+(?:only|exception)|special\s+case\s+for\s+me|bend\s+the\s+rules?\s+(?:just\s+)?(?:this\s+once|for\s+me))\b/i,
+    regex: /\b(?:make\s+(?:an?\s+)?exception(?!\s+to\s+the\b)|just\s+this\s+(?:once|one\s+time)|one\s+time\s+(?:only|exception)|special\s+case\s+for\s+me|bend\s+the\s+rules?\s+(?:just\s+)?(?:this\s+once|for\s+me))\b/i,
     weight: 0.52,
     category: 'safety_bypass',
     id: 'make_exception',
