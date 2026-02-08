@@ -29,7 +29,7 @@ prompt-bonk focuses on attacks that are **dangerous to agents and systems**:
 
 ## How it works
 
-418 regex patterns organized by attack category, plus 8 structural heuristics. Each pattern has a confidence weight (0-1). The final score combines the highest-weight match with diminishing contributions from additional matches and structural signals.
+464 regex patterns organized by attack category, plus 8 structural heuristics. Each pattern has a confidence weight (0-1). The final score combines the highest-weight match with diminishing contributions from additional matches and structural signals.
 
 **Preprocessing** strips evasion techniques before matching:
 - Null bytes replaced with spaces
@@ -112,6 +112,18 @@ prompt-bonk --quiet "some text"         # Exit code only (0=safe, 1=blocked)
 
 ## Benchmark results
 
+### Will it block my content?
+
+Tested against 8,339 real-world benign content samples:
+
+| Content Type | Source | Samples | False Blocks | Pass Rate |
+|---|---|---|---|---|
+| Trigger-word prompts | [NotInject](https://huggingface.co/datasets/leolee99/NotInject) | 339 | 0 | 100% |
+| Corporate emails | [Enron corpus](https://huggingface.co/datasets/corbt/enron-emails) | 5,000 | 14 | 99.72% |
+| Web pages & articles | [OpenWebText](https://huggingface.co/datasets/stas/openwebtext-10k) | 3,000 | 45 | 98.50% |
+
+The 59 false blocks on real-world content are from compound structural signals on long, complex documents (email threads with many forwarding separators, news articles discussing security topics). Short content under 3KB has near-zero false positive rate.
+
 ### Direct injection detection
 
 Datasets where injections contain explicit attack language:
@@ -120,11 +132,11 @@ Datasets where injections contain explicit attack language:
 |---|---|---|---|---|
 | [deepset/prompt-injections](https://huggingface.co/datasets/deepset/prompt-injections) (train) | 100% | 90.64% | 95.09% | 96.52% |
 | [deepset/prompt-injections](https://huggingface.co/datasets/deepset/prompt-injections) (test) | 100% | 83.33% | 90.91% | 91.38% |
-| [xTRam1/safe-guard](https://huggingface.co/datasets/xTRam1/safe-guard-prompt-injection) (test) | 100% | 98.31% | 99.15% | 99.47% |
+| [xTRam1/safe-guard](https://huggingface.co/datasets/xTRam1/safe-guard-prompt-injection) (test) | 100% | 98.15% | 99.07% | 99.42% |
 | [leolee99/NotInject](https://huggingface.co/datasets/leolee99/NotInject) | - | - | - | 100% (0 FP) |
 | [rubend18/Jailbreak-Prompts](https://huggingface.co/datasets/rubend18/ChatGPT-Jailbreak-Prompts) | 100% | 100% | 100% | 100% |
-| [reshabhs/SPML](https://huggingface.co/datasets/reshabhs/SPML_Chatbot_Prompt_Injection) (5k) | 100% | 69.71% | 82.15% | 76.24% |
-| [ProtectAI validation](https://huggingface.co/datasets/protectai/prompt-injection-validation) | 96.24% | 95.69% | 95.97% | 96.53% |
+| [reshabhs/SPML](https://huggingface.co/datasets/reshabhs/SPML_Chatbot_Prompt_Injection) (5k) | 100% | 69.43% | 81.96% | 76.02% |
+| [ProtectAI validation](https://huggingface.co/datasets/protectai/prompt-injection-validation) | 96.45% | 95.69% | 96.07% | 96.62% |
 
 ### Indirect injection detection
 
@@ -132,7 +144,8 @@ Injections embedded in real-world content that agents process (HTML pages, docum
 
 | Dataset | Precision | Recall | F1 | Accuracy |
 |---|---|---|---|---|
-| [BrowseSafe-Bench](https://huggingface.co/datasets/perplexity-ai/browsesafe-bench) (test) | 94.68% | 67.38% | 78.73% | 81.96% |
+| [microsoft/llmail-inject](https://huggingface.co/datasets/microsoft/llmail-inject-challenge) | 100% | 99.62% | 99.81% | 99.62% |
+| [BrowseSafe-Bench](https://huggingface.co/datasets/perplexity-ai/browsesafe-bench) (test) | 95.86% | 67.32% | 79.10% | 82.36% |
 | [BIPIA](https://github.com/microsoft/BIPIA) | 100% | 76% | 86.36% | 76% |
 | [InjecAgent](https://github.com/uiuc-kang-lab/InjecAgent) | 100% | 53.23% | 69.47% | 63.29% |
 | [CyberSecEval3](https://huggingface.co/datasets/facebook/cyberseceval3-visual-prompt-injection) | 100% | 50% | 66.67% | 50% |
@@ -143,7 +156,7 @@ These datasets contain attacks that look identical to normal text — "Please tr
 
 | Dataset | Recall | Why regex can't help |
 |---|---|---|
-| [AgentHarm](https://huggingface.co/datasets/ai-safety-institute/AgentHarm) | 2.88% | 97% of samples are harmful intent, not injection — no attack patterns to match |
+| [AgentHarm](https://huggingface.co/datasets/ai-safety-institute/AgentHarm) | 0.96% | 99% of samples are harmful intent, not injection — no attack patterns to match |
 | CyberSecEval3 remaining FN | - | 462/504 missed samples are image-based injections with no scannable text |
 | SPML remaining FN | - | 97% of missed samples are purely semantic rule violations |
 | InjecAgent remaining FN | - | Semantic action requests ("unlock my door") indistinguishable from benign |
@@ -172,7 +185,7 @@ node test.js                 # Run unit tests (86 tests)
 
 ## Limitations
 
-This is a regex-based first layer. It's fast and has zero false positives, but it has a ceiling:
+This is a regex-based first layer. It's fast with near-zero false positives on real-world content, but it has a ceiling:
 
 - **Semantic attacks** account for ~97% of remaining misses. These are instructions phrased as normal conversation that only become "injection" in the context of a specific system prompt. No pattern matcher can catch these — you need a model that understands the system prompt's rules.
 - **Encoded payloads** — Base64, ROT13, leetspeak
