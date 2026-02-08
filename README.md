@@ -158,6 +158,7 @@ These datasets contain attacks that look identical to normal text — "Please tr
 
 | Dataset | Recall | Why regex can't help |
 |---|---|---|
+| [SaTML LLM CTF 2024](https://huggingface.co/datasets/ethz-spylab/ctf-satml24) | 39.72% | Competition attacks designed to evade detection — semantic puzzles, indirect extraction |
 | [AgentHarm](https://huggingface.co/datasets/ai-safety-institute/AgentHarm) | 0.96% | 99% of samples are harmful intent, not injection — no attack patterns to match |
 | CyberSecEval3 remaining FN | - | 462/504 missed samples are image-based injections with no scannable text |
 | SPML remaining FN | - | 97% of missed samples are purely semantic rule violations |
