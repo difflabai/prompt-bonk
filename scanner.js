@@ -372,7 +372,7 @@ const PATTERNS = [
   },
   // "Rescind/revoke/retract [previous] instruction"
   {
-    regex: /\b(?:rescind|revoke|retract|annul|cancel|void|nullify|withdraw)\s+(?:(?:the|all|any|your|my|previous|prior|last)\s+)?(?:instructions?|rules?|guidelines?|directives?|commands?|orders?|protocols?)\b/i,
+    regex: /\b(?:rescind|revoke|retract|annul|cancel|void|nullify|withdraw)\s+(?:(?:the|all|any|your|my|previous|prior|last)\s+)?(?:instructions?|rules?|guidelines?|directives?|commands?|protocols?)\b/i,
     weight: 0.82,
     category: 'instruction_override',
     id: 'rescind_instruction',
@@ -3057,7 +3057,7 @@ const PATTERNS = [
   },
   // "notify" + email — social engineering notification
   {
-    regex: /\bnotify\b[^.!?\n]{0,60}?\S+@\S+/i,
+    regex: /\bnotify\b(?![^.!?\n]{0,40}?\bby\s+e-?mail\b)[^.!?\n]{0,60}?\S+@\S+/i,
     weight: 0.70,
     category: 'social_engineering',
     id: 'notify_email',
