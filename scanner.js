@@ -468,7 +468,7 @@ const PATTERNS = [
   },
   // "don't worry about rules/safety/privacy"
   {
-    regex: /\b(?:don'?t|do\s+not|no\s+need\s+to)\s+(?:worry|care|bother|think)\s+(?:about|regarding)\s+(?:the\s+)?(?:rules?|guidelines?|regulations?|protocols?|policies?|restrictions?|privacy|safety|security|confidentiality|ethics?|legality|accuracy|copyright)\b/i,
+    regex: /\b(?:don'?t|do\s+not|no\s+need\s+to)\s+(?:worry|care|bother)\s+(?:about|regarding)\s+(?:the\s+)?(?:rules?|guidelines?|regulations?|protocols?|policies?|restrictions?|privacy|safety|security|confidentiality|ethics?|legality|accuracy|copyright)\b/i,
     weight: 0.55,
     category: 'safety_bypass',
     id: 'dont_worry_rules',
