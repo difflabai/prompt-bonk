@@ -1289,6 +1289,14 @@ const PATTERNS = [
     id: 'failure_consequence',
     description: 'Threatens consequences for non-compliance',
   },
+  // "followed/obeyed without question" — blind compliance demand
+  {
+    regex: /\b(?:follow(?:ed)?|obe(?:y|yed)|execut(?:e|ed)|compli(?:ed|ance)?|accept(?:ed)?)\s+(?:(?:it|them|this|my|the|these)\s+)?without\s+question\b/i,
+    weight: 0.45,
+    category: 'coercion',
+    id: 'without_question',
+    description: 'Demands blind compliance without questioning',
+  },
   // "unless you want to be implicated"
   {
     regex: /\b(?:unless|or)\s+you\s+(?:want|wish)\s+to\s+be\s+(?:implicated|blamed|responsible|held\s+(?:liable|responsible|accountable))/i,
