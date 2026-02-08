@@ -3516,7 +3516,7 @@ function structuralScore(text) {
   // Note: "AI" checked case-sensitive to avoid matching "ai" in "afraid", "certain", etc.
   const hasBotName = /\b(?:you\s+are|you['\u2019]re|I\s+am|I['\u2019]m|(?:Hi|Hello|Hey),?\s+)\s*(?:the\s+)?(?:(?:Dr\.?\s+)?\w*(?:bot|Bot|BOT|GPT|LLM|Chat|Master|Guru|Expert|Advisor|Agent)\w*)\b/i.test(text) ||
     /\b(?:you\s+are|you['\u2019]re|I\s+am|I['\u2019]m)\s+(?:the\s+)?\w*AI\w*\b/.test(text) ||
-    /(?:^|\n)\s*\w*(?:bot|Bot|BOT|GPT|Chat|Master|Guru)\w*[,.]?\s+(?:I\s+know|you\s+(?:have|are|must)|provide|give|share|tell|show)/i.test(text);
+    /(?:^|\n)\s*\w*(?:bot|Bot|BOT|GPT|Chat|Master|Guru)\w*[,.]?\s+(?:I\s+know|you\s+(?:have|are|must)|provide|give|share|tell)\b/i.test(text);
   const hasBotRole = /\b(?:you\s+are|I\s+am|I'm)\s+\w+,?\s+(?:a|an|the)\s+(?:\w+\s+){0,3}(?:chatbot|bot|assistant|expert|consultant|guru|advisor)\b/i.test(text);
   if ((hasBotName || hasBotRole) && hasSensitiveNoun) {
     score += 0.55;
@@ -3698,7 +3698,7 @@ function structuralScore(text) {
     const hasSeparatorLine = /^(?:={5,}|-{5,}|\*{5,}|~{5,}|_{5,})\s*$/m.test(text);
     if (hasHashSection || hasSeparatorLine) {
       const hasBehavioralConstraint = /\b(?:you\s+(?:must|should|shall)(?!\s+(?:receive|receiving|call|want|know)\b)\s|you\s+(?:cannot|can\s*not|will\s+not|won'?t(?!\s+want\b)|are\s+not\s+allowed)\s|you\s+(?:may\s+not|never)(?!\s+(?:copy|distribute|forward|reproduce)\b)\s|(?:do\s+not|don'?t|never)\s+(?:provide|share(?!\s+(?:your|my|their|his|her)\s+personal)|reveal|disclose|generate|discuss|mention)\b|(?:do\s+not|don'?t|never)\s+create(?!\s+or\s+evidence)\b)/i.test(text);
-      const hasSystemPromptStart = /^(?:you\s+are\s+(?:a|an|the|my)\s+|you\s+are\s+[A-Z]\w+|(?:as|imagine\s+you\s+are)\s+(?:a|an|the)\s+)/im.test(text) && !/^(?:you\s+are\s+(?:a\s+(?:valued|registered|current|new|preferred|selected)|(?:invited|connected|enrolled|subscribed|registered|selected|approved|confirmed|eligible|receiving)))\b/im.test(text);
+      const hasSystemPromptStart = /^(?:you\s+are\s+(?:a|an|the|my)\s+|you\s+are\s+[A-Z]\w+|(?:imagine\s+you\s+are)\s+(?:a|an|the)\s+)/im.test(text) && !/^(?:you\s+are\s+(?:a\s+(?:valued|registered|current|new|preferred|selected)|(?:invited|connected|enrolled|subscribed|registered|selected|approved|confirmed|eligible|receiving)))\b/im.test(text);
       const sepScore = (hasBehavioralConstraint || hasSystemPromptStart) ? 0.50 : 0.20;
       score += sepScore;
       signals.push({ id: 'hash_section_long_text', score: sepScore, detail: 'Section markers (###) or separator lines in long text (system prompt structure)' });
