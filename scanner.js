@@ -1069,7 +1069,7 @@ const PATTERNS = [
   // Injection in HTML title attributes
   {
     regex: /title\s*=\s*["'][^"']*?\b(?:ignore\s+(?:previous|all|the)|system\s+override|new\s+directive|(?:send|forward|log|transmit)\s+(?:all\s+)?(?:transaction|session|conversation|data|logs?)\s+to|URGENT\s+from\s+(?:CEO|CTO|manager|admin)|(?:verify|confirm)\s+(?:your\s+)?(?:identity|account|channel)|(?:immediately|urgently)\s+(?:send|forward|reply|respond))\b[^"']*?["']/i,
-    weight: 0.70,
+    weight: 0.49,
     category: 'html_injection',
     id: 'html_title_attr_injection',
     description: 'Injection hidden in HTML title attribute',
@@ -2811,7 +2811,7 @@ const PATTERNS = [
   },
   // "make an exception" / "just this once" — one-time bypass request
   {
-    regex: /\b(?:make\s+(?:an?\s+)?exception(?!\s+to\s+the\b)|just\s+this\s+(?:once|one\s+time)|one\s+time\s+(?:only|exception)(?!\s+(?:email|invitation|offer|deal|sale|event|fee|payment|charge|purchase)\b)|special\s+case\s+for\s+me|bend\s+the\s+rules?\s+(?:just\s+)?(?:this\s+once|for\s+me))\b/i,
+    regex: /\b(?:make\s+(?:an?\s+)?exception(?!\s+(?:to\s+the|with)\b)|just\s+this\s+(?:once|one\s+time)|one\s+time\s+(?:only|exception)(?!\s+(?:email|invitation|offer|deal|sale|event|fee|payment|charge|purchase)\b)|special\s+case\s+for\s+me|bend\s+the\s+rules?\s+(?:just\s+)?(?:this\s+once|for\s+me))\b/i,
     weight: 0.52,
     category: 'safety_bypass',
     id: 'make_exception',
