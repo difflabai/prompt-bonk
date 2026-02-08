@@ -2561,7 +2561,7 @@ const PATTERNS = [
   // "no-holds-barred" / "no holds barred"
   {
     regex: /\bno[- ]holds?[- ]barred\b/i,
-    weight: 0.65,
+    weight: 0.49,
     category: 'safety_bypass',
     id: 'no_holds_barred',
     description: 'No-holds-barred approach (unrestricted)',
