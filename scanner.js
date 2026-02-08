@@ -1108,7 +1108,7 @@ const PATTERNS = [
 
   // ===== MULTI-STEP / CHAINED ATTACKS =====
   {
-    regex: /(?:step\s+1|first)\s*[:.]?\s*(?:ignore|forget|disregard|override)/i,
+    regex: /(?:step\s+1|first)\s*[:.]?\s*(?:ignore|forget|disregard|override)\b/i,
     weight: 0.85,
     category: 'chained_attack',
     id: 'step_based_override',
@@ -2771,7 +2771,7 @@ const PATTERNS = [
   },
   // "I understand/know [AI limitation or policy reference]" — acknowledging constraints suggests bypass intent
   {
-    regex: /\b(?:I\s+understand|I\s+know|I\s+realize|Im\s+aware)\s+(?:that\s+)?(?:[\w\s,']{0,40}?)(?:you\s+(?:cant|can'?t|normally|usually|typically|shouldnt|shouldn'?t|are\s+not\s+(?:supposed|allowed|able)|arent|aren'?t)|(?:privacy|safety|confidential|protocol|guideline|restriction|rule|ethic|legal|policy|academic\s+integrity))/i,
+    regex: /\b(?:I\s+understand|I\s+know|I\s+realize|Im\s+aware)\s+(?:that\s+)?(?:[\w\s,']{0,40}?)(?:you\s+(?:cant|can'?t|normally|usually(?!\s+do\s+not\b)|typically|shouldnt|shouldn'?t|are\s+not\s+(?:supposed|allowed|able)|arent|aren'?t)|(?:privacy|safety|confidential|protocol|guideline|restriction|rule|ethic|legal|policy|academic\s+integrity))/i,
     weight: 0.52,
     category: 'safety_bypass',
     id: 'understand_ai_limitation',
@@ -3473,7 +3473,7 @@ function structuralScore(text) {
   // Compound: role assignment + sensitive data request
   // "You are [Bot/Name]" + "give/share/provide ... data/records/credentials" in same text
   // Tightened: require AI-specific role forms, not generic "you are" in business correspondence
-  const hasRoleAssignment = /\b(?:you\s+are\s+(?:a|an|the|my)\s+\w+|you\s+are\s+[A-Z]\w+(?:Bot|AI|GPT|Agent|\d)|imagine\s+you(?:\s+are|['\u2019]re)|pretend\s+(?:you\s+are|to\s+be|you['\u2019]re)|act\s+as|you\s+(?:will\s+)?play|as\s+(?:a|the)\s+CEO)\b/i.test(text);
+  const hasRoleAssignment = /\b(?:you\s+are\s+(?:a|an|the|my)\s+(?!(?:current|remaining|registered)\b)\w+|you\s+are\s+[A-Z]\w+(?:Bot|AI|GPT|Agent|\d)|imagine\s+you(?:\s+are|['\u2019]re)|pretend\s+(?:you\s+are|to\s+be|you['\u2019]re)|act\s+as|you\s+(?:will\s+)?play(?!\s+(?:a\s+(?:key|important|vital|critical|essential|significant|major|crucial|central|active|pivotal)\s+(?:role|part)|an\s+(?:important|active|essential|integral)\s+(?:role|part)))|as\s+(?:a|the)\s+CEO)\b/i.test(text);
   const hasSensitiveNoun = /\b(?:medical\s+records?|patient\s+(?:information|data|records?)|credentials?|passwords?|private\s+keys?|access\s+keys?|confidential\s+(?:\w+\s+)?(?:information|data|records?|details?)|sensitive\s+(?:\w+\s+)?(?:information|data|records?|details?)|classified\s+(?:\w+\s+)?(?:information|data)|personal\s+(?:\w+\s+)?(?:information|data|details?|records?|contact\s+information)|user\s+data|login\s+credentials?|secret\s+(?:keys?|data|information)|source\s+code|algorithm\s+details?|security\s+(?:vulnerabilit(?:y|ies)|flaws?|weaknesses?|holes?))\b/i.test(text);
   const hasExtractionVerb = /\b(?:give|share|provide|show|tell|disclose|reveal|send|hand\s+over|leak|expose|access|retrieve|obtain|get|divulge|know|request(?:ing)?)\s+/i.test(text);
   if (hasRoleAssignment && hasSensitiveNoun && hasExtractionVerb) {
