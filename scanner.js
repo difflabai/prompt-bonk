@@ -1482,7 +1482,7 @@ const PATTERNS = [
     description: 'Claims authority then requests privileged action',
   },
   {
-    regex: /(?:if\s+you\s+(?:do\s+not|don't|refuse\s+to|fail\s+to)\s+(?:comply|cooperate|provide|give|share|disclose|divulge|obey))/i,
+    regex: /(?:if\s+you\s+(?:do\s+not|don't|refuse\s+to|fail\s+to)\s+(?:comply|cooperate|provide|give\s+(?:me|us)|share|disclose|divulge|obey))/i,
     weight: 0.70,
     category: 'coercion',
     id: 'conditional_threat',
