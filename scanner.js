@@ -975,11 +975,19 @@ const PATTERNS = [
     description: 'Requests response without restrictions',
   },
   {
-    regex: /(?:hypothetically|theoretically|in\s+theory|just\s+imagine|for\s+(?:educational|research|academic)\s+purposes?)\s*,?\s*(?:how\s+(?:would|could|can)|what\s+if)/i,
+    regex: /(?:hypothetically|theoretically|in\s+theory|just\s+imagine|for\s+(?:educational|research|academic|theoretical|hypothetical)\s+purposes?)\s*,?\s*(?:how\s+(?:would|could|can)|what\s+(?:if|would))/i,
     weight: 0.35,
     category: 'safety_bypass',
     id: 'hypothetical_framing',
     description: 'Uses hypothetical framing to bypass safety',
+  },
+  // "purely for theoretical/academic purposes" — standalone (no follow-up required)
+  {
+    regex: /\bpurely\s+(?:for\s+)?(?:theoretical|academic|hypothetical|educational|research)\s+purposes?\b/i,
+    weight: 0.35,
+    category: 'safety_bypass',
+    id: 'purely_theoretical',
+    description: 'Claims purely theoretical/academic intent to deflect from harmful request',
   },
 
   // ===== ENCODED / OBFUSCATED ATTACKS =====
