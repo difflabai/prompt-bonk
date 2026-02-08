@@ -1283,7 +1283,7 @@ const PATTERNS = [
   },
   // "You have no choice but to comply"
   {
-    regex: /\byou\s+(?:have\s+no\s+choice|must\s+(?:comply|obey|cooperate|submit))\b/i,
+    regex: /\byou\s+(?:have\s+no\s+choice(?!\s+but\s+to\s+(?!(?:comply|obey|cooperate|submit|follow|do\s+(?:what|as))\b)\w)|must\s+(?:comply|obey|cooperate|submit))\b/i,
     weight: 0.65,
     category: 'coercion',
     id: 'no_choice',
@@ -1665,7 +1665,7 @@ const PATTERNS = [
   },
   // ALL-CAPS template instruction (e.g. "*REPLACE THE FIRST SENTENCE...")
   {
-    regex: /(?:^|\n)\s*\*?(?:REPLACE|DELETE|INSERT|REMOVE|CHANGE)\s+(?:THE|THIS|ALL|YOUR|FIRST|LAST|ABOVE|BELOW)\b/,
+    regex: /(?:^|\n)\s*\*?(?:REPLACE|DELETE|INSERT|REMOVE)\s+(?:THE|THIS|ALL|YOUR|FIRST|LAST|ABOVE|BELOW)\b/,
     weight: 0.60,
     category: 'delimiter_attack',
     id: 'template_instruction',
