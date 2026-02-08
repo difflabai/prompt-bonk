@@ -2516,7 +2516,7 @@ const PATTERNS = [
   // "respond as such" after role assignment
   {
     regex: /\brespond\s+as\s+such\b/i,
-    weight: 0.40,
+    weight: 0.50,
     category: 'role_hijack',
     id: 'respond_as_such',
     description: 'Instructs model to respond in assigned role',
