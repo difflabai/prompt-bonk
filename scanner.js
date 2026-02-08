@@ -1093,7 +1093,7 @@ const PATTERNS = [
   },
   {
     regex: /(?:include|embed|insert|add)\s+(?:this|the\s+following|a)\s+(?:link|url|image|markdown\s+image|!\[)/i,
-    weight: 0.55,
+    weight: 0.49,
     category: 'output_manipulation',
     id: 'inject_link',
     description: 'Attempts to inject links/images into output',
@@ -1429,7 +1429,7 @@ const PATTERNS = [
     description: 'Threatens action to coerce compliance',
   },
   {
-    regex: /(?:face|risk)\s+(?:legal|serious|severe)?\s*(?:action|consequences|penalties|prosecution|liability)/i,
+    regex: /(?:face|risk)\s+(?:legal|serious|severe)?\s*(?:action|consequences|penalties|liability)/i,
     weight: 0.55,
     category: 'coercion',
     id: 'legal_threat',
@@ -3581,7 +3581,7 @@ function structuralScore(text) {
   // Single letters separated by spaces, 5+ in a row
   // Exclude ALL-CAPS spaced text (e.g., "W E E K E N D") — typically formatting headers, not obfuscation
   const spacedOut = text.match(/(?:^|[\s.])(?:[A-Za-z] ){4,}[A-Za-z](?:$|[\s.])/g);
-  const spacedOutFiltered = spacedOut ? spacedOut.filter(m => !/^[\sA-Z.]+$/.test(m)) : null;
+  const spacedOutFiltered = spacedOut ? spacedOut.filter(m => !/^[\sA-Z.]+$/.test(m) && !/[a-h] [a-h] [a-h] [a-h]/.test(m)) : null;
   if (spacedOutFiltered && spacedOutFiltered.length > 0) {
     score += 0.55;
     signals.push({ id: 'spaced_out_text', score: 0.55, detail: 'Spaced-out letter obfuscation detected' });
@@ -3670,7 +3670,7 @@ function structuralScore(text) {
   // Tertiary: Named bot definition in long text — "chatbot/bot/assistant named [Name]" + length > 300
   // System prompts defining named bots are not normal user input
   if (text.length > 300) {
-    const hasNamedBotDef = /\b(?:chatbot|bot|assistant|advisor|agent|tutor|coach|helper|guide|companion)\s+(?:named|called|known\s+as)\s+[A-Z]\w+/i.test(text);
+    const hasNamedBotDef = /\b(?:chatbot|bot|assistant|advisor|tutor|coach|helper|guide|companion)\s+(?:named|called|known\s+as)\s+[A-Z]\w+/i.test(text);
     if (hasNamedBotDef) {
       score += 0.50;
       signals.push({ id: 'named_bot_definition', score: 0.50, detail: 'Long text defining a named bot/assistant (system prompt pattern)' });
