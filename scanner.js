@@ -3396,7 +3396,7 @@ const PATTERNS = [
   },
   // "send an email with/to [confirmation]" — email action with confirmation word
   {
-    regex: /\bsend\s+(?:an?\s+)?email\s+(?:to\s+\S+\s+)?(?:with\s+)?["']?(?:the\s+)?(?:word\s+|text\s+)?["']?confirmation/i,
+    regex: /\bsend\s+(?:an?\s+)?email\s+(?:to\s+\S+\s+)?(?:with\s+)?["']?(?:the\s+)?(?:word\s+|text\s+|body\s+)?["']?confirmation/i,
     weight: 0.55,
     category: 'action_invocation',
     id: 'send_email_with_confirm',
@@ -3500,7 +3500,7 @@ const PATTERNS = [
   },
   // "send/draft/write email to him/her/them [at] someone@" — pronoun-targeted email send
   {
-    regex: /\b(?:send|draft|write|compose)\s+(?:an?\s+)?email\s+to\s+(?:him|her|them)\s+(?:at\s+)?\S+@/i,
+    regex: /\b(?:send|draft|write|compose)\s+(?:(?:an?\s+)?email\s+to\s+(?:him|her|them)|(?:him|her|them)\s+(?:an?\s+)?email)\s+(?:at\s+)?\S+@/i,
     weight: 0.55,
     category: 'action_invocation',
     id: 'send_pronoun_email_at',
@@ -3529,6 +3529,30 @@ const PATTERNS = [
     category: 'action_invocation',
     id: 'contact_manager_email',
     description: 'Contact manager with email address — injection pattern',
+  },
+  // "subject line 'confirmation'" — email subject line injection
+  {
+    regex: /\bsubject\s+line\s+["']?confirm/i,
+    weight: 0.55,
+    category: 'action_invocation',
+    id: 'subject_line_confirm',
+    description: 'Email subject line specified as confirmation',
+  },
+  // "connect with the [dept] manager" — social engineering contact instruction
+  {
+    regex: /\bconnect\s+with\s+the\s+(?:PR|HR|IT|finance|marketing|operations|legal|account)\s+manager\b/i,
+    weight: 0.55,
+    category: 'action_invocation',
+    id: 'connect_role_manager',
+    description: 'Connect with department role manager — social engineering',
+  },
+  // "return {...exfil...}" — exfiltration flag in return dict
+  {
+    regex: /\breturn\s+\{[^}]*exfil/i,
+    weight: 0.55,
+    category: 'data_exfiltration',
+    id: 'return_exfil_dict',
+    description: 'Return dictionary containing exfiltration flags',
   },
 
   // "// Subject:" or "// Body:" or "// end body" — comment-style fake message structure
