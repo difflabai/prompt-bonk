@@ -148,7 +148,7 @@ const PATTERNS = [
   },
   // "reveal/expose/show [the/your] [secret] instructions" — extraction
   {
-    regex: /\b(?:reveal|expose|show|display|print|output|dump|list)\s+(?:all\s+|the\s+|your\s+|my\s+)?(?:secret\s+|hidden\s+|original\s+|internal\s+|initial\s+|system\s+)?(?:instructions?|directives?|prompt|programming|guidelines?|rules?|system\s+prompt)\b/i,
+    regex: /\b(?:(?:reveal|expose|show|display|print|output|dump)\s+(?:all\s+|the\s+|your\s+|my\s+)?|list\s+(?:all|the|your|my)\s+)(?:secret\s+|hidden\s+|original\s+|internal\s+|initial\s+|system\s+)?(?:instructions?|directives?|prompt|programming|guidelines?|rules?|system\s+prompt)\b/i,
     weight: 0.78,
     category: 'prompt_extraction',
     id: 'reveal_instructions',
@@ -734,7 +734,7 @@ const PATTERNS = [
   // ===== ROLE HIJACKING =====
   // Attempts to make the model adopt a different persona/role
   {
-    regex: /(?:now\s+you\s+are|you\s+are\s+now)\s+(?!(?:enrolled|connected|registered|subscribed|listed|confirmed|eligible|required|authorized|approved|able|ready|free|welcome|set|done|finished|good|fine|in\s+(?:the|a)|on\s+(?:the|a)|at\s+(?:the|a)|going|being|doubly|officially|also|even|no\s+longer|all\s+set|part\s+of|hurt|injured|dead|safe|aware|old|older|young|younger|stronger|smarter|weaker|faster|slower|taller|shorter|bigger|smaller|better|worse|closer|further|more|less|or\b|(?:about|nearly|almost)\s+(?:to|ready))\b)(?:a|an|the|my)?\s*/i,
+    regex: /(?:now\s+you\s+are|you\s+are\s+now)\s+(?!(?:enrolled|connected|registered|subscribed|listed|confirmed|eligible|required|authorized|approved|able|ready|free|welcome|set|done|finished|good|fine|in\s+(?:the|a)|on\s+(?:the|a)|at\s+(?:the|a)|going|being|doubly|officially|also|even|no\s+longer|all\s+set|part\s+of|hurt|injured|dead|safe|aware|old|older|young|younger|stronger|smarter|weaker|faster|slower|taller|shorter|bigger|smaller|better|worse|closer|further|more|less|or\b|(?:about|nearly|almost)\s+(?:to|ready)|using|extremely|very|quite|really|so\s+(?:much|close|far)|too\s+(?:late|early|busy|old|young)|one\s+of)\b)(?:a|an|the|my)?\s*/i,
     weight: 0.70,
     category: 'role_hijack',
     id: 'you_are_now',
@@ -3284,7 +3284,7 @@ const PATTERNS = [
   // "Misspell/intentional misspellings" — output obfuscation
   {
     regex: /\b(?:misspell|intentional\w*\s+misspell)/i,
-    weight: 0.45,
+    weight: 0.35,
     category: 'output_obfuscation',
     id: 'obfuscate_misspell',
     description: 'Misspell words in response — output obfuscation',
@@ -3552,7 +3552,7 @@ function structuralScore(text) {
   // e.g. "i-nstruction", "T-he", "w-ith" — NOT em dashes like "months--and"
   // Exclude common CSS properties and common English hyphenated words (e-mail, T-shirt, X-ray, etc.)
   const _CSS_HYPHEN = /^[xyzXYZ]-(?:index|overflow|hidden|visible|scroll|auto|position|offset|axis|large|small|ms-|webkit-|moz-|o-)/;
-  const _COMMON_HYPHEN = /^(?:e-mail|e-commerce|e-book|e-learning|e-sign|e-bay|e-trade|e-ticket|e-card|t-shirt|t-bone|t-mobile|t-cell|x-ray|x-men|x-box|u-turn|u-boat|u-haul|a-list|a-frame|a-ok|a-team|b-list|b-team|b-roll|c-suite|c-span|c-section|d-day|g-mail|h-bomb|i-beam|i-pad|j-walk|k-pop|k-mart|n-word|o-ring|p-value|r-rated|s-curve|s-corp|v-neck|v-chip|re-do|re-work|re-read|re-use|re-open|re-set|re-write|re-hire|re-cap|co-op|co-pay|co-own|co-sign)s?$/i;
+  const _COMMON_HYPHEN = /^(?:e-mail|e-commerce|e-book|e-learning|e-sign|e-bay|e-trade|e-ticket|e-card|e-tailer|e-report|e-government|t-shirt|t-bone|t-mobile|t-cell|t-note|x-ray|x-men|x-box|u-turn|u-boat|u-haul|a-list|a-frame|a-ok|a-team|a-side|b-list|b-team|b-roll|b-side|c-suite|c-span|c-section|c-type|d-day|d-link|f-sharp|g-mail|g-file|h-bomb|i-beam|i-pad|j-walk|k-pop|k-mart|l-dopa|n-word|o-ring|o-linked|p-value|q-value|q-function|q-learning|r-rated|s-curve|s-corp|s-chip|s-expression|s-transferase|u-dub|v-neck|v-chip|re-do|re-work|re-read|re-use|re-open|re-set|re-write|re-hire|re-cap|co-op|co-pay|co-own|co-sign)s?$/i;
   const singleCharHyphenMatches = text.match(/(?:^|\s)[a-zA-Z]-[a-zA-Z]{2,}\b/g) || [];
   const singleCharHyphen = singleCharHyphenMatches.filter(m => {
     const trimmed = m.trim();
