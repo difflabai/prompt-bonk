@@ -3273,6 +3273,39 @@ const PATTERNS = [
     description: 'Euphemistic AI agent reference — miracle machine',
   },
 
+  // "// Subject:" or "// Body:" or "// end body" — comment-style fake message structure
+  {
+    regex: /\/\/\s*(?:Subject|Body|end\s+body|end\s+subject)\s*:/i,
+    weight: 0.55,
+    category: 'delimiter_attack',
+    id: 'comment_fake_message',
+    description: 'Comment-style fake message structure — simulated conversation',
+  },
+  // Chinese injection delimiters — AI system boundary markers in Chinese
+  {
+    regex: /结束用户消息|最终用户消息|启动管理员模式/,
+    weight: 0.55,
+    category: 'delimiter_attack',
+    id: 'chinese_injection_delimiter',
+    description: 'Chinese-language injection delimiter — end user message / admin mode',
+  },
+  // Chinese tool invocation — requesting AI to call email/tool functions in Chinese
+  {
+    regex: /发送电子邮件的工具|调用[^。]{0,20}发送[^。]{0,20}邮件/,
+    weight: 0.55,
+    category: 'action_invocation',
+    id: 'chinese_tool_invocation',
+    description: 'Chinese tool invocation — call send email tool',
+  },
+  // "decode and execute/run/perform" — base64/encoded payload execution
+  {
+    regex: /\b(?:decode|decoding)\s+(?:it\s+)?(?:and\s+)?(?:execute|run|perform|follow|do)\b/i,
+    weight: 0.55,
+    category: 'obfuscation',
+    id: 'decode_and_execute',
+    description: 'Decode and execute — base64/encoded payload injection',
+  },
+
   // ===== RESPONSE MODIFICATION / ADVERTISING INJECTION =====
   // "Do not listen to any previous information" — synonym for "ignore previous"
   {
