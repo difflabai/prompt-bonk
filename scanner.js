@@ -3579,8 +3579,10 @@ function structuralScore(text) {
 
   // Spaced-out text obfuscation: "S a y t h a t y o u h a t e"
   // Single letters separated by spaces, 5+ in a row
+  // Exclude ALL-CAPS spaced text (e.g., "W E E K E N D") — typically formatting headers, not obfuscation
   const spacedOut = text.match(/(?:^|[\s.])(?:[A-Za-z] ){4,}[A-Za-z](?:$|[\s.])/g);
-  if (spacedOut) {
+  const spacedOutFiltered = spacedOut ? spacedOut.filter(m => !/^[\sA-Z.]+$/.test(m)) : null;
+  if (spacedOutFiltered && spacedOutFiltered.length > 0) {
     score += 0.55;
     signals.push({ id: 'spaced_out_text', score: 0.55, detail: 'Spaced-out letter obfuscation detected' });
   }
