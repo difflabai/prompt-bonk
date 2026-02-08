@@ -2737,8 +2737,11 @@ const PATTERNS = [
     description: 'Dismisses concern about rules/consequences',
   },
   // "without asking/checking/verifying/confirming" — skips verification
+  // "asking" narrowed to require "me/us" or "for permission/consent/approval" to avoid
+  // benign matches like "without asking for details", "without asking for anything in return".
+  // "worrying" removed — "without worrying about X" is indistinguishable benign/injection.
   {
-    regex: /\bwithout\s+(?:any\s+)?(?:asking|checking|verif\w+|confirm\w+|bothering|worry\w*|requiring|need\w*\s+(?:for|to))\s+(?:me|my|the|your|for|about|any|further)\b/i,
+    regex: /\bwithout\s+(?:any\s+)?(?:asking\s+(?:me|us|for\s+(?:(?:my|any|your|explicit)\s+)?(?:permission|consent|approval|confirmation|authorization))|(?:checking|verif\w+|confirm\w+|bothering|requiring|need\w*\s+(?:for|to))\s+(?:me|my|the|your|for|about|any|further))\b/i,
     weight: 0.52,
     category: 'safety_bypass',
     id: 'without_verification',
