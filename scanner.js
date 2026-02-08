@@ -1258,7 +1258,7 @@ const PATTERNS = [
   },
   // [END USER] / [DEOBFUSCATION] / [TASK OVERRIDE] — fake boundary/mode markers
   {
-    regex: /\[(?:END\s*USER|DEOBFUSCATION|TASK\s*OVERRIDE)\]/i,
+    regex: /\[(?:END\s*USER|DEOBFUSCATION|TASK\s*OVERRIDE|NEW\s+INSTRUCTIONS?)\]/i,
     weight: 0.55,
     category: 'delimiter_attack',
     id: 'fake_boundary_marker',
@@ -3169,7 +3169,7 @@ const PATTERNS = [
   },
   // "new/updated/designated contact" + email — social engineering contact redirect
   {
-    regex: /\b(?:new|updated|current|primary|designated)\s+(?:contact|email|address)\b[^.!?\n]{0,60}?\S+@\S+/i,
+    regex: /\b(?:new|updated|current|primary|designated)\s+(?:contact|email(?!\s+from\b)|address)\b[^.!?\n]{0,60}?\S+@\S+/i,
     weight: 0.75,
     category: 'social_engineering',
     id: 'new_contact_email',
@@ -3217,7 +3217,7 @@ const PATTERNS = [
   },
   // "to my/your/the email [address] email@domain" — data exfiltration to personal email
   {
-    regex: /\bto\s+(?:my|your|their|his|her|the|an?\s+)?\s*(?:email|e-mail)\s*(?:address)?[,:\s]+\S+@\S+/i,
+    regex: /(?<!\b(?:registered|associated|linked|connected|belonging|tied)\s+)to\s+(?:my|your|their|his|her|the|an?\s+)?\s*(?:email|e-mail)\s*(?:address)?[,:\s]+\S+@\S+/i,
     weight: 0.75,
     category: 'data_extraction',
     id: 'to_my_email',
@@ -3393,6 +3393,22 @@ const PATTERNS = [
     category: 'social_engineering',
     id: 'transfer_funds_threat',
     description: 'Transfer funds coercion with threat',
+  },
+  // "send an email with/to [confirmation]" — email action with confirmation word
+  {
+    regex: /\bsend\s+(?:an?\s+)?email\s+(?:to\s+\S+\s+)?(?:with\s+)?["']?(?:the\s+)?(?:word\s+|text\s+)?["']?confirmation/i,
+    weight: 0.55,
+    category: 'action_invocation',
+    id: 'send_email_with_confirm',
+    description: 'Send email with confirmation text — action injection',
+  },
+  // "reach out to [target] ... confirm" — confirmation via outreach
+  {
+    regex: /\breach\s+out\s+(?:to\s+)?.{0,100}?\bconfirm/i,
+    weight: 0.55,
+    category: 'action_invocation',
+    id: 'reach_out_confirm',
+    description: 'Reach out to target with confirmation — action injection',
   },
 
   // "// Subject:" or "// Body:" or "// end body" — comment-style fake message structure
