@@ -2659,7 +2659,7 @@ const PATTERNS = [
   // Boundary denial + conjunction bypass: "cannot X, but could you Y"
   {
     regex: /\b(?:cannot|can'?t|should\s*n'?t|must\s*n'?t|not\s+(?:allowed|supposed|able))\s+(?:to\s+)?(?:offer|provide|give|share|discuss|diagnose|prescribe|recommend)[^.!?]{5,80}?\b(?:but|however|although|though|yet|still)\b/i,
-    weight: 0.40,
+    weight: 0.50,
     category: 'safety_bypass',
     id: 'boundary_denial_bypass',
     description: 'Acknowledges restriction then attempts bypass with conjunction',
