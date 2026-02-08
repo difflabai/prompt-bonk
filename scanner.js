@@ -2469,7 +2469,7 @@ const PATTERNS = [
   // "role-playing as" / "roleplaying as"
   {
     regex: /\brole[- ]?play(?:ing)?\s+as\s+(?:a|an|the|my)?\s*/i,
-    weight: 0.55,
+    weight: 0.49,
     category: 'role_hijack',
     id: 'roleplaying_as',
     description: 'Explicit role-playing assignment',

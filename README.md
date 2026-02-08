@@ -135,9 +135,9 @@ Datasets where injections contain explicit attack language:
 | [xTRam1/safe-guard](https://huggingface.co/datasets/xTRam1/safe-guard-prompt-injection) (test) | 100% | 98.15% | 99.07% | 99.42% |
 | [leolee99/NotInject](https://huggingface.co/datasets/leolee99/NotInject) | - | - | - | 100% (0 FP) |
 | [rubend18/Jailbreak-Prompts](https://huggingface.co/datasets/rubend18/ChatGPT-Jailbreak-Prompts) | 100% | 100% | 100% | 100% |
-| [reshabhs/SPML](https://huggingface.co/datasets/reshabhs/SPML_Chatbot_Prompt_Injection) (5k) | 100% | 69.43% | 81.96% | 76.02% |
-| [ProtectAI validation](https://huggingface.co/datasets/protectai/prompt-injection-validation) | 96.45% | 95.69% | 96.07% | 96.62% |
-| [jackhhao/jailbreak-classification](https://huggingface.co/datasets/jackhhao/jailbreak-classification) | 92.89% | 86.34% | 89.49% | 89.66% |
+| [reshabhs/SPML](https://huggingface.co/datasets/reshabhs/SPML_Chatbot_Prompt_Injection) (5k) | 100% | 69.35% | 81.90% | 75.96% |
+| [ProtectAI validation](https://huggingface.co/datasets/protectai/prompt-injection-validation) | 96.66% | 95.69% | 96.17% | 96.72% |
+| [jackhhao/jailbreak-classification](https://huggingface.co/datasets/jackhhao/jailbreak-classification) | 98.29% | 86.19% | 91.84% | 92.19% |
 
 ### Indirect injection detection
 
