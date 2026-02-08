@@ -92,7 +92,7 @@ const PATTERNS = [
   },
   // "Skip/Delete all previous instructions/messages"
   {
-    regex: /(?:skip|delete|remove|drop|erase)\s+(?:all\s+)?(?:the\s+|your\s+)?(?:previous|prior|above|earlier|preceding)?\s*(?:instructions?|guidelines?|protocols?|rules?|(?:previous|prior|above|earlier|preceding)\s+messages?)\b/i,
+    regex: /(?<!-)(?:skip|delete|remove|drop|erase)\s+(?:all\s+)?(?:the\s+|your\s+)?(?:previous|prior|above|earlier|preceding)?\s*(?:instructions?|guidelines?|protocols?|rules?|(?:previous|prior|above|earlier|preceding)\s+messages?)\b/i,
     weight: 0.82,
     category: 'instruction_override',
     id: 'delete_instructions',
