@@ -3410,6 +3410,78 @@ const PATTERNS = [
     id: 'reach_out_confirm',
     description: 'Reach out to target with confirmation — action injection',
   },
+  // "email can just be 'confirm'" / "email is 'confirm'" — email content specification
+  {
+    regex: /\bemail\s+(?:can\s+)?(?:just\s+)?(?:be|is)\s+["']?confirm/i,
+    weight: 0.55,
+    category: 'action_invocation',
+    id: 'email_be_confirm',
+    description: 'Email content specified as confirmation — action injection',
+  },
+  // "send email to [target] ... confirm" — broader send-to-target confirmation
+  {
+    regex: /\bsend\s+(?:an?\s+)?email\s+to\s+\S+.{0,60}?confirm/i,
+    weight: 0.55,
+    category: 'action_invocation',
+    id: 'send_email_to_confirm',
+    description: 'Send email to target with confirmation content',
+  },
+  // "after you summarize, send" — multi-step addendum injection
+  {
+    regex: /\bafter\s+you\s+summariz\w*\s*,?\s*send\b/i,
+    weight: 0.55,
+    category: 'action_invocation',
+    id: 'after_summarize_send',
+    description: 'Multi-step injection — summarize then send',
+  },
+  // "I forgot to mention ... send" — social engineering addendum
+  {
+    regex: /\bforgot\s+to\s+mention.{0,40}\bsend\b/i,
+    weight: 0.55,
+    category: 'social_engineering',
+    id: 'forgot_to_mention_send',
+    description: 'Addendum social engineering — forgot to mention + send',
+  },
+  // "include the word/text 'confirm'" — include confirmation in content
+  {
+    regex: /\binclude\s+(?:the\s+)?(?:word|text)\s+["']?confirm/i,
+    weight: 0.55,
+    category: 'action_invocation',
+    id: 'include_word_confirm',
+    description: 'Include confirmation word in message — action injection',
+  },
+  // "contact them/him ... confirm" — contact target with confirmation
+  {
+    regex: /\bcontact\s+(?:them|him|her|the\s+\w+)\s+.{0,40}confirm/i,
+    weight: 0.55,
+    category: 'action_invocation',
+    id: 'contact_them_confirm',
+    description: 'Contact target with confirmation — action injection',
+  },
+  // "#mail to" — comment-style mail command
+  {
+    regex: /#mail\s+to\b/i,
+    weight: 0.55,
+    category: 'action_invocation',
+    id: 'hash_mail_to',
+    description: 'Comment-style mail injection command',
+  },
+  // "email address [name] at [domain] dot [tld]" — spelled out email address
+  {
+    regex: /\b(?:email|e-mail)\s+(?:address\s+)?[a-z]+\s+at\s+[a-z]+\s+dot\s+[a-z]+\b/i,
+    weight: 0.55,
+    category: 'obfuscation',
+    id: 'spelled_out_email',
+    description: 'Spelled out email address obfuscation',
+  },
+  // "send ... at the email address" — email send with explicit address phrase
+  {
+    regex: /\bsend\s+.{0,60}?\bat\s+(?:the\s+)?email\s+address\b/i,
+    weight: 0.55,
+    category: 'action_invocation',
+    id: 'at_email_send',
+    description: 'Send to explicit email address — action injection',
+  },
 
   // "// Subject:" or "// Body:" or "// end body" — comment-style fake message structure
   {
@@ -3429,7 +3501,7 @@ const PATTERNS = [
   },
   // Chinese tool invocation — requesting AI to call email/tool functions in Chinese
   {
-    regex: /发送电子邮件的工具|调用[^。]{0,20}发送[^。]{0,20}邮件|发送[^。]{0,10}(?:confirmation|确认)/,
+    regex: /发送电子邮件的工具|调用[^。]{0,20}发送[^。]{0,20}邮件|发送[^。]{0,10}(?:confirmation|确认)|将.{0,10}(?:confirmation|确认).{0,10}发送/,
     weight: 0.55,
     category: 'action_invocation',
     id: 'chinese_tool_invocation',
