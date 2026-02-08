@@ -1372,7 +1372,7 @@ const PATTERNS = [
   },
   {
     regex: /(?:if\s+you\s+are\s+(?:a|an)\s+(?:AI|language\s+model|LLM|assistant|bot|chatbot))/i,
-    weight: 0.80,
+    weight: 0.49,
     category: 'indirect_injection',
     id: 'if_you_are_ai',
     description: 'Conditional targeting of AI systems',
@@ -3070,6 +3070,14 @@ const PATTERNS = [
     category: 'data_extraction',
     id: 'hidden_input_email',
     description: 'Hidden form input containing email — data exfiltration',
+  },
+  // Hidden form input with instruction-like content in value
+  {
+    regex: /<input(?=[^>]*type\s*=\s*["']hidden["'])(?=[^>]*value\s*=\s*["'][^"']*(?:please\s+\w|verify\s+your|confirm\s+your|click\s+here|visit\s+this|send\s+(?:an?\s+)?email))[^>]*>/i,
+    weight: 0.55,
+    category: 'html_injection',
+    id: 'hidden_input_instruction',
+    description: 'Hidden form input containing instruction-like text',
   },
   // data-instruction or data-prompt attribute — explicit injection container
   {
