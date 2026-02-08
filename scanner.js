@@ -620,7 +620,7 @@ const PATTERNS = [
   },
   // "not follow your programming/instructions" (without "do not" prefix)
   {
-    regex: /\bnot\s+(?:follow|obey|adhere\s+to|comply\s+with|stick\s+to)\s+(?:your|its)\s+(?:program(?:ming)?|training|conditioning|instructions?|rules?|guidelines?|protocols?|restrictions?)\b/i,
+    regex: /(?<!does\s)\bnot\s+(?:follow|obey|adhere\s+to|comply\s+with|stick\s+to)\s+(?:your|its)\s+(?:program(?:ming)?|training|conditioning|instructions?|rules?|guidelines?|protocols?|restrictions?)\b/i,
     weight: 0.72,
     category: 'instruction_override',
     id: 'not_follow_programming',
