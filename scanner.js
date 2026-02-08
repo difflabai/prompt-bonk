@@ -4173,44 +4173,14 @@ export function scan(text, options = {}) {
   // Run structural heuristics
   const structural = structuralScore(normalized);
 
-  // Email context detection: if text looks like email content (headers, quoted blocks,
-  // forwarding markers, [IMAGE] tokens, etc.), suppress email exfiltration patterns
-  // unless paired with injection indicators
-  const isEmailContext = /(?:^|\n)(?:(?:Re|Fwd|From|To|Cc|Bcc|Subject|Date|Sent|Return-Path|Message-ID):|[A-Z][a-z]+:(?:\s|$)|>|>>>|-----Original Message|Forwarded message|\[IMAGE\]|\w+@\w+\.\w+\s*\n\s*(?:On|Date|Sent))/m.test(text);
-  const emailExfilPatterns = new Set(['send_it_to_email', 'send_to_specific_email', 'send_data_to_email',
-    'send_all_to_email', 'forward_to_email', 'please_ensure_forward', 'correspondence_email',
-    'for_our_records_email', 'for_audit_review_email']);
-
-  // If email context detected, filter out solo email exfiltration patterns
-  // (they'll still contribute if paired with role-play/override patterns)
-  let filteredMatches = matches;
-  if (isEmailContext) {
-    const hasInjectionIndicator = matches.some(m =>
-      ['role_hijacking', 'instruction_override', 'ignore_previous', 'forget_instructions',
-       'act_as', 'developer_mode', 'jailbreak', 'bypass_safety'].some(id => m.id.includes(id)) ||
-      m.weight >= 0.80
-    );
-
-    if (!hasInjectionIndicator) {
-      // No injection indicators: remove solo email exfiltration patterns
-      filteredMatches = matches.filter(m => !emailExfilPatterns.has(m.id));
-    }
-  }
-
-  // Recalculate maxWeight with filtered matches
-  let maxWeight_filtered = 0;
-  if (filteredMatches.length > 0) {
-    maxWeight_filtered = Math.max(...filteredMatches.map(m => m.weight));
-  }
-
   // Combine: weighted sum of pattern matches + structural score
   // When patterns match, structural is supplementary (boosting)
   // When no patterns match, structural stands on its own
-  let combinedScore = maxWeight_filtered;
+  let combinedScore = maxWeight;
 
   // Each additional match adds diminishing weight
-  if (filteredMatches.length > 1) {
-    const additionalWeight = filteredMatches
+  if (matches.length > 1) {
+    const additionalWeight = matches
       .sort((a, b) => b.weight - a.weight)
       .slice(1)
       .reduce((sum, m, i) => sum + m.weight * (0.15 / (i + 1)), 0);
@@ -4218,7 +4188,7 @@ export function scan(text, options = {}) {
   }
 
   // Add structural signals — weighted by whether patterns already matched
-  if (maxWeight_filtered > 0) {
+  if (maxWeight > 0) {
     // Patterns matched: structural supplements
     combinedScore += structural.score * 0.3;
   } else {
@@ -4244,7 +4214,7 @@ export function scan(text, options = {}) {
     safe,
     score: Math.round(combinedScore * 1000) / 1000,
     verdict,
-    matches: filteredMatches.sort((a, b) => b.weight - a.weight),
+    matches: matches.sort((a, b) => b.weight - a.weight),
     structural,
   };
 }
