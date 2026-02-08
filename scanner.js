@@ -2845,7 +2845,7 @@ const PATTERNS = [
   },
   // "override/bypass the restrictions of the model" — capability override
   {
-    regex: /\b(?:override|bypass|circumvent|remove|disable|lift|ignore)\s+(?:the\s+)?(?:restrictions?|limitations?|constraints?|safeguards?|guardrails?|protections?|safety\s+(?:measures?|features?))\s+(?:of|on|for|in)?\b/i,
+    regex: /\b(?:override|bypass|circumvent|remove|disable|lift|ignore)\s+(?:the\s+)?(?:restrictions?|limitations?|constraints?|safeguards?|guardrails?|protections?(?!\s+(?:of\s+a\s|in\s+order))|safety\s+(?:measures?|features?))\s+(?:of|on|for|in)?\b/i,
     weight: 0.70,
     category: 'safety_bypass',
     id: 'override_restrictions',
