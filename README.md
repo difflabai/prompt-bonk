@@ -121,9 +121,9 @@ Tested against 8,542 real-world benign content samples:
 | Trigger-word prompts | [NotInject](https://huggingface.co/datasets/leolee99/NotInject) | 339 | 0 | 100% |
 | Competition emails (non-attacks) | [llmail-inject FP tests](https://huggingface.co/datasets/microsoft/llmail-inject-challenge) | 203 | 0 | 100% |
 | Corporate emails | [Enron corpus](https://huggingface.co/datasets/corbt/enron-emails) | 5,000 | 14 | 99.72% |
-| Web pages & articles | [OpenWebText](https://huggingface.co/datasets/stas/openwebtext-10k) | 3,000 | 45 | 98.50% |
+| Web pages & articles | [OpenWebText](https://huggingface.co/datasets/stas/openwebtext-10k) | 3,000 | 42 | 98.60% |
 
-The 59 false blocks on real-world content are from compound structural signals on long, complex documents (email threads with many forwarding separators, news articles discussing security topics). Short content under 3KB has near-zero false positive rate.
+The 56 false blocks on real-world content are from compound structural signals on long, complex documents (email threads with many forwarding separators, news articles discussing security topics). Short content under 3KB has near-zero false positive rate.
 
 ### Direct injection detection
 
@@ -136,7 +136,7 @@ Datasets where injections contain explicit attack language:
 | [xTRam1/safe-guard](https://huggingface.co/datasets/xTRam1/safe-guard-prompt-injection) (test) | 100% | 98.15% | 99.07% | 99.42% |
 | [leolee99/NotInject](https://huggingface.co/datasets/leolee99/NotInject) | - | - | - | 100% (0 FP) |
 | [rubend18/Jailbreak-Prompts](https://huggingface.co/datasets/rubend18/ChatGPT-Jailbreak-Prompts) | 100% | 100% | 100% | 100% |
-| [reshabhs/SPML](https://huggingface.co/datasets/reshabhs/SPML_Chatbot_Prompt_Injection) (5k) | 100% | 69.35% | 81.90% | 75.96% |
+| [reshabhs/SPML](https://huggingface.co/datasets/reshabhs/SPML_Chatbot_Prompt_Injection) (5k) | 100% | 69.33% | 81.89% | 75.94% |
 | [ProtectAI validation](https://huggingface.co/datasets/protectai/prompt-injection-validation) | 96.45% | 95.69% | 96.07% | 96.62% |
 | [jackhhao/jailbreak-classification](https://huggingface.co/datasets/jackhhao/jailbreak-classification) | 98.33% | 88.29% | 93.04% | 93.26% |
 
@@ -147,7 +147,7 @@ Injections embedded in real-world content that agents process (HTML pages, docum
 | Dataset | Precision | Recall | F1 | Accuracy |
 |---|---|---|---|---|
 | [microsoft/llmail-inject](https://huggingface.co/datasets/microsoft/llmail-inject-challenge) | 100% | 99.62% | 99.81% | 99.62% |
-| [BrowseSafe-Bench](https://huggingface.co/datasets/perplexity-ai/browsesafe-bench) (test) | 95.86% | 67.32% | 79.10% | 82.36% |
+| [BrowseSafe-Bench](https://huggingface.co/datasets/perplexity-ai/browsesafe-bench) (test) | 95.94% | 67.32% | 79.12% | 82.39% |
 | [BIPIA](https://github.com/microsoft/BIPIA) | 100% | 76% | 86.36% | 76% |
 | [InjecAgent](https://github.com/uiuc-kang-lab/InjecAgent) | 100% | 53.23% | 69.47% | 63.29% |
 | [CyberSecEval3](https://huggingface.co/datasets/facebook/cyberseceval3-visual-prompt-injection) | 100% | 50% | 66.67% | 50% |
