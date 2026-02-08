@@ -3658,7 +3658,7 @@ const PATTERNS = [
   },
   // "Anagram/jumble" words in response — output obfuscation
   {
-    regex: /\b(?:anagram\w*|jumble)\s+/i,
+    regex: /\b(?:anagram\w*|jumble)\s+(?!of\b)/i,
     weight: 0.55,
     category: 'output_obfuscation',
     id: 'obfuscate_anagram',
