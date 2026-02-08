@@ -409,19 +409,25 @@ No. Tested against 38,491 real-world content samples with zero false positives:
 
 ---
 
-## Status: Research Complete — Entering Integration Phase
+## Status: Integration Complete
 
-Research phase (iterations 1-10) identified 22 candidate datasets, validated formats and licenses (all VERIFY tags resolved), and produced integration specs for the top 4 priorities plus 2 benign content datasets.
+Research phase (iterations 1-10) identified 22 candidate datasets, validated formats and licenses. Integration phase (iterations 11-40) implemented all priority datasets, optimized patterns, and documented results.
 
 **Integration checklist:**
-- [ ] Implement download for llmail-inject (labelled file, 10K attacks + 9.4K benign)
-- [ ] Implement download for TrustAIRLab (1.4K jailbreaks + 13.7K benign)
-- [ ] Implement download for Enron benign emails (5K)
-- [ ] Implement download for OpenWebText benign pages (10K)
-- [ ] Add `config` parameter to `downloadHF()` function
-- [ ] Run benchmarks on all new datasets
-- [ ] Add "Will it block my content?" section to README
-- [ ] Update attack detection tables with new results
+- [x] Implement download for llmail-inject (10K attacks + 203 benign FP tests)
+- [x] Implement download for TrustAIRLab (1.4K jailbreaks + 13.7K benign)
+- [x] Implement download for Enron benign emails (5K)
+- [x] Implement download for OpenWebText benign pages (3K)
+- [x] Add `config` parameter to `downloadHF()` function
+- [x] Run benchmarks on all new datasets
+- [x] Add "Will it block my content?" section to README
+- [x] Update attack detection tables with new results
+- [x] Add jailbreak-classification (1.3K balanced)
+- [x] Add SaTML LLM CTF 2024 (144K adversarial chats)
+- [x] Add gandalf-summarization (indirect injection)
+- [x] Optimize patterns: -18 benign FPs through 11 surgical fixes (zero regression)
 
-*Generated: 2026-02-07 | Final (iteration 10 of 10) — all licenses verified, numbering sequential, ready for implementation*
+**Final results:** 20 datasets in regression suite, 464 patterns, 36 benign FPs on 8,542 samples (99.58% TNR)
+
+*Generated: 2026-02-07 | Updated: 2026-02-08 — integration complete*
 *Feedback from: CTO (Nova x4), Product Lead (Nathan x3), Partnerships (Zorblax), Customer Success (Samantha), UX (Pierre)*
