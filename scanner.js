@@ -734,7 +734,7 @@ const PATTERNS = [
   // ===== ROLE HIJACKING =====
   // Attempts to make the model adopt a different persona/role
   {
-    regex: /(?:now\s+you\s+are|you\s+are\s+now)\s+(?!(?:enrolled|connected|registered|subscribed|listed|confirmed|eligible|required|authorized|approved|able|ready|free|welcome|set|done|finished|good|fine|in\s+(?:the|a)|on\s+(?:the|a)|at\s+(?:the|a)|going|being|doubly|officially|also|even|no\s+longer|all\s+set)\b)(?:a|an|the|my)?\s*/i,
+    regex: /(?:now\s+you\s+are|you\s+are\s+now)\s+(?!(?:enrolled|connected|registered|subscribed|listed|confirmed|eligible|required|authorized|approved|able|ready|free|welcome|set|done|finished|good|fine|in\s+(?:the|a)|on\s+(?:the|a)|at\s+(?:the|a)|going|being|doubly|officially|also|even|no\s+longer|all\s+set|part\s+of|hurt|injured|dead|safe|aware|old|older|young|younger|stronger|smarter|weaker|faster|slower|taller|shorter|bigger|smaller|better|worse|closer|further|more|less|or\b|(?:about|nearly|almost)\s+(?:to|ready))\b)(?:a|an|the|my)?\s*/i,
     weight: 0.70,
     category: 'role_hijack',
     id: 'you_are_now',
@@ -791,7 +791,7 @@ const PATTERNS = [
     description: 'Attempts to switch model into different mode',
   },
   {
-    regex: /enter\s+(a\s+|an\s+)?(developer|admin|debug|sudo|root|god|unrestricted|unfiltered|DAN)\s*(mode|access)?/i,
+    regex: /enter\s+(?:a\s+|an\s+)?(?:developer|admin|debug|sudo|root|god|unrestricted|unfiltered|DAN)\s+(?:mode|access)/i,
     weight: 0.92,
     category: 'role_hijack',
     id: 'enter_mode',
@@ -2420,7 +2420,7 @@ const PATTERNS = [
   // "You are [brand/company/person]. What do you think about X?"
   // Negative lookahead avoids task descriptions and generic role words
   {
-    regex: /\byou\s+are\s+(?!(?:given|asked|shown|provided|presented|supposed|expected|required|allowed|able|going|not|also|on|doing|responsible|known|copying|sitting|working|running|acting|trying|looking|coming|getting|here|there|right|wrong|already|still|just|well|very|being|currently|always|never|now|about|only|one|using|making|having|connected|selected|enrolled|registered|subscribed|listed|described|invited|scheduled|importing|confirmed|assigned|authorized|appointed|the\s+(?:one|person|only)|a\s+(?:teacher|student|doctor|lawyer|writer|developer|user|person|member|fan|customer|player|manager|team|group|part|bit|lot|good|great|new))\b)(?:the\s+)?(?:[A-Z][\w]*(?:\s+[A-Z][\w]*){0,3})\s*[.,!]?\s*(?:as\s+(?:the\s+)?(?!(?:well|follows|of|much|far|long|a\s+result|part|such|if|though|per|soon)\b)|what\s+do\s+you\s+think|tell\s+me\s+what|how\s+do\s+you\s+feel|what\s+(?:is|are)\s+your\s+(?:opinion|view|thought))/i,
+    regex: /\byou\s+are\s+(?!(?:given|asked|shown|provided|presented|supposed|expected|required|allowed|able|going|not|also|on|doing|responsible|known|copying|sitting|working|running|acting|trying|looking|coming|getting|here|there|right|wrong|already|still|just|well|very|being|currently|always|never|now|about|only|one|using|making|having|connected|selected|enrolled|registered|subscribed|listed|described|invited|scheduled|importing|confirmed|assigned|authorized|appointed|as\s|describing|the\s+(?:one|person|only)|a\s+(?:teacher|student|doctor|lawyer|writer|developer|user|person|member|fan|customer|player|manager|team|group|part|bit|lot|good|great|new))\b)(?:the\s+)?(?:[A-Z][\w]*(?:\s+[A-Z][\w]*){0,3})\s*[.,!]?\s*(?:as\s+(?:the\s+)?(?!(?:well|follows|of|much|far|long|a\s+result|part|such|if|though|per|soon)\b)|what\s+do\s+you\s+think|tell\s+me\s+what|how\s+do\s+you\s+feel|what\s+(?:is|are)\s+your\s+(?:opinion|view|thought))/i,
     weight: 0.55,
     category: 'role_hijack',
     id: 'entity_impersonation',
