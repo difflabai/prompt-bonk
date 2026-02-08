@@ -3681,8 +3681,8 @@ function structuralScore(text) {
     const hasHashSection = /^###\s/m.test(text);
     const hasSeparatorLine = /^(?:={5,}|-{5,}|\*{5,}|~{5,}|_{5,})\s*$/m.test(text);
     if (hasHashSection || hasSeparatorLine) {
-      const hasBehavioralConstraint = /\b(?:you\s+(?:must|should|shall|cannot|can\s*not|will\s+not|won'?t|are\s+not\s+allowed|may\s+not|never)|(?:do\s+not|don'?t|never)\s+(?:provide|share|reveal|disclose|generate|create|discuss|mention))\b/i.test(text);
-      const hasSystemPromptStart = /^(?:you\s+are\s+(?:a|an|the|my)\s+|you\s+are\s+[A-Z]\w+|(?:as|imagine\s+you\s+are)\s+(?:a|an|the)\s+)/im.test(text) && !/^(?:you\s+are\s+(?:a\s+(?:valued|registered|current|new|preferred|selected)|(?:invited|connected|enrolled|subscribed|registered|selected|approved|confirmed|eligible)))\b/im.test(text);
+      const hasBehavioralConstraint = /\b(?:you\s+(?:must|should|shall)(?!\s+(?:receive|receiving|call|want|know)\b)\s|you\s+(?:cannot|can\s*not|will\s+not|won'?t|are\s+not\s+allowed|may\s+not|never)|(?:do\s+not|don'?t|never)\s+(?:provide|share|reveal|disclose|generate|create|discuss|mention))\b/i.test(text);
+      const hasSystemPromptStart = /^(?:you\s+are\s+(?:a|an|the|my)\s+|you\s+are\s+[A-Z]\w+|(?:as|imagine\s+you\s+are)\s+(?:a|an|the)\s+)/im.test(text) && !/^(?:you\s+are\s+(?:a\s+(?:valued|registered|current|new|preferred|selected)|(?:invited|connected|enrolled|subscribed|registered|selected|approved|confirmed|eligible|receiving)))\b/im.test(text);
       const sepScore = (hasBehavioralConstraint || hasSystemPromptStart) ? 0.50 : 0.20;
       score += sepScore;
       signals.push({ id: 'hash_section_long_text', score: sepScore, detail: 'Section markers (###) or separator lines in long text (system prompt structure)' });
