@@ -221,6 +221,23 @@ async function main() {
     label: 0,
   })));
 
+  // 22. ethz-spylab/ctf-satml24 — multi-turn prompt injection/extraction (SaTML 2024 CTF)
+  // 137K adversarial chats. Extract first user message from each as scan target (all attacks).
+  // Config: interaction_chats, split: attack. Sample 5K chats.
+  console.log('Downloading ethz-spylab/ctf-satml24 (5000 chats)...');
+  raw = await downloadHF('ethz-spylab/ctf-satml24', 'attack', 100, 5000, 'interaction_chats');
+  const satmlRows = [];
+  for (const r of raw) {
+    // Extract all user messages from chat history
+    const userMsgs = (r.history || []).filter(m => m.role === 'user');
+    for (const msg of userMsgs) {
+      if (msg.content && msg.content.trim()) {
+        satmlRows.push({ text: msg.content, label: 1 });
+      }
+    }
+  }
+  writeJsonl(path.join(DATASETS_DIR, 'satml-ctf.jsonl'), satmlRows);
+
   console.log('\nAll datasets downloaded.');
 }
 
