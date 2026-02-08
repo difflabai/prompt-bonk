@@ -1379,7 +1379,7 @@ const PATTERNS = [
   // ===== CONTEXT SWITCHING =====
   // Attempts to break out of current task and start a new one
   {
-    regex: /(?:that\s+(?:is|was)\s+(?:enough|ok|good|great|fine|correct|right|perfect|excellent|well\s+done|superb|bravo))[.!]?\s*(?:now|but\s+now|here\s+comes?|next|new\s+task)/i,
+    regex: /(?:that\s+(?:is|was)\s+(?:enough|ok|good|great|fine|correct|right(?!\s+next)|perfect|excellent|well\s+done|superb|bravo))[.!]?\s*(?:now|but\s+now|here\s+comes?|next|new\s+task)/i,
     weight: 0.80,
     category: 'context_switch',
     id: 'praise_then_redirect',
