@@ -3792,7 +3792,11 @@ export function scan(text, options = {}) {
     combinedScore += structural.score * 0.3;
   } else {
     // No patterns: structural is the primary signal
-    combinedScore += structural.score;
+    // Long texts (>3KB) with weak structural signals get dampened — legitimate emails/articles
+    // accumulate weak signals that don't indicate injection. Strong structural signals (0.65+)
+    // like system_prompt_injection + bot_identity are preserved regardless of length.
+    const lengthDampening = (text.length > 3000 && structural.score < 0.65) ? 0.6 : 1.0;
+    combinedScore += structural.score * lengthDampening;
   }
 
   // Clamp to [0, 1]
