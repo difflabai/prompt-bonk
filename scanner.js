@@ -3432,7 +3432,7 @@ function structuralScore(text) {
   if (hasExplicitToneShift) {
     score += 0.55;
     signals.push({ id: 'tone_shift', score: 0.55, detail: 'Explicit "done/good, now [command]" pattern' });
-  } else if (hasPraise && hasOverrideVerb) {
+  } else if (hasPraise && hasOverrideVerb && text.length <= 7000) {
     score += 0.20;
     signals.push({ id: 'tone_shift', score: 0.20, detail: 'Praise/acknowledgment followed by override commands' });
   }
@@ -3681,7 +3681,7 @@ function structuralScore(text) {
     const hasHashSection = /^###\s/m.test(text);
     const hasSeparatorLine = /^(?:={5,}|-{5,}|\*{5,}|~{5,}|_{5,})\s*$/m.test(text);
     if (hasHashSection || hasSeparatorLine) {
-      const hasBehavioralConstraint = /\b(?:you\s+(?:must|should|shall)(?!\s+(?:receive|receiving|call|want|know)\b)\s|you\s+(?:cannot|can\s*not|will\s+not|won'?t|are\s+not\s+allowed)\s|you\s+(?:may\s+not|never)(?!\s+(?:copy|distribute|forward|reproduce)\b)\s|(?:do\s+not|don'?t|never)\s+(?:provide|share|reveal|disclose|generate|discuss|mention)\b|(?:do\s+not|don'?t|never)\s+create(?!\s+or\s+evidence)\b)/i.test(text);
+      const hasBehavioralConstraint = /\b(?:you\s+(?:must|should|shall)(?!\s+(?:receive|receiving|call|want|know)\b)\s|you\s+(?:cannot|can\s*not|will\s+not|won'?t(?!\s+want\b)|are\s+not\s+allowed)\s|you\s+(?:may\s+not|never)(?!\s+(?:copy|distribute|forward|reproduce)\b)\s|(?:do\s+not|don'?t|never)\s+(?:provide|share(?!\s+(?:your|my|their|his|her)\s+personal)|reveal|disclose|generate|discuss|mention)\b|(?:do\s+not|don'?t|never)\s+create(?!\s+or\s+evidence)\b)/i.test(text);
       const hasSystemPromptStart = /^(?:you\s+are\s+(?:a|an|the|my)\s+|you\s+are\s+[A-Z]\w+|(?:as|imagine\s+you\s+are)\s+(?:a|an|the)\s+)/im.test(text) && !/^(?:you\s+are\s+(?:a\s+(?:valued|registered|current|new|preferred|selected)|(?:invited|connected|enrolled|subscribed|registered|selected|approved|confirmed|eligible|receiving)))\b/im.test(text);
       const sepScore = (hasBehavioralConstraint || hasSystemPromptStart) ? 0.50 : 0.20;
       score += sepScore;
