@@ -1299,7 +1299,7 @@ const PATTERNS = [
   },
   // "You have no choice but to comply"
   {
-    regex: /\byou\s+(?:have\s+no\s+choice(?!\s+but\s+to\s+(?!(?:comply|obey|cooperate|submit|follow|do\s+(?:what|as))\b)\w)|must\s+(?:comply|obey|cooperate|submit))\b/i,
+    regex: /\byou\s+(?:have\s+no\s+choice(?!\s+but\s+to\s+(?!(?:comply|obey|cooperate|submit|follow|do\s+(?:what|as))\b)\w)|must\s+(?:comply|obey|cooperate|submit)\b(?!\s+with\s+(?!(?:my|this|these|the|your|all|any|its)\s)))/i,
     weight: 0.65,
     category: 'coercion',
     id: 'no_choice',
