@@ -140,6 +140,8 @@ const datasets = [
   // { name: 'hackaprompt', file: 'hackaprompt.jsonl' },
   // Competition attacks — multi-turn secret extraction (SaTML 2024 CTF)
   { name: 'satml-ctf', file: 'satml-ctf.jsonl' },
+  // Indirect injection via summarization task (Gandalf Adventure 4)
+  { name: 'gandalf-summarization', file: 'gandalf-summarization.jsonl' },
   // Benign content — real-world FP testing (all label=0)
   { name: 'llmail-benign', file: 'llmail-benign.jsonl' },
   { name: 'enron-benign', file: 'enron-benign.jsonl' },

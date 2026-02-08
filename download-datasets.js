@@ -238,6 +238,16 @@ async function main() {
   }
   writeJsonl(path.join(DATASETS_DIR, 'satml-ctf.jsonl'), satmlRows);
 
+  // 23. Lakera/gandalf_summarization — indirect injection via summarization task (Gandalf Adventure 4)
+  // 140 rows (all attacks), MIT license. Injection attempts to extract secret password from summarization LLM.
+  console.log('Downloading Lakera/gandalf_summarization...');
+  const gandalfRows = [];
+  for (const split of ['train', 'validation', 'test']) {
+    raw = await downloadHF('Lakera/gandalf_summarization', split, 100, 200);
+    for (const r of raw) gandalfRows.push({ text: r.text, label: 1 });
+  }
+  writeJsonl(path.join(DATASETS_DIR, 'gandalf-summarization.jsonl'), gandalfRows);
+
   console.log('\nAll datasets downloaded.');
 }
 

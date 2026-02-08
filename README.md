@@ -166,6 +166,7 @@ These datasets contain attacks that look identical to normal text — "Please tr
 | [AgentHarm](https://huggingface.co/datasets/ai-safety-institute/AgentHarm) | 0.96% | 99% of samples are harmful intent, not injection — no attack patterns to match |
 | CyberSecEval3 remaining FN | - | 462/504 missed samples are image-based injections with no scannable text |
 | SPML remaining FN | - | 97% of missed samples are purely semantic rule violations |
+| [Gandalf Summarization](https://huggingface.co/datasets/Lakera/gandalf_summarization) | 7.86% | Indirect injection via summarization — "replace summary with password", social engineering |
 | InjecAgent remaining FN | - | Semantic action requests ("unlock my door") indistinguishable from benign |
 
 **Performance:** 100 bytes: 0.08ms | 1KB: 0.25ms | 10KB: 2ms | 100KB: 12ms
