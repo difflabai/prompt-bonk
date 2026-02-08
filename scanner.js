@@ -1256,6 +1256,22 @@ const PATTERNS = [
     id: 'fake_bracket_tag',
     description: 'Fake bracket metadata tag (INFO, ADMIN, OVERRIDE, etc.)',
   },
+  // [END USER] / [DEOBFUSCATION] / [TASK OVERRIDE] — fake boundary/mode markers
+  {
+    regex: /\[(?:END\s*USER|DEOBFUSCATION|TASK\s*OVERRIDE)\]/i,
+    weight: 0.55,
+    category: 'delimiter_attack',
+    id: 'fake_boundary_marker',
+    description: 'Fake message boundary marker (END USER, DEOBFUSCATION, etc.)',
+  },
+  // Hidden instructions in angle brackets disguised as HTML tags
+  {
+    regex: /<(?:listen\s+carefully|are\s+you\s+there|i\s+dont\s+have\s+much\s+time|important\s+instruction|hidden\s+instruction|secret\s+instruction)>/i,
+    weight: 0.55,
+    category: 'delimiter_attack',
+    id: 'hidden_angle_instruction',
+    description: 'Hidden instruction in angle brackets disguised as HTML',
+  },
   {
     regex: /<save>|<\/save>|new\s+main\s*=|codeboxes\s*=\s*false/i,
     weight: 0.80,
