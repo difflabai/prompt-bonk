@@ -3472,7 +3472,8 @@ function structuralScore(text) {
 
   // Compound: role assignment + sensitive data request
   // "You are [Bot/Name]" + "give/share/provide ... data/records/credentials" in same text
-  const hasRoleAssignment = /\b(?:you\s+are|you['\u2019]re|imagine\s+you(?:\s+are|['\u2019]re)|pretend\s+(?:you\s+are|to\s+be|you['\u2019]re)|act\s+as|you\s+(?:will\s+)?play|as\s+(?:a|the)\s+CEO)\b/i.test(text);
+  // Tightened: require AI-specific role forms, not generic "you are" in business correspondence
+  const hasRoleAssignment = /\b(?:you\s+are\s+(?:a|an|the|my)\s+\w+|you\s+are\s+[A-Z]\w+(?:Bot|AI|GPT|Agent|\d)|imagine\s+you(?:\s+are|['\u2019]re)|pretend\s+(?:you\s+are|to\s+be|you['\u2019]re)|act\s+as|you\s+(?:will\s+)?play|as\s+(?:a|the)\s+CEO)\b/i.test(text);
   const hasSensitiveNoun = /\b(?:medical\s+records?|patient\s+(?:information|data|records?)|credentials?|passwords?|private\s+keys?|access\s+keys?|confidential\s+(?:\w+\s+)?(?:information|data|records?|details?)|sensitive\s+(?:\w+\s+)?(?:information|data|records?|details?)|classified\s+(?:\w+\s+)?(?:information|data)|personal\s+(?:\w+\s+)?(?:information|data|details?|records?|contact\s+information)|user\s+data|login\s+credentials?|secret\s+(?:keys?|data|information)|source\s+code|algorithm\s+details?|security\s+(?:vulnerabilit(?:y|ies)|flaws?|weaknesses?|holes?))\b/i.test(text);
   const hasExtractionVerb = /\b(?:give|share|provide|show|tell|disclose|reveal|send|hand\s+over|leak|expose|access|retrieve|obtain|get|divulge|know|request(?:ing)?)\s+/i.test(text);
   if (hasRoleAssignment && hasSensitiveNoun && hasExtractionVerb) {
@@ -3674,7 +3675,7 @@ function structuralScore(text) {
     const hasSeparatorLine = /^(?:={5,}|-{5,}|\*{5,}|~{5,}|_{5,})\s*$/m.test(text);
     if (hasHashSection || hasSeparatorLine) {
       const hasBehavioralConstraint = /\b(?:you\s+(?:must|should|shall|cannot|can\s*not|will\s+not|won'?t|are\s+not\s+allowed|may\s+not|never)|(?:do\s+not|don'?t|never)\s+(?:provide|share|reveal|disclose|generate|create|discuss|mention))\b/i.test(text);
-      const hasSystemPromptStart = /^(?:you\s+are\s+(?:a|an|the|my)\s+|(?:as|imagine\s+you\s+are)\s+(?:a|an|the)\s+)/im.test(text);
+      const hasSystemPromptStart = /^(?:you\s+are\s+(?:a|an|the|my)\s+|you\s+are\s+[A-Z]\w+|(?:as|imagine\s+you\s+are)\s+(?:a|an|the)\s+)/im.test(text) && !/^(?:you\s+are\s+(?:a\s+(?:valued|registered|current|new|preferred|selected)|(?:invited|connected|enrolled|subscribed|registered|selected|approved|confirmed|eligible)))\b/im.test(text);
       const sepScore = (hasBehavioralConstraint || hasSystemPromptStart) ? 0.50 : 0.20;
       score += sepScore;
       signals.push({ id: 'hash_section_long_text', score: sepScore, detail: 'Section markers (###) or separator lines in long text (system prompt structure)' });
