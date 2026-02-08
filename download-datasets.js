@@ -16,7 +16,10 @@ function fetch(url) {
     const mod = url.startsWith('https') ? https : http;
     mod.get(url, { headers: { 'User-Agent': 'prompt-bonk/1.0' } }, (res) => {
       if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-        return fetch(res.headers.location).then(resolve, reject);
+        const loc = res.headers.location.startsWith('http')
+          ? res.headers.location
+          : new URL(res.headers.location, url).href;
+        return fetch(loc).then(resolve, reject);
       }
       const chunks = [];
       res.on('data', (c) => chunks.push(c));
@@ -206,6 +209,16 @@ async function main() {
   writeJsonl(path.join(DATASETS_DIR, 'jailbreak-class.jsonl'), raw.map(r => ({
     text: r.prompt,
     label: r.type === 'jailbreak' ? 1 : 0,
+  })));
+
+  // 21. microsoft/llmail-inject-challenge — benign competition emails for FP testing
+  // Direct JSON file download (not rows API) — 203 benign emails from SaTML 2025
+  console.log('Downloading microsoft/llmail-inject-challenge benign emails...');
+  const fpRes = await fetch('https://huggingface.co/datasets/microsoft/llmail-inject-challenge/resolve/main/data/emails_for_fp_tests.json');
+  const fpEmails = JSON.parse(fpRes.body);
+  writeJsonl(path.join(DATASETS_DIR, 'llmail-benign.jsonl'), fpEmails.map(e => ({
+    text: String(e),
+    label: 0,
   })));
 
   console.log('\nAll datasets downloaded.');
