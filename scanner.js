@@ -3256,6 +3256,23 @@ const PATTERNS = [
     description: 'Security bypass — disable two-factor authentication',
   },
 
+  // "issue/make/execute an api_call" — API invocation injection
+  {
+    regex: /\bissue\s+(?:an?\s+)?api[_\s]?call/i,
+    weight: 0.55,
+    category: 'action_invocation',
+    id: 'invoke_api_call',
+    description: 'API invocation injection — issue/execute api_call',
+  },
+  // "miracle machine" — euphemistic reference to AI agent for action injection
+  {
+    regex: /\bmiracle\s+machine\b/i,
+    weight: 0.55,
+    category: 'action_invocation',
+    id: 'euphemistic_ai_agent',
+    description: 'Euphemistic AI agent reference — miracle machine',
+  },
+
   // ===== RESPONSE MODIFICATION / ADVERTISING INJECTION =====
   // "Do not listen to any previous information" — synonym for "ignore previous"
   {
