@@ -3530,11 +3530,16 @@ function structuralScore(text) {
   }
 
   // Film/actor framing with villain roles (bilingual EN/DE)
-  const hasActorScene = /\b(?:actors?|actress(?:es)?|acting|portray(?:s|ed|ing)?|embod(?:ies|ying|y)|play(?:s|ing|ed)?|Schauspieler(?:in(?:nen)?)?|(?:mit)?spiel(?:en|t|st|te)|verk[oö]rper(?:t|n)|darstell(?:en|t|ung)|fungier(?:en|t)|Figur(?:en)?)\b/i.test(text);
-  const hasVillainRole = /\b(?:murderer|killer|thief|hacker|villain|dictator|criminal|terrorist|gangster|robber|kidnapper|assassin|mastermind|Meisterdieb|M[oö]rder|Dieb|R[aä]uber|Verbrecher|Terroris(?:t|tin)|Erpresser|Einbrecher)\b/i.test(text);
+  // Require actor and villain words within 200 chars of each other to avoid FP on long news articles
+  const _actorRe = /\b(?:actors?|actress(?:es)?|acting|portray(?:s|ed|ing)?|embod(?:ies|ying|y)|play(?:s|ing|ed)?|Schauspieler(?:in(?:nen)?)?|(?:mit)?spiel(?:en|t|st|te)|verk[oö]rper(?:t|n)|darstell(?:en|t|ung)|fungier(?:en|t)|Figur(?:en)?)\b/ig;
+  const _villainRe = /\b(?:murderer|killer|thief|hacker|villain|dictator|criminal|terrorist|gangster|robber|kidnapper|assassin|mastermind|Meisterdieb|M[oö]rder|Dieb|R[aä]uber|Verbrecher|Terroris(?:t|tin)|Erpresser|Einbrecher)\b/ig;
+  const actorPositions = []; let _am; while ((_am = _actorRe.exec(text)) !== null) actorPositions.push(_am.index);
+  const villainPositions = []; let _vm; while ((_vm = _villainRe.exec(text)) !== null) villainPositions.push(_vm.index);
+  let hasActorVillainProximity = false;
+  for (const ap of actorPositions) { for (const vp of villainPositions) { if (Math.abs(ap - vp) <= 200) { hasActorVillainProximity = true; break; } } if (hasActorVillainProximity) break; }
   const hasFilmContext = /\b(?:film|movie|scene|play|skit|sketch|drama|script|story|act\s+in|Film|Szene|Drehbuch|Serie)\b/.test(text);
   const hasCharacterPersistence = /\b(?:(?:stay|remain)(?:ing|s)?\s+(?:fully\s+|always\s+)?in\s+(?:their|your|the|his|her)\s+(?:roles?|characters?)|(?:don'?t|do\s+not|never)\s+(?:break|fall\s+out\s+of|leave|drop|step\s+out\s+of|break(?:ing)?\s+out\s+of)\s+(?:their|your|the|his|her)?\s*(?:roles?|characters?|figure)|(?:completely|fully|totally)\s+(?:absorbed|immersed)\s+in\s+(?:their|your|the|his|her)\s+(?:roles?|characters?)|(?:bleiben?|verharren?)\s+(?:voll\s+|stets\s+|immer\s+)?in\s+(?:ihren?|seinen?|ihrer?)\s+(?:Rollen?|Charakteren?)|aus\s+(?:ihre[rn]?|der)\s+(?:Rolle|Figur)\s+(?:zu\s+)?(?:fallen|ausbrechen|herausfallen))\b/i.test(text);
-  if (hasActorScene && hasVillainRole && hasFilmContext) {
+  if (hasActorVillainProximity && hasFilmContext) {
     const filmScore = hasCharacterPersistence ? 0.55 : 0.45;
     score += filmScore;
     signals.push({ id: 'film_villain_framing', score: filmScore, detail: 'Film/actor scene with villain role assignment' + (hasCharacterPersistence ? ' + character persistence' : '') });
@@ -3640,7 +3645,7 @@ function structuralScore(text) {
 
   // System prompt injection: full AI persona definition with proper name + behavioral constraints
   // Normal user input should not contain a full system prompt definition
-  const negLookahead = '(?!given\\b|asked\\b|shown\\b|provided\\b|expected\\b|supposed\\b|required\\b|allowed\\b|able\\b|going\\b|not\\b|also\\b|here\\b|right\\b|welcome\\b|correct\\b|wrong\\b|free\\b|good\\b|great\\b|very\\b|one\\b|my\\b|the\\b|being\\b|about\\b)';
+  const negLookahead = '(?!given\\b|asked\\b|shown\\b|provided\\b|expected\\b|supposed\\b|required\\b|allowed\\b|able\\b|going\\b|not\\b|also\\b|here\\b|right\\b|welcome\\b|correct\\b|wrong\\b|free\\b|good\\b|great\\b|very\\b|one\\b|my\\b|the\\b|being\\b|about\\b|connected\\b|receiving\\b|having\\b|using\\b|looking\\b|reading\\b|taking\\b|running\\b|getting\\b|coming\\b|sitting\\b|standing\\b|living\\b|working\\b|writing\\b|making\\b|doing\\b|watching\\b|playing\\b|currently\\b|already\\b|still\\b|now\\b|just\\b|only\\b|both\\b|part\\b|invited\\b|registered\\b|scheduled\\b|subscribed\\b|selected\\b|enrolled\\b|entitled\\b|eligible\\b|certified\\b|qualified\\b|authorized\\b|approved\\b)';
   const hasProperNameSystemPrompt = new RegExp(
     '^(?:you\\s+are|consider\\s+yourself(?:\\s+as)?|imagine\\s+(?:you(?:\\s+are|(?:[\'\\u2019])?re)|yourself\\s+as|being)|picture\\s+yourself\\s+as|assume\\s+(?:that\\s+)?you\\s+are|envision\\s+(?:yourself(?:\\s+as)?|you\\s+are|being)|visuali[sz]e\\s+(?:yourself(?:\\s+as)?|(?:that\\s+)?you\\s+are(?:\\s+as)?|being)|presume\\s+(?:that\\s+)?you\\s+are|pretend\\s+(?:that\\s+)?you\\s+are)\\s+(?:an?\\s+)?(?:the\\s+)?' + negLookahead + '[A-Z]\\w+', 'im'
   ).test(text);
