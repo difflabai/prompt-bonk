@@ -120,12 +120,12 @@ Tested against 8,542 real-world benign content samples:
 |---|---|---|---|---|
 | Trigger-word prompts | [NotInject](https://huggingface.co/datasets/leolee99/NotInject) | 339 | 0 | 100% |
 | Competition emails (non-attacks) | [llmail-inject FP tests](https://huggingface.co/datasets/microsoft/llmail-inject-challenge) | 203 | 0 | 100% |
-| Corporate emails | [Enron corpus](https://huggingface.co/datasets/corbt/enron-emails) | 5,000 | 13 | 99.74% |
-| Web pages & articles | [OpenWebText-10k](https://huggingface.co/datasets/stas/openwebtext-10k) | 3,000 | 28 | 99.07% |
+| Corporate emails | [Enron corpus](https://huggingface.co/datasets/corbt/enron-emails) | 5,000 | 12 | 99.76% |
+| Web pages & articles | [OpenWebText-10k](https://huggingface.co/datasets/stas/openwebtext-10k) | 3,000 | 24 | 99.2% |
 
-The 41 false blocks on real-world content are from compound structural signals on long, complex documents (email threads with many forwarding separators, news articles discussing security topics). Short content under 3KB has near-zero false positive rate.
+The 36 false blocks on real-world content are from compound structural signals on long, complex documents (email threads with forwarding separators that resemble data exfiltration, news articles discussing security topics with injection-like vocabulary). Short content under 3KB has near-zero false positive rate.
 
-**Note:** TrustAIRLab's in-the-wild dataset shows 2,106 FPs on 3,183 flagged samples (33.8% precision) due to source-based labeling (Reddit/Discord channel origin) rather than content-based labels. The 76.65% recall on genuine jailbreaks is high; the low precision reflects that benign creative writing and roleplay naturally triggers patterns designed for jailbreak detection. Use 0.50 threshold for broad injection catching or 0.70+ for precision-critical applications.
+**Note:** TrustAIRLab's in-the-wild dataset shows ~2,100 FPs on ~3,200 flagged samples (33.9% precision) due to source-based labeling (Reddit/Discord channel origin) rather than content-based labels. The 76.6% recall on genuine jailbreaks is high; the low precision reflects that benign creative writing and roleplay naturally triggers patterns designed for jailbreak detection. Use 0.50 threshold for broad injection catching or 0.70+ for precision-critical applications.
 
 ### Direct injection detection
 
@@ -141,7 +141,7 @@ Datasets where injections contain explicit attack language:
 | [reshabhs/SPML](https://huggingface.co/datasets/reshabhs/SPML_Chatbot_Prompt_Injection) (5k) | 100% | 69.05% | 81.69% | 75.72% |
 | [ProtectAI validation](https://huggingface.co/datasets/protectai/prompt-injection-validation) | 96.45% | 95.69% | 96.07% | 96.62% |
 | [jackhhao/jailbreak-classification](https://huggingface.co/datasets/jackhhao/jailbreak-classification) | 98.33% | 88.29% | 93.04% | 93.26% |
-| [TrustAIRLab/in-the-wild-jailbreak-prompts](https://huggingface.co/datasets/TrustAIRLab/in-the-wild-jailbreak-prompts) | 33.93% | 76.58% | 47.03% | 73.08% |
+| [TrustAIRLab/in-the-wild-jailbreak-prompts](https://huggingface.co/datasets/TrustAIRLab/in-the-wild-jailbreak-prompts) | 33.94% | 76.58% | 47.04% | 73.09% |
 
 ### Indirect injection detection
 
@@ -166,7 +166,7 @@ These datasets contain attacks that look identical to normal text — "Please tr
 | [AgentHarm](https://huggingface.co/datasets/ai-safety-institute/AgentHarm) | 0.96% | 99% of samples are harmful intent, not injection — no attack patterns to match |
 | CyberSecEval3 remaining FN | - | 462/504 missed samples are image-based injections with no scannable text |
 | SPML remaining FN | - | 97% of missed samples are purely semantic rule violations |
-| [Gandalf Summarization](https://huggingface.co/datasets/Lakera/gandalf_summarization) | 7.86% | Indirect injection via summarization — "replace summary with password", social engineering |
+| [Gandalf Summarization](https://huggingface.co/datasets/Lakera/gandalf_summarization) | 7.14% | Indirect injection via summarization — "replace summary with password", social engineering |
 | InjecAgent remaining FN | - | Semantic action requests ("unlock my door") indistinguishable from benign |
 
 **Performance:** 100 bytes: 0.08ms | 1KB: 0.25ms | 10KB: 2ms | 100KB: 12ms
