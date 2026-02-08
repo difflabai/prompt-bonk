@@ -2805,7 +2805,7 @@ const PATTERNS = [
   // ===== IDENTITY RENAME / SAFETY BYPASS =====
   // "You will be called Dan from now on" — identity renaming/alias injection
   {
-    regex: /\b(?:you\s+will\s+be|you\s+are|from\s+now\s+(?:on\s+)?you(?:'re|\s+are))\s+(?:called|named|known\s+as|referred\s+to\s+as)\s+\w+\s+(?:from\s+now\s+on)?/i,
+    regex: /\b(?:you\s+will\s+be|you\s+are|from\s+now\s+(?:on\s+)?you(?:'re|\s+are))\s+(?:called(?!\s+to\b)|named|known\s+as|referred\s+to\s+as)\s+\w+\s+(?:from\s+now\s+on)?/i,
     weight: 0.65,
     category: 'role_hijack',
     id: 'identity_rename',
