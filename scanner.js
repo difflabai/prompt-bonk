@@ -3338,6 +3338,31 @@ const PATTERNS = [
     description: 'False assurance — no prompt injection detected',
   },
 
+  // "with body text confirmation" — email body content injection
+  {
+    regex: /\bwith\s+(?:the\s+)?body\s+(?:text\s+)?["']?confirmation/i,
+    weight: 0.55,
+    category: 'action_invocation',
+    id: 'body_text_confirmation',
+    description: 'Email injection — with body text confirmation',
+  },
+  // "send confirmation to" — send confirmation email injection
+  {
+    regex: /\bsend\s+["']?confirmation["']?\s+to\b/i,
+    weight: 0.55,
+    category: 'action_invocation',
+    id: 'send_confirmation_to',
+    description: 'Email injection — send confirmation to address',
+  },
+  // "summarize ... then ... send" — multi-step action injection
+  {
+    regex: /\bsummariz\w*\b[^.]{0,40}\bthen\b[^.]{0,40}\bsend\b/i,
+    weight: 0.55,
+    category: 'action_invocation',
+    id: 'summarize_then_send',
+    description: 'Multi-step injection — summarize then send',
+  },
+
   // "// Subject:" or "// Body:" or "// end body" — comment-style fake message structure
   {
     regex: /\/\/\s*(?:Subject|Body|end\s+body|end\s+subject)\s*:/i,
