@@ -136,8 +136,8 @@ Datasets where injections contain explicit attack language:
 | [leolee99/NotInject](https://huggingface.co/datasets/leolee99/NotInject) | - | - | - | 100% (0 FP) |
 | [rubend18/Jailbreak-Prompts](https://huggingface.co/datasets/rubend18/ChatGPT-Jailbreak-Prompts) | 100% | 100% | 100% | 100% |
 | [reshabhs/SPML](https://huggingface.co/datasets/reshabhs/SPML_Chatbot_Prompt_Injection) (5k) | 100% | 69.35% | 81.90% | 75.96% |
-| [ProtectAI validation](https://huggingface.co/datasets/protectai/prompt-injection-validation) | 96.66% | 95.69% | 96.17% | 96.72% |
-| [jackhhao/jailbreak-classification](https://huggingface.co/datasets/jackhhao/jailbreak-classification) | 98.29% | 86.19% | 91.84% | 92.19% |
+| [ProtectAI validation](https://huggingface.co/datasets/protectai/prompt-injection-validation) | 96.38% | 95.69% | 96.03% | 96.59% |
+| [jackhhao/jailbreak-classification](https://huggingface.co/datasets/jackhhao/jailbreak-classification) | 98.31% | 87.54% | 92.61% | 92.88% |
 
 ### Indirect injection detection
 

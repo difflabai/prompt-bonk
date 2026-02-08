@@ -2600,8 +2600,8 @@ const PATTERNS = [
   },
   // "remain in character" / "stay in character" (persistence instruction for jailbreak)
   {
-    regex: /\b(?:remain|stay|keep)\s+in\s+(?:character|role|persona)\b/i,
-    weight: 0.40,
+    regex: /\b(?:remain|stay|keep|never\s+(?:break|leave|drop|exit))\s+(?:in\s+)?(?:character|role|persona)\b/i,
+    weight: 0.50,
     category: 'role_hijack',
     id: 'remain_in_character',
     description: 'Instructs model to persist in assigned character/role',
