@@ -121,9 +121,9 @@ Tested against 8,542 real-world benign content samples:
 | Trigger-word prompts | [NotInject](https://huggingface.co/datasets/leolee99/NotInject) | 339 | 0 | 100% |
 | Competition emails (non-attacks) | [llmail-inject FP tests](https://huggingface.co/datasets/microsoft/llmail-inject-challenge) | 203 | 0 | 100% |
 | Corporate emails | [Enron corpus](https://huggingface.co/datasets/corbt/enron-emails) | 5,000 | 14 | 99.72% |
-| Web pages & articles | [OpenWebText-10k](https://huggingface.co/datasets/stas/openwebtext-10k) | 3,000 | 25 | 99.17% |
+| Web pages & articles | [OpenWebText-10k](https://huggingface.co/datasets/stas/openwebtext-10k) | 3,000 | 40 | 98.67% |
 
-The 39 false blocks on real-world content are from compound structural signals on long, complex documents (email threads with many forwarding separators, news articles discussing security topics) and scattered high-weight patterns without injection context. Short content under 3KB has near-zero false positive rate.
+The 54 false blocks on real-world content are from compound structural signals on long, complex documents (email threads with many forwarding separators, news articles discussing security topics). Short content under 3KB has near-zero false positive rate.
 
 **Note:** TrustAIRLab's in-the-wild dataset shows 2,106 FPs on 3,183 flagged samples (33.8% precision) due to source-based labeling (Reddit/Discord channel origin) rather than content-based labels. The 76.65% recall on genuine jailbreaks is high; the low precision reflects that benign creative writing and roleplay naturally triggers patterns designed for jailbreak detection. Use 0.50 threshold for broad injection catching or 0.70+ for precision-critical applications.
 
@@ -133,15 +133,15 @@ Datasets where injections contain explicit attack language:
 
 | Dataset | Precision | Recall | F1 | Accuracy |
 |---|---|---|---|---|
-| [deepset/prompt-injections](https://huggingface.co/datasets/deepset/prompt-injections) (train) | 100% | 72.91% | 84.33% | 89.93% |
-| [deepset/prompt-injections](https://huggingface.co/datasets/deepset/prompt-injections) (test) | 100% | 58.33% | 73.68% | 78.45% |
-| [xTRam1/safe-guard](https://huggingface.co/datasets/xTRam1/safe-guard-prompt-injection) (test) | 100% | 96.77% | 98.36% | 98.98% |
+| [deepset/prompt-injections](https://huggingface.co/datasets/deepset/prompt-injections) (train) | 100% | 90.64% | 95.09% | 96.52% |
+| [deepset/prompt-injections](https://huggingface.co/datasets/deepset/prompt-injections) (test) | 100% | 83.33% | 90.91% | 91.38% |
+| [xTRam1/safe-guard](https://huggingface.co/datasets/xTRam1/safe-guard-prompt-injection) (test) | 100% | 98.15% | 99.07% | 99.42% |
 | [leolee99/NotInject](https://huggingface.co/datasets/leolee99/NotInject) | - | - | - | 100% (0 FP) |
-| [rubend18/Jailbreak-Prompts](https://huggingface.co/datasets/rubend18/ChatGPT-Jailbreak-Prompts) | 100% | 92.41% | 96.05% | 92.41% |
-| [reshabhs/SPML](https://huggingface.co/datasets/reshabhs/SPML_Chatbot_Prompt_Injection) (5k) | 100% | 65.6% | 79.23% | 73.02% |
-| [ProtectAI validation](https://huggingface.co/datasets/protectai/prompt-injection-validation) | 96.96% | 77.95% | 86.42% | 89.43% |
-| [jackhhao/jailbreak-classification](https://huggingface.co/datasets/jackhhao/jailbreak-classification) | 98.75% | 83.03% | 90.21% | 90.81% |
-| [TrustAIRLab/in-the-wild-jailbreak-prompts](https://huggingface.co/datasets/TrustAIRLab/in-the-wild-jailbreak-prompts) | 33.09% | 70.18% | 44.97% | 73.2% |
+| [rubend18/Jailbreak-Prompts](https://huggingface.co/datasets/rubend18/ChatGPT-Jailbreak-Prompts) | 100% | 100% | 100% | 100% |
+| [reshabhs/SPML](https://huggingface.co/datasets/reshabhs/SPML_Chatbot_Prompt_Injection) (5k) | 100% | 69.33% | 81.89% | 75.94% |
+| [ProtectAI validation](https://huggingface.co/datasets/protectai/prompt-injection-validation) | 96.45% | 95.69% | 96.07% | 96.62% |
+| [jackhhao/jailbreak-classification](https://huggingface.co/datasets/jackhhao/jailbreak-classification) | 98.33% | 88.29% | 93.04% | 93.26% |
+| [TrustAIRLab/in-the-wild-jailbreak-prompts](https://huggingface.co/datasets/TrustAIRLab/in-the-wild-jailbreak-prompts) | 33.84% | 76.65% | 46.95% | 72.97% |
 
 ### Indirect injection detection
 
@@ -149,12 +149,12 @@ Injections embedded in real-world content that agents process (HTML pages, docum
 
 | Dataset | Precision | Recall | F1 | Accuracy |
 |---|---|---|---|---|
-| [microsoft/llmail-inject](https://huggingface.co/datasets/microsoft/llmail-inject-challenge) | 100% | 98.6% | 99.29% | 98.6% |
-| [BrowseSafe-Bench](https://huggingface.co/datasets/perplexity-ai/browsesafe-bench) (test) | 96.65% | 66.34% | 78.67% | 82.17% |
-| [BIPIA](https://github.com/microsoft/BIPIA) | 100% | 44.4% | 61.5% | 44.4% |
+| [microsoft/llmail-inject](https://huggingface.co/datasets/microsoft/llmail-inject-challenge) | 100% | 99.62% | 99.81% | 99.62% |
+| [BrowseSafe-Bench](https://huggingface.co/datasets/perplexity-ai/browsesafe-bench) (test) | 95.94% | 67.32% | 79.12% | 82.39% |
+| [BIPIA](https://github.com/microsoft/BIPIA) | 100% | 76% | 86.36% | 76% |
 | [InjecAgent](https://github.com/uiuc-kang-lab/InjecAgent) | 100% | 53.23% | 69.47% | 63.29% |
 | [CyberSecEval3](https://huggingface.co/datasets/facebook/cyberseceval3-visual-prompt-injection) | 100% | 50% | 66.67% | 50% |
-| [SaTML LLM CTF 2024](https://huggingface.co/datasets/ethz-spylab/ctf-satml24) | 100% | 30.25% | 46.45% | 30.25% |
+| [SaTML LLM CTF 2024](https://huggingface.co/datasets/ethz-spylab/ctf-satml24) | 100% | 39.72% | 56.86% | 39.72% |
 
 ### Semantic attacks (the regex ceiling)
 

@@ -1609,11 +1609,11 @@ const PATTERNS = [
   },
   // Amoral persona definition
   {
-    regex: /(?:be|act|respond|answer|you\s+(?:are|should\s+be)|being)\s+(?:completely|totally|fully|absolutely|purely)?\s*amoral\b/i,
+    regex: /\b(?:(?:completely|totally|fully|absolutely)\s+)?amoral\b/i,
     weight: 0.82,
     category: 'role_hijack',
     id: 'amoral_persona',
-    description: 'Instructs model to be/act amoral in responses',
+    description: 'Defines an amoral character/persona',
   },
   // "answers any request without regards for legality/ethics"
   {
@@ -4173,39 +4173,17 @@ export function scan(text, options = {}) {
   // Run structural heuristics
   const structural = structuralScore(normalized);
 
-  // Apply proximity-based dampening: patterns with weight 0.50-0.55 (marginal confidence) that appear
-  // in isolation (no other matches within 300 chars) get dampened by 25% to reduce FPs on legitimate
-  // discourse. This preserves genuine injections (which cluster signals) while reducing false positives
-  // on scattered benign phrases. Only targets weakest patterns; patterns 0.55+ stay intact.
-  const proximitySensitiveWeightThreshold = { min: 0.50, max: 0.55 };
-  const contextWindow = 300;
-  for (let i = 0; i < matches.length; i++) {
-    const match = matches[i];
-    if (match.weight >= proximitySensitiveWeightThreshold.min && match.weight <= proximitySensitiveWeightThreshold.max) {
-      // Check if there are other injection-like patterns nearby (within contextWindow chars)
-      const matchIndex = match.index;
-      const hasNearbySupport = matches.some((other, j) => {
-        if (i === j) return false;
-        return Math.abs(other.index - matchIndex) <= contextWindow;
-      });
-      if (!hasNearbySupport) {
-        // Dampen: reduce weight by 25% (conservative dampening on marginal patterns)
-        match.dampedWeight = match.weight * 0.75;
-      }
-    }
-  }
-
   // Combine: weighted sum of pattern matches + structural score
   // When patterns match, structural is supplementary (boosting)
   // When no patterns match, structural stands on its own
-  let combinedScore = Math.max(...matches.map(m => m.dampedWeight ?? m.weight), 0);
+  let combinedScore = maxWeight;
 
-  // Each additional match adds diminishing weight (using dampedWeight if available)
+  // Each additional match adds diminishing weight
   if (matches.length > 1) {
     const additionalWeight = matches
-      .sort((a, b) => (b.dampedWeight ?? b.weight) - (a.dampedWeight ?? a.weight))
+      .sort((a, b) => b.weight - a.weight)
       .slice(1)
-      .reduce((sum, m, i) => sum + (m.dampedWeight ?? m.weight) * (0.15 / (i + 1)), 0);
+      .reduce((sum, m, i) => sum + m.weight * (0.15 / (i + 1)), 0);
     combinedScore += additionalWeight;
   }
 
