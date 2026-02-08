@@ -724,7 +724,7 @@ const PATTERNS = [
   },
   // Passive: "needs to be bypassed/overridden/disabled"
   {
-    regex: /\b(?:needs?|has|have|must|should)\s+(?:to\s+)?be\s+(?:bypassed|circumvented|overridden|disabled|ignored|removed|hacked|breached)\b/i,
+    regex: /\b(?:needs?|has|have|must|should)\s+(?:to\s+)?be\s+(?:bypassed|circumvented|overridden|disabled|ignored|hacked|breached)\b/i,
     weight: 0.55,
     category: 'safety_bypass',
     id: 'passive_bypass',
@@ -2374,7 +2374,7 @@ const PATTERNS = [
     description: 'Simulating AI conversations to bypass restrictions',
   },
   {
-    regex: /\b(?:continue|proceed|switch|transition)\s+as\s+(?!planned|usual|normal|expected|before|follows|needed|required|necessary)(?:[A-Z]\w+|\w+\s+(?:language\s+)?model|a\s+(?:different|new)\s+(?:AI|assistant|chatbot|model))/i,
+    regex: /\b(?:continue|proceed|switch|transition)\s+as\s+(?!planned|usual|normal|expected|before|follows|needed|required|necessary|long|good|well|much|soon|far|little|part|such|if|though)(?:[A-Z]\w+|\w+\s+(?:language\s+)?model|a\s+(?:different|new)\s+(?:AI|assistant|chatbot|model))/i,
     weight: 0.55,
     category: 'role_hijack',
     id: 'continue_as',
