@@ -3486,15 +3486,35 @@ function structuralScore(text) {
     }
   }
 
+  // Proximity helpers for compound heuristics on long text
+  // When text > 5000 chars, require compound components within 3000 chars of each other
+  // to prevent false positives from coincidental co-occurrence in long articles
+  const _PROX = 3000;
+  const _proxCheck = text.length > 5000;
+  const _allPos = (re) => {
+    const g = new RegExp(re.source, re.flags.replace(/g/g, '') + 'g');
+    const p = []; let m; while ((m = g.exec(text)) !== null) p.push(m.index); return p;
+  };
+  const _near = (posA, posB) => {
+    for (const a of posA) for (const b of posB) if (Math.abs(a - b) <= _PROX) return true;
+    return false;
+  };
+
   // Compound: role assignment + sensitive data request
   // "You are [Bot/Name]" + "give/share/provide ... data/records/credentials" in same text
   // Tightened: require AI-specific role forms, not generic "you are" in business correspondence
-  const hasRoleAssignment = /\b(?:you\s+are\s+(?:a|an|the|my)\s+(?!(?:current|remaining|registered)\b)\w+|you\s+are\s+[A-Z]\w+(?:Bot|AI|GPT|Agent|\d)|imagine\s+you(?:\s+are|['\u2019]re)|pretend\s+(?:you\s+are|to\s+be|you['\u2019]re)|act\s+as|you\s+(?:will\s+)?play(?!\s+(?:a\s+(?:key|important|vital|critical|essential|significant|major|crucial|central|active|pivotal)\s+(?:role|part)|an\s+(?:important|active|essential|integral)\s+(?:role|part)))|as\s+(?:a|the)\s+CEO)\b/i.test(text);
-  const hasSensitiveNoun = /\b(?:medical\s+records?|patient\s+(?:information|data|records?)|credentials?|passwords?|private\s+keys?|access\s+keys?|confidential\s+(?:\w+\s+)?(?:information|data|records?|details?)|sensitive\s+(?:\w+\s+)?(?:information|data|records?|details?)|classified\s+(?:\w+\s+)?(?:information|data)|personal\s+(?:\w+\s+)?(?:information|data|details?|records?|contact\s+information)|user\s+data|login\s+credentials?|secret\s+(?:keys?|data|information)|source\s+code|algorithm\s+details?|security\s+(?:vulnerabilit(?:y|ies)|flaws?|weaknesses?|holes?))\b/i.test(text);
-  const hasExtractionVerb = /\b(?:give|share|provide|show|tell|disclose|reveal|send|hand\s+over|leak|expose|access|retrieve|obtain|get|divulge|know|request(?:ing)?)\s+/i.test(text);
+  const _roleAssignRe = /\b(?:you\s+are\s+(?:a|an|the|my)\s+(?!(?:current|remaining|registered)\b)\w+|you\s+are\s+[A-Z]\w+(?:Bot|AI|GPT|Agent|\d)|imagine\s+you(?:\s+are|['\u2019]re)|pretend\s+(?:you\s+are|to\s+be|you['\u2019]re)|act\s+as|you\s+(?:will\s+)?play(?!\s+(?:a\s+(?:key|important|vital|critical|essential|significant|major|crucial|central|active|pivotal)\s+(?:role|part)|an\s+(?:important|active|essential|integral)\s+(?:role|part)))|as\s+(?:a|the)\s+CEO)\b/i;
+  const hasRoleAssignment = _roleAssignRe.test(text);
+  const _sensitiveNounRe = /\b(?:medical\s+records?|patient\s+(?:information|data|records?)|credentials?|passwords?|private\s+keys?|access\s+keys?|confidential\s+(?:\w+\s+)?(?:information|data|records?|details?)|sensitive\s+(?:\w+\s+)?(?:information|data|records?|details?)|classified\s+(?:\w+\s+)?(?:information|data)|personal\s+(?:\w+\s+)?(?:information|data|details?|records?|contact\s+information)|user\s+data|login\s+credentials?|secret\s+(?:keys?|data|information)|source\s+code|algorithm\s+details?|security\s+(?:vulnerabilit(?:y|ies)|flaws?|weaknesses?|holes?))\b/i;
+  const hasSensitiveNoun = _sensitiveNounRe.test(text);
+  const _extractionVerbRe = /\b(?:give|share|provide|show|tell|disclose|reveal|send|hand\s+over|leak|expose|access|retrieve|obtain|get|divulge|know|request(?:ing)?)\s+/i;
+  const hasExtractionVerb = _extractionVerbRe.test(text);
   if (hasRoleAssignment && hasSensitiveNoun && hasExtractionVerb) {
-    score += 0.50;
-    signals.push({ id: 'role_plus_extraction', score: 0.50, detail: 'Role assignment combined with sensitive data request' });
+    const proxOk = !_proxCheck || _near(_allPos(_roleAssignRe), _allPos(_sensitiveNounRe));
+    if (proxOk) {
+      score += 0.50;
+      signals.push({ id: 'role_plus_extraction', score: 0.50, detail: 'Role assignment combined with sensitive data request' });
+    }
   }
 
   // Compound: threat/coercion + demand for sensitive data
@@ -3514,32 +3534,50 @@ function structuralScore(text) {
 
   // Bot/AI identity in role assignment (e.g. "You are HealthBot3000", "You are Dr. Watson")
   // Note: "AI" checked case-sensitive to avoid matching "ai" in "afraid", "certain", etc.
-  const hasBotName = /\b(?:you\s+are|you['\u2019]re|I\s+am|I['\u2019]m|(?:Hi|Hello|Hey),?\s+)\s*(?:the\s+)?(?:(?:Dr\.?\s+)?\w*(?:bot|Bot|BOT|GPT|LLM|Chat|Master|Guru|Expert|Advisor|Agent)\w*)\b/i.test(text) ||
-    /\b(?:you\s+are|you['\u2019]re|I\s+am|I['\u2019]m)\s+(?:the\s+)?\w*AI\w*\b/.test(text) ||
-    /(?:^|\n)\s*\w*(?:bot|Bot|BOT|GPT|Chat|Master|Guru)\w*[,.]?\s+(?:I\s+know|you\s+(?:have|are|must)|provide|give|share|tell)\b/i.test(text);
-  const hasBotRole = /\b(?:you\s+are|I\s+am|I'm)\s+\w+,?\s+(?:a|an|the)\s+(?:\w+\s+){0,3}(?:chatbot|bot|assistant|expert|consultant|guru|advisor)\b/i.test(text);
+  const _botNameRe1 = /\b(?:you\s+are|you['\u2019]re|I\s+am|I['\u2019]m|(?:Hi|Hello|Hey),?\s+)\s*(?:the\s+)?(?:(?:Dr\.?\s+)?\w*(?:bot|Bot|BOT|GPT|LLM|Chat|Master|Guru|Expert|Advisor|Agent)\w*)\b/i;
+  const _botNameRe2 = /\b(?:you\s+are|you['\u2019]re|I\s+am|I['\u2019]m)\s+(?:the\s+)?\w*AI\w*\b/;
+  const _botNameRe3 = /(?:^|\n)\s*\w*(?:bot|Bot|BOT|GPT|Chat|Master|Guru)\w*[,.]?\s+(?:I\s+know|you\s+(?:have|are|must)|provide|give|share|tell)\b/i;
+  const hasBotName = _botNameRe1.test(text) || _botNameRe2.test(text) || _botNameRe3.test(text);
+  const _botRoleRe = /\b(?:you\s+are|I\s+am|I'm)\s+\w+,?\s+(?:a|an|the)\s+(?:\w+\s+){0,3}(?:chatbot|bot|assistant|expert|consultant|guru|advisor)\b/i;
+  const hasBotRole = _botRoleRe.test(text);
+  const _botPos = () => [..._allPos(_botNameRe1), ..._allPos(_botNameRe2), ..._allPos(_botNameRe3), ..._allPos(_botRoleRe)];
   if ((hasBotName || hasBotRole) && hasSensitiveNoun) {
-    score += 0.55;
-    signals.push({ id: 'bot_identity_extraction', score: 0.55, detail: 'Addresses bot/expert by name + requests sensitive data' });
+    const proxOk = !_proxCheck || _near(_botPos(), _allPos(_sensitiveNounRe));
+    if (proxOk) {
+      score += 0.55;
+      signals.push({ id: 'bot_identity_extraction', score: 0.55, detail: 'Addresses bot/expert by name + requests sensitive data' });
+    }
   } else if ((hasBotName || hasBotRole) && hasExtractionVerb) {
-    score += 0.52;
-    signals.push({ id: 'bot_identity_request', score: 0.52, detail: 'Addresses bot/expert by name + requests data' });
+    const proxOk = !_proxCheck || _near(_botPos(), _allPos(_extractionVerbRe));
+    if (proxOk) {
+      score += 0.52;
+      signals.push({ id: 'bot_identity_request', score: 0.52, detail: 'Addresses bot/expert by name + requests data' });
+    }
   }
 
   // "As a/an [AI/expert/bot]" + sensitive data or override command
   // Note: "AI" checked case-sensitive in compound to avoid "ai" in normal words
-  const hasAsAIRole = /\bas\s+(?:a|an|the)\s+(?:[\w-]+\s+){0,5}(?:language\s+model|chatbot|bot|model|assistant|expert|consultant|guru|researcher|hacker|mastermind)\b/i.test(text) ||
-    /\bAs\s+(?:a|an|the)\s+(?:[\w-]+\s+){0,5}AI\b/.test(text);
+  const _asAIRe1 = /\bas\s+(?:a|an|the)\s+(?:[\w-]+\s+){0,5}(?:language\s+model|chatbot|bot|model|assistant|expert|consultant|guru|researcher|hacker|mastermind)\b/i;
+  const _asAIRe2 = /\bAs\s+(?:a|an|the)\s+(?:[\w-]+\s+){0,5}AI\b/;
+  const hasAsAIRole = _asAIRe1.test(text) || _asAIRe2.test(text);
+  const _asAIPos = () => [..._allPos(_asAIRe1), ..._allPos(_asAIRe2)];
   const hasOverrideCommand = /\b(?:ignore|forget|disregard|override|bypass|skip|must\s+(?:now\s+)?(?:ignore|obey|comply|provide|give|share|delete)|you\s+must\s+(?:obey|comply|give|provide|share|reveal|delete))\b/i.test(text);
+  const _confidentialRe = /\b(?:confidential|sensitive|classified|restricted|private|privileged|secret|insider|internal)\b/i;
   if (hasAsAIRole && hasSensitiveNoun && hasExtractionVerb) {
-    score += 0.55;
-    signals.push({ id: 'as_ai_extraction', score: 0.55, detail: 'Claims AI/expert role + requests sensitive data' });
+    const proxOk = !_proxCheck || _near(_asAIPos(), _allPos(_sensitiveNounRe));
+    if (proxOk) {
+      score += 0.55;
+      signals.push({ id: 'as_ai_extraction', score: 0.55, detail: 'Claims AI/expert role + requests sensitive data' });
+    }
   } else if (hasAsAIRole && hasOverrideCommand) {
     score += 0.52;
     signals.push({ id: 'as_ai_override', score: 0.52, detail: 'Claims AI/expert role + issues override command' });
-  } else if (hasAsAIRole && hasExtractionVerb && /\b(?:confidential|sensitive|classified|restricted|private|privileged|secret|insider|internal)\b/i.test(text)) {
-    score += 0.52;
-    signals.push({ id: 'as_ai_confidential', score: 0.52, detail: 'Claims AI/expert role + requests confidential info' });
+  } else if (hasAsAIRole && hasExtractionVerb && _confidentialRe.test(text)) {
+    const proxOk = !_proxCheck || _near(_asAIPos(), _allPos(_confidentialRe));
+    if (proxOk) {
+      score += 0.52;
+      signals.push({ id: 'as_ai_confidential', score: 0.52, detail: 'Claims AI/expert role + requests confidential info' });
+    }
   } else if (hasAsAIRole && /\btell\s+me\s+everything\b/i.test(text)) {
     score += 0.55;
     signals.push({ id: 'as_ai_tell_everything', score: 0.55, detail: 'Claims AI role + "tell me everything" extraction' });
