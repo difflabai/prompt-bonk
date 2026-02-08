@@ -29,7 +29,7 @@ prompt-bonk focuses on attacks that are **dangerous to agents and systems**:
 
 ## How it works
 
-465 regex patterns organized by attack category, plus 8 structural heuristics. Each pattern has a confidence weight (0-1). The final score combines the highest-weight match with diminishing contributions from additional matches and structural signals.
+464 regex patterns organized by attack category, plus 8 structural heuristics. Each pattern has a confidence weight (0-1). The final score combines the highest-weight match with diminishing contributions from additional matches and structural signals.
 
 **Preprocessing** strips evasion techniques before matching:
 - Null bytes replaced with spaces
