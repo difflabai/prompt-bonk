@@ -968,7 +968,7 @@ const PATTERNS = [
     description: 'Tells model to ignore safety/security measures',
   },
   {
-    regex: /(?:without|no)\s+(?:any\s+)?(?:restrictions?|limitations?(?!s?\s+applied)|filters?(?!s?\s+applied)|censorship|safety(?!\s+net)|guardrails?|boundaries)/i,
+    regex: /(?:without|no)\s+(?:any\s+)?(?:restrictions?|limitations?(?!s?\s+applied)|filters?(?!s?\s+applied)|censorship|safety(?!\s+net)|guardrails?|boundaries|prohibitions?)/i,
     weight: 0.60,
     category: 'safety_bypass',
     id: 'no_restrictions',
