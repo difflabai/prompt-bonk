@@ -29,7 +29,7 @@ prompt-bonk focuses on attacks that are **dangerous to agents and systems**:
 
 ## How it works
 
-464 regex patterns organized by attack category, plus 8 structural heuristics. Each pattern has a confidence weight (0-1). The final score combines the highest-weight match with diminishing contributions from additional matches and structural signals.
+465 regex patterns organized by attack category, plus 8 structural heuristics. Each pattern has a confidence weight (0-1). The final score combines the highest-weight match with diminishing contributions from additional matches and structural signals.
 
 **Preprocessing** strips evasion techniques before matching:
 - Null bytes replaced with spaces
@@ -137,8 +137,8 @@ Datasets where injections contain explicit attack language:
 | [leolee99/NotInject](https://huggingface.co/datasets/leolee99/NotInject) | - | - | - | 100% (0 FP) |
 | [rubend18/Jailbreak-Prompts](https://huggingface.co/datasets/rubend18/ChatGPT-Jailbreak-Prompts) | 100% | 100% | 100% | 100% |
 | [reshabhs/SPML](https://huggingface.co/datasets/reshabhs/SPML_Chatbot_Prompt_Injection) (5k) | 100% | 69.35% | 81.90% | 75.96% |
-| [ProtectAI validation](https://huggingface.co/datasets/protectai/prompt-injection-validation) | 96.38% | 95.69% | 96.03% | 96.59% |
-| [jackhhao/jailbreak-classification](https://huggingface.co/datasets/jackhhao/jailbreak-classification) | 98.31% | 87.54% | 92.61% | 92.88% |
+| [ProtectAI validation](https://huggingface.co/datasets/protectai/prompt-injection-validation) | 96.45% | 95.69% | 96.07% | 96.62% |
+| [jackhhao/jailbreak-classification](https://huggingface.co/datasets/jackhhao/jailbreak-classification) | 98.32% | 87.99% | 92.87% | 93.11% |
 
 ### Indirect injection detection
 
