@@ -198,6 +198,16 @@ async function main() {
     label: 0,
   })));
 
+  // 20. jackhhao/jailbreak-classification — balanced jailbreak/benign (Apache 2.0)
+  console.log('Downloading jackhhao/jailbreak-classification...');
+  raw = await downloadHF('jackhhao/jailbreak-classification', 'train');
+  const jcTest = await downloadHF('jackhhao/jailbreak-classification', 'test');
+  raw = raw.concat(jcTest);
+  writeJsonl(path.join(DATASETS_DIR, 'jailbreak-class.jsonl'), raw.map(r => ({
+    text: r.prompt,
+    label: r.type === 'jailbreak' ? 1 : 0,
+  })));
+
   console.log('\nAll datasets downloaded.');
 }
 
