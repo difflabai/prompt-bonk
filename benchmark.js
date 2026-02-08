@@ -120,6 +120,8 @@ const datasets = [
   { name: 'jailbreak-prompts', file: 'jailbreak-prompts.jsonl' },
   { name: 'spml-5k', file: 'spml-5k.jsonl' },
   { name: 'protectai', file: 'protectai.jsonl' },
+  // Balanced jailbreak/benign classification (Apache 2.0)
+  { name: 'jailbreak-class', file: 'jailbreak-class.jsonl' },
   // In-the-wild jailbreaks + benign (ACM CCS 2024)
   // NOTE: ~40% of "benign" labels contain actual jailbreak language (collected by source channel, not content).
   // High FP rate is expected and reflects labeling methodology, not scanner deficiency.
@@ -137,6 +139,7 @@ const datasets = [
   // { name: 'tensor-trust', file: 'tensor-trust.jsonl' },
   // { name: 'hackaprompt', file: 'hackaprompt.jsonl' },
   // Benign content — real-world FP testing (all label=0)
+  { name: 'llmail-benign', file: 'llmail-benign.jsonl' },
   { name: 'enron-benign', file: 'enron-benign.jsonl' },
   { name: 'openwebtext-benign', file: 'openwebtext-benign.jsonl' },
 ];

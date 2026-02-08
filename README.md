@@ -114,11 +114,12 @@ prompt-bonk --quiet "some text"         # Exit code only (0=safe, 1=blocked)
 
 ### Will it block my content?
 
-Tested against 8,339 real-world benign content samples:
+Tested against 8,542 real-world benign content samples:
 
 | Content Type | Source | Samples | False Blocks | Pass Rate |
 |---|---|---|---|---|
 | Trigger-word prompts | [NotInject](https://huggingface.co/datasets/leolee99/NotInject) | 339 | 0 | 100% |
+| Competition emails (non-attacks) | [llmail-inject FP tests](https://huggingface.co/datasets/microsoft/llmail-inject-challenge) | 203 | 0 | 100% |
 | Corporate emails | [Enron corpus](https://huggingface.co/datasets/corbt/enron-emails) | 5,000 | 14 | 99.72% |
 | Web pages & articles | [OpenWebText](https://huggingface.co/datasets/stas/openwebtext-10k) | 3,000 | 45 | 98.50% |
 
