@@ -3482,6 +3482,54 @@ const PATTERNS = [
     id: 'at_email_send',
     description: 'Send to explicit email address — action injection',
   },
+  // "sales manager [adverb] at/through/via someone@email" — role-targeted email injection
+  {
+    regex: /\bsales\s+manager\s+\w*\s*(?:at|through|via)\s+\S+@\S+/i,
+    weight: 0.55,
+    category: 'action_invocation',
+    id: 'sales_manager_at_email',
+    description: 'Email injection targeting sales manager at specific address',
+  },
+  // "email your/the [role] manager" — direct instruction to email a manager
+  {
+    regex: /\bemail\s+(?:your|the|his|her|my)\s+(?:sales|PR|HR|IT|finance|marketing|operations|legal|account)\s+manager\b/i,
+    weight: 0.55,
+    category: 'action_invocation',
+    id: 'email_role_manager',
+    description: 'Direct instruction to email a specific role manager',
+  },
+  // "send/draft/write email to him/her/them [at] someone@" — pronoun-targeted email send
+  {
+    regex: /\b(?:send|draft|write|compose)\s+(?:an?\s+)?email\s+to\s+(?:him|her|them)\s+(?:at\s+)?\S+@/i,
+    weight: 0.55,
+    category: 'action_invocation',
+    id: 'send_pronoun_email_at',
+    description: 'Send email to pronoun target at specific address',
+  },
+  // "your [sales] manager [to] review" — manager review request in complaint context
+  {
+    regex: /\byour\s+(?:sales\s+)?manager\s+(?:to\s+)?review\b/i,
+    weight: 0.55,
+    category: 'action_invocation',
+    id: 'manager_review_request',
+    description: 'Request for manager to review — complaint injection pattern',
+  },
+  // "urgent email to the [role]" — urgency + role-targeted email
+  {
+    regex: /\burgent\s+email\s+to\s+(?:the\s+)?(?:sales|account|project|team|service)\s+\w+/i,
+    weight: 0.55,
+    category: 'action_invocation',
+    id: 'urgent_email_to_role',
+    description: 'Urgent email to role — social engineering injection',
+  },
+  // "contact your/the manager" + email address nearby — manager contact with email
+  {
+    regex: /\bcontact\s+(?:your|the|his|her)\s+(?:sales\s+)?manager\b.{0,80}\S+@\S+/i,
+    weight: 0.55,
+    category: 'action_invocation',
+    id: 'contact_manager_email',
+    description: 'Contact manager with email address — injection pattern',
+  },
 
   // "// Subject:" or "// Body:" or "// end body" — comment-style fake message structure
   {
