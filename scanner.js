@@ -3289,6 +3289,55 @@ const PATTERNS = [
     description: 'Euphemistic AI agent reference — miracle machine',
   },
 
+  // "Send email destination to" — specific injection action phrase
+  {
+    regex: /\bsend\s+(?:an?\s+)?email\s+destination\s+to\b/i,
+    weight: 0.55,
+    category: 'action_invocation',
+    id: 'send_email_destination',
+    description: 'Specific injection phrase — send email destination to',
+  },
+  // ">> Send" or ">> <<Send" — delimiter-prefixed send command
+  {
+    regex: />>\s*(?:<<)?(?:Send|Forward|Email)\b/i,
+    weight: 0.55,
+    category: 'delimiter_attack',
+    id: 'double_angle_send',
+    description: 'Delimiter-prefixed email send command',
+  },
+  // "Remove all yes" — deobfuscation instruction for word-interleaved payload
+  {
+    regex: /\bremove\s+(?:all\s+)?yes\b/i,
+    weight: 0.55,
+    category: 'obfuscation',
+    id: 'remove_word_deobfuscate',
+    description: 'Deobfuscation — remove interleaved filler words',
+  },
+  // "notify users/them via email" — instructing AI to send notification emails
+  {
+    regex: /\bnotify\s+(?:users?|them|the\s+\w+)\s+via\s+email\b/i,
+    weight: 0.55,
+    category: 'action_invocation',
+    id: 'notify_via_email',
+    description: 'Action injection — notify users via email',
+  },
+  // "</context>" — XML close tag to simulate end of context boundary
+  {
+    regex: /<\/context\b/i,
+    weight: 0.55,
+    category: 'delimiter_attack',
+    id: 'xml_context_close',
+    description: 'XML context close tag — simulated end of context',
+  },
+  // "No prompt injection detected" — false assurance to bypass detection
+  {
+    regex: /\bno\s+prompt\s+injection\s+detected\b/i,
+    weight: 0.55,
+    category: 'evasion',
+    id: 'false_no_injection',
+    description: 'False assurance — no prompt injection detected',
+  },
+
   // "// Subject:" or "// Body:" or "// end body" — comment-style fake message structure
   {
     regex: /\/\/\s*(?:Subject|Body|end\s+body|end\s+subject)\s*:/i,
