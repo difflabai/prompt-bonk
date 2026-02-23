@@ -120,9 +120,12 @@ const datasets = [
   { name: 'jailbreak-prompts', file: 'jailbreak-prompts.jsonl' },
   { name: 'spml-5k', file: 'spml-5k.jsonl' },
   { name: 'protectai', file: 'protectai.jsonl' },
+  { name: 'gandalf-ignore', file: 'gandalf-ignore.jsonl' },
   // Indirect injection — attacks embedded in real-world content
   { name: 'browsesafe-test', file: 'browsesafe-test.jsonl' },
   { name: 'bipia', file: 'bipia.jsonl' },
+  { name: 'open-pi', file: 'open-prompt-injection.jsonl' },
+  { name: 'xxz224', file: 'xxz224.jsonl' },
   // Semantic attacks — look like normal text, unsolvable with regex
   { name: 'injecagent', file: 'injecagent.jsonl' },
   { name: 'agentharm', file: 'agentharm.jsonl' },

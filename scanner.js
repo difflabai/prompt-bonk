@@ -24,6 +24,22 @@ const PATTERNS = [
     id: 'ignore_above',
     description: 'Tells model to ignore content above',
   },
+  // "ignore [previous] instructions" with common misspellings (istructions, insturctions, indtructions)
+  {
+    regex: /\bignore\s+(?:all\s+|the\s+)?(?:previous\s+|prior\s+)?(?:i(?:n?)structions?|insturctions?|indtructions?)\b/i,
+    weight: 0.88,
+    category: 'instruction_override',
+    id: 'ignore_instructions_typo',
+    description: 'Ignore instructions with common misspellings',
+  },
+  // "discard/abandon instructions"
+  {
+    regex: /\b(?:discard|abandon|drop|ditch|throw\s+away)\s+(?:all\s+)?(?:the\s+|your\s+|my\s+)?(?:previous\s+|prior\s+)?instructions?\b/i,
+    weight: 0.65,
+    category: 'instruction_override',
+    id: 'discard_instructions',
+    description: 'Tells model to discard its instructions',
+  },
   {
     regex: /(?<!\bnot\s+(?:to\s+)?)disregard(?:ing)?\s+(all\s+|the\s+|any\s+|my\s+|our\s+|those\s+|these\s+)?(previous|previously|prior|above|below|earlier|preceding|last|next|following|further|standard|usual|initial|original|formerly|originally|initially)?\s*(?:(?:\d+|few|several)\s+)?(?:\w+\s+)?(instructions?|prompts?|rules?|guidelines?|directions?|directives?|commands?|safety\s+protocols?|privacy\s+(?:policies?|norms?|concerns?)|policies?|protocols?|restrictions?|messages?|inputs?|constraints?|limitations?|formalities|articles?|documents?|settings?|sentences?|things|texts?|conversations?|expressions?|advisories?|techniques?|preferences?)/i,
     weight: 0.90,
@@ -44,6 +60,14 @@ const PATTERNS = [
     category: 'instruction_override',
     id: 'forget_guidelines',
     description: 'Tells model to forget its guidelines/restrictions',
+  },
+  // "forget [all] [your] security/safety measures"
+  {
+    regex: /\bforget\s+(?:all\s+)?(?:your\s+|the\s+)?(?:security|safety|protection|defense|ancient)\s+\w+/i,
+    weight: 0.55,
+    category: 'instruction_override',
+    id: 'forget_security_measures',
+    description: 'Tells model to forget security/safety measures',
   },
   {
     regex: /forget\s+(about\s+)?(all\s+)?(the\s+|my\s+|our\s+|any\s+|those\s+|these\s+)?(previous|previously|prior|above|earlier|preceding|last|further|initial|original|formerly|originally|initially)\s+(?:(?:\d+|few|several)\s+)?(?:\w+\s+)?(instructions?|tasks?|orders?|assignments?|information|context|conversations?|guidelines?|prompts?|rules?|messages?|settings?|sentences?|things|inputs?|texts?|directions?|expressions?|techniques?|preferences?|statements?|requests?|commands?|directives?)/i,
@@ -153,6 +177,38 @@ const PATTERNS = [
     category: 'prompt_extraction',
     id: 'reveal_instructions',
     description: 'Attempts to reveal/expose hidden instructions',
+  },
+  // "what are/is/were [your/the/previous] instructions?"
+  {
+    regex: /\bwhat\s+(?:are|is|were|was)\s+(?:the\s+|your\s+|all\s+)?(?:previous\s+|prior\s+|original\s+|initial\s+)?instructions?\b/i,
+    weight: 0.65,
+    category: 'prompt_extraction',
+    id: 'what_are_instructions',
+    description: 'Asks what the instructions are',
+  },
+  // "quote/repeat/duplicate [your] instructions"
+  {
+    regex: /\b(?:quote|repeat|duplicate|copy|recite|reiterate)\s+(?:all\s+|the\s+|your\s+|my\s+)?(?:\w+\s+)?instructions?\b/i,
+    weight: 0.65,
+    category: 'prompt_extraction',
+    id: 'repeat_quote_instructions',
+    description: 'Asks to repeat or quote instructions',
+  },
+  // "tell me [the] instructions you were given/provided"
+  {
+    regex: /\b(?:what|tell|show|give|repeat|quote|list|print|display|describe|duplicate)\s+(?:me\s+)?(?:the\s+|your\s+|my\s+|all\s+)?(?:\w+\s+)?instructions?\s+(?:you\s+(?:were|have|got|had|received|been)|given|provided|I\s+gave)/i,
+    weight: 0.65,
+    category: 'prompt_extraction',
+    id: 'reveal_instructions_given',
+    description: 'Asks about instructions that were given to the model',
+  },
+  // "instructions given/provided to you"
+  {
+    regex: /\binstructions?\s+(?:that\s+)?(?:were\s+|was\s+)?(?:given|provided|sent|assigned|issued)\s+(?:to\s+)?(?:you|me|us)/i,
+    weight: 0.65,
+    category: 'prompt_extraction',
+    id: 'instructions_given_to',
+    description: 'References instructions given to the model',
   },
   // "ignore the [noun] written/stated/mentioned above/below" — post-nominal qualifier
   {

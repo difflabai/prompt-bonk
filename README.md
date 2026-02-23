@@ -29,7 +29,7 @@ prompt-bonk focuses on attacks that are **dangerous to agents and systems**:
 
 ## How it works
 
-418 regex patterns organized by attack category, plus 8 structural heuristics. Each pattern has a confidence weight (0-1). The final score combines the highest-weight match with diminishing contributions from additional matches and structural signals.
+425 regex patterns organized by attack category, plus 8 structural heuristics. Each pattern has a confidence weight (0-1). The final score combines the highest-weight match with diminishing contributions from additional matches and structural signals.
 
 **Preprocessing** strips evasion techniques before matching:
 - Null bytes replaced with spaces
@@ -123,8 +123,9 @@ Datasets where injections contain explicit attack language:
 | [xTRam1/safe-guard](https://huggingface.co/datasets/xTRam1/safe-guard-prompt-injection) (test) | 100% | 98.31% | 99.15% | 99.47% |
 | [leolee99/NotInject](https://huggingface.co/datasets/leolee99/NotInject) | - | - | - | 100% (0 FP) |
 | [rubend18/Jailbreak-Prompts](https://huggingface.co/datasets/rubend18/ChatGPT-Jailbreak-Prompts) | 100% | 100% | 100% | 100% |
-| [reshabhs/SPML](https://huggingface.co/datasets/reshabhs/SPML_Chatbot_Prompt_Injection) (5k) | 100% | 69.71% | 82.15% | 76.24% |
+| [reshabhs/SPML](https://huggingface.co/datasets/reshabhs/SPML_Chatbot_Prompt_Injection) (5k) | 100% | 69.99% | 82.35% | 76.46% |
 | [ProtectAI validation](https://huggingface.co/datasets/protectai/prompt-injection-validation) | 96.24% | 95.69% | 95.97% | 96.53% |
+| [Lakera/gandalf_ignore](https://huggingface.co/datasets/Lakera/gandalf_ignore_instructions) | 100% | 84.04% | 91.33% | 84.04% |
 
 ### Indirect injection detection
 
@@ -133,9 +134,11 @@ Injections embedded in real-world content that agents process (HTML pages, docum
 | Dataset | Precision | Recall | F1 | Accuracy |
 |---|---|---|---|---|
 | [BrowseSafe-Bench](https://huggingface.co/datasets/perplexity-ai/browsesafe-bench) (test) | 94.68% | 67.38% | 78.73% | 81.96% |
-| [BIPIA](https://github.com/microsoft/BIPIA) | 100% | 76% | 86.36% | 76% |
-| [InjecAgent](https://github.com/uiuc-kang-lab/InjecAgent) | 100% | 53.23% | 69.47% | 63.29% |
-| [CyberSecEval3](https://huggingface.co/datasets/facebook/cyberseceval3-visual-prompt-injection) | 100% | 50% | 66.67% | 50% |
+| [BIPIA](https://github.com/microsoft/BIPIA) | 100% | 97% | 98.48% | 97.6% |
+| [open-prompt-injection](https://huggingface.co/datasets/guychuk/open-prompt-injection) (10k) | 100% | 48.22% | 65.07% | 74.11% |
+| [xxz224](https://huggingface.co/datasets/xxz224/prompt-injection-attack-dataset) | 100% | 40.66% | 57.81% | 40.66% |
+| [InjecAgent](https://github.com/uiuc-kang-lab/InjecAgent) | 100% | 53.32% | 69.55% | 53.32% |
+| [CyberSecEval3](https://huggingface.co/datasets/facebook/cyberseceval3-visual-prompt-injection) | 100% | 50.2% | 66.84% | 50.2% |
 
 ### Semantic attacks (the regex ceiling)
 
@@ -143,17 +146,19 @@ These datasets contain attacks that look identical to normal text — "Please tr
 
 | Dataset | Recall | Why regex can't help |
 |---|---|---|
-| [AgentHarm](https://huggingface.co/datasets/ai-safety-institute/AgentHarm) | 2.88% | 97% of samples are harmful intent, not injection — no attack patterns to match |
-| CyberSecEval3 remaining FN | - | 462/504 missed samples are image-based injections with no scannable text |
+| [AgentHarm](https://huggingface.co/datasets/ai-safety-institute/AgentHarm) | 2.27% | 97% of samples are harmful intent, not injection — no attack patterns to match |
+| CyberSecEval3 remaining FN | - | 498/1000 missed are "never discuss X" policy violations with indirect questions |
 | SPML remaining FN | - | 97% of missed samples are purely semantic rule violations |
-| InjecAgent remaining FN | - | Semantic action requests ("unlock my door") indistinguishable from benign |
+| InjecAgent remaining FN | - | 492/1054 FN all score 0 — semantic tool-use injection |
+| xxz224 naive/escape/fake_comp | ~1% | Task appended without injection markers — indistinguishable from benign |
+| open-pi naive attacks | ~0% | Different task appended to input, no explicit injection language |
 
 **Performance:** 100 bytes: 0.08ms | 1KB: 0.25ms | 10KB: 2ms | 100KB: 12ms
 
 ### Running benchmarks
 
 ```bash
-node download-datasets.js   # Download all datasets from HuggingFace
+node download-parquet.js     # Download all datasets from HuggingFace
 node benchmark.js            # Run full benchmark suite
 node test.js                 # Run unit tests (86 tests)
 ```
