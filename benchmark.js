@@ -13,8 +13,15 @@ const DATASETS_DIR = path.join(import.meta.dirname, 'datasets');
 
 function loadJsonl(filename) {
   const filepath = path.join(DATASETS_DIR, filename);
-  const lines = readFileSync(filepath, 'utf8').trim().split('\n');
-  return lines.map(line => JSON.parse(line));
+  try {
+    const content = readFileSync(filepath, 'utf8').trim();
+    if (!content) return [];
+    const lines = content.split('\n').filter(l => l.trim());
+    return lines.map(line => JSON.parse(line));
+  } catch (e) {
+    if (e.code === 'ENOENT') return [];
+    throw e;
+  }
 }
 
 function benchmark(datasetName, rows, threshold = 0.50) {
@@ -137,6 +144,10 @@ const results = [];
 for (const ds of datasets) {
   const rows = loadJsonl(ds.file);
   console.log(`  ${ds.name}: ${rows.length} rows loaded`);
+  if (rows.length === 0) {
+    console.log(`  (skipping — empty dataset)`);
+    continue;
+  }
 
   const r = benchmark(ds.name, rows);
   results.push(r);
