@@ -24,12 +24,76 @@ const PATTERNS = [
     id: 'ignore_above',
     description: 'Tells model to ignore content above',
   },
+  // "ignore previous and current/new/future instructions" — 2-word gap between temporal and target
+  {
+    regex: /\bignore\s+(?:all\s+)?(?:previous|prior|earlier)\s+(?:and\s+)?(?:current\s+|new\s+|future\s+|other\s+)?(?:instructions?|rules?|guidelines?|commands?|directives?|orders?|prompts?)\b/i,
+    weight: 0.92,
+    category: 'instruction_override',
+    id: 'ignore_previous_2word_gap',
+    description: 'Ignore previous and current/new instructions',
+  },
+  // "IGNORE PREV INSTRUCTIONS" — abbreviation of "previous"
+  {
+    regex: /\bignore\s+prev\s+(?:instructions?|prompts?|rules?|guidelines?|commands?)\b/i,
+    weight: 0.88,
+    category: 'instruction_override',
+    id: 'ignore_prev_abbrev',
+    description: 'Ignore prev (abbreviated previous) instructions',
+  },
+  // "ignore [previous] instructions" with common misspellings (istructions, insturctions, indtructions)
+  {
+    regex: /\bignore\s+(?:all\s+|the\s+)?(?:previous\s+|prior\s+)?(?:i(?:n?)structions?|insturctions?|indtructions?)\b/i,
+    weight: 0.88,
+    category: 'instruction_override',
+    id: 'ignore_instructions_typo',
+    description: 'Ignore instructions with common misspellings',
+  },
+  // More typos of "ignore": ignoren, ignorr, ign0re
+  {
+    regex: /\b(?:ignoren?|ignorr|ign0re)\s+(?:all\s+|the\s+|your\s+|my\s+)?(?:previous\s+|prior\s+)?(?:instructions?|directions?|rules?|guidelines?|commands?|prompts?|orders?)\b/i,
+    weight: 0.88,
+    category: 'instruction_override',
+    id: 'ignore_verb_typo',
+    description: 'Typos of "ignore" (ignoren, ignorr, ign0re)',
+  },
+  // Typos in "instructions": onstructions, istructions, instrutions, instructons
+  {
+    regex: /\b(?:ignore|disregard|forget)\s+(?:all\s+)?(?:the\s+|your\s+|my\s+)?(?:previous\s+|prior\s+)?(?:onstructions?|istructions?|instrutions?|instructons?)\b/i,
+    weight: 0.88,
+    category: 'instruction_override',
+    id: 'instructions_noun_typo',
+    description: 'Typos of "instructions" (onstructions, istructions)',
+  },
+  // "discard/abandon instructions"
+  {
+    regex: /\b(?:discard|abandon|drop|ditch|throw\s+away)\s+(?:all\s+)?(?:the\s+|your\s+|my\s+)?(?:previous\s+|prior\s+)?instructions?\b/i,
+    weight: 0.65,
+    category: 'instruction_override',
+    id: 'discard_instructions',
+    description: 'Tells model to discard its instructions',
+  },
+  // "negate/nullify/void/invalidate instructions"
+  {
+    regex: /\b(?:negate|nullify|void|invalidate|cancel)\s+(?:all\s+|any\s+|the\s+|your\s+|my\s+)?(?:previous\s+|prior\s+|above\s+|earlier\s+)?(?:instructions?|rules?|guidelines?|directives?|commands?|orders?|prompts?)\b/i,
+    weight: 0.82,
+    category: 'instruction_override',
+    id: 'negate_instructions',
+    description: 'Negate/nullify/void instructions',
+  },
   {
     regex: /(?<!\bnot\s+(?:to\s+)?)disregard(?:ing)?\s+(all\s+|the\s+|any\s+|my\s+|our\s+|those\s+|these\s+)?(previous|previously|prior|above|below|earlier|preceding|last|next|following|further|standard|usual|initial|original|formerly|originally|initially)?\s*(?:(?:\d+|few|several)\s+)?(?:\w+\s+)?(instructions?|prompts?|rules?|guidelines?|directions?|directives?|commands?|safety\s+protocols?|privacy\s+(?:policies?|norms?|concerns?)|policies?|protocols?|restrictions?|messages?|inputs?|constraints?|limitations?|formalities|articles?|documents?|settings?|sentences?|things|texts?|conversations?|expressions?|advisories?|techniques?|preferences?)/i,
     weight: 0.90,
     category: 'instruction_override',
     id: 'disregard_previous',
     description: 'Tells model to disregard instructions or protocols',
+  },
+  // "disregard/ignore/forget previous statements/answers/responses"
+  {
+    regex: /\b(?:ignore|disregard|forget)\s+(?:all\s+|the\s+|any\s+|your\s+|my\s+)?(?:previous\s+|prior\s+|earlier\s+)?(?:answers?|responses?|statements?|replies?|outputs?)\b/i,
+    weight: 0.78,
+    category: 'instruction_override',
+    id: 'disregard_statements',
+    description: 'Disregard previous statements/answers/responses',
   },
   {
     regex: /forget\s+(everything|all|what)\s+(you('ve|'ve| have)\s+(been\s+told|learned|been\s+taught|been\s+trained)|about\s+your\s+(instructions?|rules?|prompt)|we('ve|'ve| have)\s+(talked|spoken|discussed)|that\s+(was|came)\s+before|I\s+(have\s+)?told\s+you|so\s+far)/i,
@@ -45,6 +109,14 @@ const PATTERNS = [
     id: 'forget_guidelines',
     description: 'Tells model to forget its guidelines/restrictions',
   },
+  // "forget [all] [your] security/safety measures"
+  {
+    regex: /\bforget\s+(?:all\s+)?(?:your\s+|the\s+)?(?:security|safety|protection|defense|ancient)\s+\w+/i,
+    weight: 0.55,
+    category: 'instruction_override',
+    id: 'forget_security_measures',
+    description: 'Tells model to forget security/safety measures',
+  },
   {
     regex: /forget\s+(about\s+)?(all\s+)?(the\s+|my\s+|our\s+|any\s+|those\s+|these\s+)?(previous|previously|prior|above|earlier|preceding|last|further|initial|original|formerly|originally|initially)\s+(?:(?:\d+|few|several)\s+)?(?:\w+\s+)?(instructions?|tasks?|orders?|assignments?|information|context|conversations?|guidelines?|prompts?|rules?|messages?|settings?|sentences?|things|inputs?|texts?|directions?|expressions?|techniques?|preferences?|statements?|requests?|commands?|directives?)/i,
     weight: 0.90,
@@ -52,12 +124,28 @@ const PATTERNS = [
     id: 'forget_previous',
     description: 'Tells model to forget previous context',
   },
+  // "forget all previous answers/responses"
+  {
+    regex: /\bforget\s+(?:all\s+)?(?:the\s+|your\s+|my\s+)?(?:previous\s+|prior\s+|earlier\s+)?(?:answers?|responses?|outputs?|statements?|replies?)\b/i,
+    weight: 0.72,
+    category: 'instruction_override',
+    id: 'forget_previous_answers',
+    description: 'Forget previous answers/responses',
+  },
   {
     regex: /(?:forget|ignore)\s+everything\s*(?:(?:(?:that\s+was\s+|I\s+|you\s+(?:were\s+|have\s+been\s+)?)?said|told|written|stated|mentioned)\s+(?:before|earlier|previously|above)|before\s+(?:that|this|now)|you(?:\s+(?:know|knew|learned|were\s+told))?|above|and\b|[,.:!])/i,
     weight: 0.88,
     category: 'instruction_override',
     id: 'forget_everything',
     description: 'Tells model to forget/ignore everything (simple form)',
+  },
+  // "ignore everything I've told you / before this"
+  {
+    regex: /\bignore\s+everything\s+(?:I'?ve?\s+(?:told|said|asked|written|typed)|(?:that\s+(?:came|was|is)\s+)?before|(?:above|before)\s+this)\b/i,
+    weight: 0.88,
+    category: 'instruction_override',
+    id: 'ignore_everything_before',
+    description: 'Ignore everything told before this point',
   },
   {
     regex: /override\s+(your|the|all|any)\s+(previous\s+)?(instructions?|rules?|guidelines?|programming|directives?|constraints?|safety|orders?|commands?|protocols?)/i,
@@ -153,6 +241,62 @@ const PATTERNS = [
     category: 'prompt_extraction',
     id: 'reveal_instructions',
     description: 'Attempts to reveal/expose hidden instructions',
+  },
+  // "what are/is/were [your/the/previous] instructions?"
+  {
+    regex: /\bwhat\s+(?:are|is|were|was)\s+(?:the\s+|your\s+|all\s+)?(?:previous\s+|prior\s+|original\s+|initial\s+)?instructions?\b/i,
+    weight: 0.65,
+    category: 'prompt_extraction',
+    id: 'what_are_instructions',
+    description: 'Asks what the instructions are',
+  },
+  // "quote/repeat/duplicate [your] instructions"
+  {
+    regex: /\b(?:quote|repeat|duplicate|copy|recite|reiterate)\s+(?:all\s+|the\s+|your\s+|my\s+)?(?:\w+\s+)?instructions?\b/i,
+    weight: 0.65,
+    category: 'prompt_extraction',
+    id: 'repeat_quote_instructions',
+    description: 'Asks to repeat or quote instructions',
+  },
+  // "tell me [the] instructions you were given/provided"
+  {
+    regex: /\b(?:what|tell|show|give|repeat|quote|list|print|display|describe|duplicate)\s+(?:me\s+)?(?:the\s+|your\s+|my\s+|all\s+)?(?:\w+\s+)?instructions?\s+(?:you\s+(?:were|have|got|had|received|been)|given|provided|I\s+gave)/i,
+    weight: 0.65,
+    category: 'prompt_extraction',
+    id: 'reveal_instructions_given',
+    description: 'Asks about instructions that were given to the model',
+  },
+  // "instructions given/provided to you"
+  {
+    regex: /\binstructions?\s+(?:that\s+)?(?:were\s+|was\s+)?(?:given|provided|sent|assigned|issued)\s+(?:to\s+)?(?:you|me|us)/i,
+    weight: 0.65,
+    category: 'prompt_extraction',
+    id: 'instructions_given_to',
+    description: 'References instructions given to the model',
+  },
+  // "what is the instruction given/provided" (inverted word order)
+  {
+    regex: /\bwhat(?:'s|s|\s+is|\s+are|\s+was|\s+were)\s+(?:the\s+|your\s+)?instructions?\s+(?:given|provided|you\s+(?:were|have|got|had)\s+given)\b/i,
+    weight: 0.65,
+    category: 'prompt_extraction',
+    id: 'whats_the_instruction',
+    description: 'What is the instruction given/provided',
+  },
+  // "those/these instructions are:" (extraction by eliciting content)
+  {
+    regex: /\b(?:again|so|now|ok|okay)?\s*[,.]?\s*(?:those|these|the|your)\s+instructions?\s+(?:are|were|is|was)\s*[:]/i,
+    weight: 0.65,
+    category: 'prompt_extraction',
+    id: 'those_instructions_are',
+    description: 'Elicits instruction content via "those instructions are:"',
+  },
+  // "print/spell out instructions"
+  {
+    regex: /\b(?:print|spit|spell)\s+(?:out\s+)?(?:all\s+|the\s+|your\s+|my\s+)?(?:previous\s+|prior\s+|original\s+|initial\s+|given\s+)?instructions?\b/i,
+    weight: 0.65,
+    category: 'prompt_extraction',
+    id: 'print_out_instructions',
+    description: 'Print/spell out instructions',
   },
   // "ignore the [noun] written/stated/mentioned above/below" — post-nominal qualifier
   {
@@ -673,6 +817,14 @@ const PATTERNS = [
     category: 'instruction_override',
     id: 'forget_about_everything',
     description: 'Tells model to forget about everything',
+  },
+  // "all [previous] instructions are false/wrong/void"
+  {
+    regex: /\ball\s*(?:previous\s+|prior\s+)?instructions?\s+(?:are|were)\s+(?:false|wrong|incorrect|lies?|invalid|void|null|fake|bogus)\b/i,
+    weight: 0.82,
+    category: 'instruction_override',
+    id: 'instructions_are_false',
+    description: 'Claims all instructions are false/wrong/void',
   },
   // "change/replace your instructions to..."
   {
@@ -1480,6 +1632,14 @@ const PATTERNS = [
     category: 'coercion',
     id: 'authority_claim',
     description: 'Claims authority then requests privileged action',
+  },
+  // "as the administrator, I command/order/instruct..."
+  {
+    regex: /\bas\s+(?:the\s+|an?\s+)?(?:admin(?:istrator)?|root|superuser|system\s+admin(?:istrator)?)\b[^.]{0,30}\b(?:I\s+)?(?:command|order|instruct|direct|authorize|demand|require)\b/i,
+    weight: 0.78,
+    category: 'coercion',
+    id: 'admin_i_command',
+    description: 'Claims admin role and issues command',
   },
   {
     regex: /(?:if\s+you\s+(?:do\s+not|don't|refuse\s+to|fail\s+to)\s+(?:comply|cooperate|provide|give\s+(?:me|us)|share|disclose|divulge|obey))/i,
@@ -2854,6 +3014,14 @@ const PATTERNS = [
     category: 'instruction_override',
     id: 'pretend_no_rules',
     description: 'Asks to pretend rules do not exist or have been forgotten',
+  },
+  // "act like you don't have instructions/rules"
+  {
+    regex: /\bact\s+(?:like|as\s+if|as\s+though)\s+(?:you\s+)?(?:don'?t|do\s+not|have\s+no|don'?t\s+have)\s+(?:any\s+)?(?:these\s+)?(?:instructions?|rules?|guidelines?|restrictions?|prompts?|programming)\b/i,
+    weight: 0.78,
+    category: 'instruction_override',
+    id: 'act_like_no_instructions',
+    description: 'Act like you have no instructions/rules',
   },
   // "legality/safety/ethics is a non-issue" / "security doesn't matter" — dismissing safety constraints
   {
