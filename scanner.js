@@ -133,7 +133,7 @@ const PATTERNS = [
     description: 'Forget previous answers/responses',
   },
   {
-    regex: /(?:forget|ignore)\s+everything\s*(?:(?:(?:that\s+was\s+|I\s+|you\s+(?:were\s+|have\s+been\s+)?)?said|told|written|stated|mentioned)\s+(?:before|earlier|previously|above)|before\s+(?:that|this|now)|you(?:\s+(?:know|knew|learned|were\s+told))?|above|and\b|[,.:!])/i,
+    regex: /(?<!\byou\s)(?:forget|ignore)\s+everything\s*(?:(?:(?:that\s+was\s+|I\s+|you\s+(?:were\s+|have\s+been\s+)?)?said|told|written|stated|mentioned)\s+(?:before|earlier|previously|above)|before\s+(?:that|this|now)|you(?:\s+(?:know|knew|learned|were\s+told))?|above|and\b|[,.:!])/i,
     weight: 0.88,
     category: 'instruction_override',
     id: 'forget_everything',
@@ -2626,7 +2626,7 @@ const PATTERNS = [
 
   {
     regex: /\b(?:can\s+)?does?\s+anything\s+now\b/i,
-    weight: 0.72,
+    weight: 0.49,
     category: 'safety_bypass',
     id: 'do_anything_now',
     description: 'DAN-style "do anything now" activation',
