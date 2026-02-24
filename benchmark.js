@@ -141,6 +141,12 @@ const datasets = [
   { name: 'bipia', file: 'bipia.jsonl' },
   { name: 'open-pi', file: 'open-prompt-injection.jsonl' },
   { name: 'xxz224', file: 'xxz224.jsonl' },
+  // Mixed injection + content safety — adversarial benign samples designed to fool detectors
+  { name: 'jayavibhav', file: 'jayavibhav.jsonl' },
+  // Indirect injection in summarization context (very subtle, mostly semantic)
+  { name: 'gandalf-summarization', file: 'gandalf-summarization.jsonl' },
+  // Multilingual injections (PT, DE, FR, ES, IT, RO) — tests non-English coverage
+  { name: 'yanismiraoui', file: 'yanismiraoui-multilingual.jsonl' },
   // Semantic attacks — look like normal text, unsolvable with regex
   { name: 'injecagent', file: 'injecagent.jsonl' },
   { name: 'agentharm', file: 'agentharm.jsonl' },

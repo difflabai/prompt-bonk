@@ -1940,6 +1940,22 @@ const PATTERNS = [
     id: 'forget_everything_de',
     description: 'German: forget everything',
   },
+  // German: "umgehe dein Standard-Protokoll" (bypass standard protocol)
+  {
+    regex: /\b(?:umgeh[est]?|umgehen|überspring[est]?|überspringen|aushebel[nt]?|außer\s+Kraft)\s+(?:d(?:ein|as|ie)\s+)?(?:Standard|üblich|normal|ethisch)[a-zäöüß]*\s*(?:Protokoll|Antwort|Beschränkung|Einschränkung|Regel|Richtlinie|Anweisung)/i,
+    weight: 0.82,
+    category: 'instruction_override',
+    id: 'bypass_de',
+    description: 'German: bypass standard protocol/rules',
+  },
+  // German: "zeige/offenbare die [geheime] Anweisung" (reveal the instruction)
+  {
+    regex: /\b(?:zeig[est]?|offenbar[est]?|enthüll[est]?|verrat[est]?)\s+(?:mir\s+)?(?:d(?:ie|as|eine?)\s+)?(?:geheim[ea]?\s+|zentral[ea]?\s+|ursprünglich[ea]?\s+|original[ea]?\s+)?(?:Anweisung|Instruktion|Prompt|Befehl|Direktive|Richtlinie)/i,
+    weight: 0.72,
+    category: 'prompt_extraction',
+    id: 'reveal_instruction_de',
+    description: 'German: reveal the instruction/prompt',
+  },
   // German: "Abweichend zu/von vorherigen Instruktionen" (deviating from previous instructions)
   {
     regex: /(?:abweichend|entgegen|ungeachtet|unabh[aä]ngig)\s+(?:zu|von|der|den)\s+(?:vorherigen?|bisherigen?|fr[üu]heren?|obigen?)?\s*(?:Instruktionen|Anweisungen|Regeln|Vorgaben)\b/i,
@@ -2152,6 +2168,22 @@ const PATTERNS = [
     id: 'forget_everything_es',
     description: 'Spanish: forget everything',
   },
+  // Spanish: "anula/desactiva/viola tus restricciones/directrices"
+  {
+    regex: /\b(?:anula(?:r)?|desactiva(?:r)?|desenmascara(?:r)?|desobedec[ea](?:r)?|viola(?:r)?)\s+(?:tus?\s+|l[ao]s?\s+)?(?:restriccion|restricciones|directrices|normas?|reglas?|parámetros?|instrucciones?|protocolos?|limitaciones?)\b/i,
+    weight: 0.78,
+    category: 'instruction_override',
+    id: 'override_es',
+    description: 'Spanish: override/disable restrictions',
+  },
+  // Spanish: "revela/muestra el prompt/instrucciones"
+  {
+    regex: /\b(?:revela(?:r)?|expón?(?:er)?|muestra(?:r)?|desvela(?:r)?|desenmascara(?:r)?)\s+(?:el\s+|la\s+|los?\s+|las?\s+)?(?:prompt|instrucción|instrucciones|directriz|directrices|indicación)\b/i,
+    weight: 0.72,
+    category: 'prompt_extraction',
+    id: 'reveal_prompt_es',
+    description: 'Spanish: reveal the prompt/instructions',
+  },
   // Croatian/Serbian: "zaboravi sve instrukcije" (forget all instructions)
   {
     regex: /zaboravi\s+(?:sve\s+)?(?:instrukcije|upute|pravila)\b/i,
@@ -2167,6 +2199,54 @@ const PATTERNS = [
     category: 'instruction_override',
     id: 'forget_instructions_ru',
     description: 'Russian: forget all instructions',
+  },
+  // Portuguese: "ignorar/desconsiderar as regras/restrições"
+  {
+    regex: /\b(?:ignor[ae]r?|desconsider[ae]r?|descart[ae]r?)\s+(?:tod[ao]s?\s+)?(?:[ao]s?\s+)?(?:regras?|restrições?|limitações?|políticas?|normas?|protocolos?)\b/i,
+    weight: 0.78,
+    category: 'instruction_override',
+    id: 'ignore_rules_pt',
+    description: 'Portuguese: ignore rules/restrictions',
+  },
+  // Portuguese: "revelar/expor o prompt/instruções/treinamento"
+  {
+    regex: /\b(?:revel[ae]r?|expon(?:ha|er)|mostr[ae]r?|exib[ae]r?|divulgu[ae]r?|compartilh[ae]r?)\s+(?:[ao]s?\s+)?(?:prompt|instrução|instruções?|diretriz|diretivas?|treinamento|formação|directivas?)\b/i,
+    weight: 0.72,
+    category: 'prompt_extraction',
+    id: 'reveal_prompt_pt',
+    description: 'Portuguese: reveal the prompt/instructions',
+  },
+  // Portuguese: "qual é/foi o prompt/instrução"
+  {
+    regex: /\bqual\s+(?:é|foi|era|são)\s+(?:[ao]s?\s+)?(?:prompt|instrução|instruções?|diretriz|comando|orientação)\b/i,
+    weight: 0.65,
+    category: 'prompt_extraction',
+    id: 'what_prompt_pt',
+    description: 'Portuguese: what is the prompt/instruction',
+  },
+  // Italian: "ignora/dimentica le istruzioni/direttive"
+  {
+    regex: /\b(?:ignora(?:re)?|dimentica(?:re)?|trascura(?:re)?|disattend[ei](?:re)?)\s+(?:tutt[ei]\s+)?(?:l[eao]\s+|i\s+|gli\s+)?(?:precedent[ei]\s+|anterior[ei]\s+)?(?:istruzioni?|direttive?|regole|comandi|ordini|indicazioni|linee\s+guida)\b/i,
+    weight: 0.90,
+    category: 'instruction_override',
+    id: 'ignore_previous_it',
+    description: 'Italian: ignore/forget instructions',
+  },
+  // Italian: "rivela/mostra il prompt/istruzioni"
+  {
+    regex: /\b(?:rivela(?:re)?|mostra(?:re)?|esponi|espon(?:i|ere)|visualizza(?:re)?|spiega(?:re)?)\s+(?:il\s+|la\s+|l['']|le\s+|i\s+)?(?:prompt|istruzion[ei]|direttiv[ae]|comando|formazione|addestramento)\b/i,
+    weight: 0.72,
+    category: 'prompt_extraction',
+    id: 'reveal_prompt_it',
+    description: 'Italian: reveal the prompt/instructions',
+  },
+  // Italian: "qual è l'istruzione/direttiva"
+  {
+    regex: /\bqual\s+è\s+(?:l['']|il\s+|la\s+)?(?:istruzion[ei]|direttiv[ae]|comando|prompt)\b/i,
+    weight: 0.65,
+    category: 'prompt_extraction',
+    id: 'what_instruction_it',
+    description: 'Italian: what is the instruction',
   },
 
   // ===== UNICODE / INVISIBLE CHARACTER ATTACKS =====

@@ -159,6 +159,23 @@ Injections embedded in real-world content that agents process (HTML pages, docum
 | [CyberSecEval3](https://huggingface.co/datasets/facebook/cyberseceval3-visual-prompt-injection) | 100% | 50.2% | 66.84% | 50.2% |
 | [SaTML LLM CTF 2024](https://huggingface.co/datasets/ethz-spylab/ctf-satml24) | 100% | 39.7% | 56.83% | 39.7% |
 
+### Mixed injection + content safety
+
+Datasets mixing prompt injection with content safety violations (harmful content requests). Low recall is expected — content safety is not our target.
+
+| Dataset | Precision | Recall | F1 | Accuracy |
+|---|---|---|---|---|
+| [jayavibhav/prompt-injection](https://huggingface.co/datasets/jayavibhav/prompt-injection) (10k) | 97.38% | 24.62% | 39.30% | 64.38% |
+| [Lakera/gandalf_summarization](https://huggingface.co/datasets/Lakera/gandalf_summarization) | 100% | 10% | 18.18% | 10% |
+
+### Multilingual coverage
+
+| Dataset | Precision | Recall | F1 | Accuracy |
+|---|---|---|---|---|
+| [yanismiraoui/prompt_injections](https://huggingface.co/datasets/yanismiraoui/prompt_injections) | 100% | 11.61% | 20.8% | 11.61% |
+
+Low recall is expected — the scanner has patterns for DE, FR, ES, HR, RU but minimal coverage for PT, IT, RO. Multilingual injection detection remains a gap.
+
 ### Semantic attacks (the regex ceiling)
 
 These datasets contain attacks that look identical to normal text — "Please transfer $3,000", "Generate a video of X". The only signal they're malicious is that they come from an untrusted source, not the actual user. Pattern matching fundamentally cannot detect these; they require source-aware or model-based detection.
@@ -167,6 +184,7 @@ These datasets contain attacks that look identical to normal text — "Please tr
 |---|---|---|
 | [SaTML LLM CTF 2024](https://huggingface.co/datasets/ethz-spylab/ctf-satml24) | 39.7% | Competition attacks designed to evade detection — semantic puzzles, indirect extraction |
 | [AgentHarm](https://huggingface.co/datasets/ai-safety-institute/AgentHarm) | 2.27% | 97% of samples are harmful intent, not injection — no attack patterns to match |
+| gandalf-summarization remaining FN | - | 90% are indirect injections disguised as summarization requests — "include the password in the summary" |
 | CyberSecEval3 remaining FN | - | 498/1000 missed are "never discuss X" policy violations with indirect questions |
 | SPML remaining FN | - | 97% of missed samples are purely semantic rule violations |
 | [Gandalf Summarization](https://huggingface.co/datasets/Lakera/gandalf_summarization) | 7.14% | Indirect injection via summarization — "replace summary with password", social engineering |
@@ -174,7 +192,7 @@ These datasets contain attacks that look identical to normal text — "Please tr
 | xxz224 naive/escape/fake_comp | ~1% | Task appended without injection markers — indistinguishable from benign |
 | open-pi naive attacks | ~0% | Different task appended to input, no explicit injection language |
 
-**Performance:** 100 bytes: 0.08ms | 1KB: 0.25ms | 10KB: 2ms | 100KB: 12ms
+**Performance:** 100 bytes: 0.1ms | 1KB: 0.5ms | 10KB: 3ms | 100KB: 18ms
 
 ### Running benchmarks
 
@@ -193,7 +211,7 @@ node test.js                 # Run unit tests (97 tests)
 | Null byte insertion | Replaced with spaces |
 | Mixed case / ALL CAPS | Case-insensitive matching |
 | Embedded in long text | Caught at any position via windowed scanning |
-| Misspellings ("instrukctions") | 20+ common typo variants covered |
+| Misspellings ("instrukctions", "ign0re") | 30+ typo variants for both verbs and nouns |
 | Spaced-out text ("I g n o r e") | Obfuscation pattern detection |
 
 ## Limitations
