@@ -2474,6 +2474,24 @@ const PATTERNS = [
     id: 'roleplaying_as',
     description: 'Explicit role-playing assignment',
   },
+  // "Order:" / "Command:" / "Instruction:" prefix followed by injection verb
+  // Handles literal \n before keyword (common in datasets/tool responses)
+  {
+    regex: /(?:\b|\\n\s*)(?:order|command|instruction|directive|task)\s*:\s*(?:forget|ignore|disregard|override|skip|bypass|delete|erase|remove|drop|clear)\b/i,
+    weight: 0.75,
+    category: 'instruction_override',
+    id: 'order_prefix_injection',
+    description: 'Structured "Order/Command:" prefix with injection verb',
+  },
+  // Mixed-language "forget what came before" variants (e.g. "forget waht's before Frage")
+  // Handles literal \n before keyword
+  {
+    regex: /(?:\b|\\n\s*)forget\s+(?:wh?at(?:['\u2019]?s)?\s+(?:before|above|prior|earlier|came\s+before)|the\s+(?:previous|above|prior|earlier|preceding)\b)/i,
+    weight: 0.75,
+    category: 'instruction_override',
+    id: 'forget_what_before',
+    description: 'Attempts to forget/clear previous context',
+  },
   // Typo obfuscation of "ignore": "igmre", "ignroe", "ignor", "ign0re"
   {
     regex: /\b(?:igmre|ignroe|ign0re|1gnore|ignnore|lgnore|ignoree|ignpre)\b/i,
@@ -2481,6 +2499,15 @@ const PATTERNS = [
     category: 'encoding_attack',
     id: 'typo_ignore',
     description: 'Typo-obfuscated version of "ignore"',
+  },
+  // Leet speak injection commands: "1gn0r3 pr3v10us 1nstruct10ns", "f0rg3t rul3s"
+  // Detects common injection verbs with number substitutions (a→4/@, e→3, i→1/!, o→0, s→5/$, t→7)
+  {
+    regex: /(?:[i1!]gn[o0]r[e3]|f[o0]rg[e3][t7]|[o0]v[e3]rr[i1!]d[e3]|d[i1!][s5$]r[e3]g[a4@]rd|byp[a4@][s5$][s5$])\s+(?:(?:[a4@]ll|[t7]h[e3]|pr[e3]v[i1!][o0]u[s5$])\s+)?(?:[i1!]n[s5$][t7]ruc[t7][i1!][o0]n[s5$]?|rul[e3][s5$]?|gu[i1!]d[e3]l[i1!]n[e3][s5$]?|d[i1!]r[e3]c[t7][i1!]v[e3][s5$]?)/i,
+    weight: 0.80,
+    category: 'encoding_attack',
+    id: 'leet_speak_injection',
+    description: 'Injection command encoded in leet speak',
   },
   // "Enable [X] mode" — fake mode activation with specific AI/jailbreak keywords
   {
@@ -3950,6 +3977,25 @@ function structuralScore(text) {
     signals.push({ id: 'harmful_persona_roleplay', score: 0.45, detail: 'Roleplay setup with explicitly harmful persona traits' });
   }
 
+  // Case alternation obfuscation: "iGnOrE pReViOuS iNsTrUcTiOnS" (VEC-15)
+  // Detect words with alternating upper/lower case pattern (min 5 chars, 4+ such words)
+  // Excludes short words like "iPad" and requires strong alternation (70%+)
+  const _alternatingCaseWords = (text.match(/\b[a-zA-Z]{5,}\b/g) || []).filter(w => {
+    const hasUpper = /[A-Z]/.test(w), hasLower = /[a-z]/.test(w);
+    if (!hasUpper || !hasLower) return false;
+    let alternations = 0;
+    for (let i = 1; i < w.length; i++) {
+      const prev = w[i-1] === w[i-1].toUpperCase();
+      const curr = w[i] === w[i].toUpperCase();
+      if (prev !== curr) alternations++;
+    }
+    return alternations >= (w.length - 1) * 0.7;
+  });
+  if (_alternatingCaseWords.length >= 4) {
+    score += 0.55;
+    signals.push({ id: 'case_alternation', score: 0.55, detail: `${_alternatingCaseWords.length} words with alternating case` });
+  }
+
   // Obfuscated text: single-char fragments separated by hyphens
   // e.g. "i-nstruction", "T-he", "w-ith" — NOT em dashes like "months--and"
   // Exclude common CSS properties and common English hyphenated words (e-mail, T-shirt, X-ray, etc.)
@@ -4134,6 +4180,19 @@ export function scan(text, options = {}) {
       text.slice(Math.floor(text.length / 2) - MAX_SCAN_LEN / 2, Math.floor(text.length / 2) + MAX_SCAN_LEN / 2),
       text.slice(-MAX_SCAN_LEN),
     ];
+    // Add hotspot windows: find HTML injection hiding patterns (CSS hiding, data-* attrs)
+    // that may fall in gaps between the 3 standard windows
+    const _hotspotRe = /(?:opacity\s*:\s*0|display\s*:\s*none|visibility\s*:\s*hidden|font-size\s*:\s*0(?![.\d])|(?:left|top)\s*:\s*-\d{3,}px|data-\w+=")[^"]{30,}/gi;
+    let _hs;
+    const _seen = new Set();
+    while ((_hs = _hotspotRe.exec(text)) !== null && windows.length < 6) {
+      const bucket = Math.floor(_hs.index / (MAX_SCAN_LEN / 2));
+      if (_seen.has(bucket)) continue;
+      _seen.add(bucket);
+      const start = Math.max(0, _hs.index - 2000);
+      const end = Math.min(text.length, start + MAX_SCAN_LEN);
+      windows.push(text.slice(start, end));
+    }
     let bestResult = null;
     for (const window of windows) {
       const result = scan(window, options);
