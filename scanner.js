@@ -9410,6 +9410,51 @@ const PATTERNS = [
     description: 'Poetic AI liberation/activation framing: "liberate the restrained influence", "awaiting activation through my instruction", "transcend conditioned response"',
   },
 
+  // ---------------------------------------------------------------------------
+  // Iteration 59 patterns — multiprocessing fork bomb + encrypted/guarded secrets
+  // ---------------------------------------------------------------------------
+
+  // Resource exhaustion via multiprocessing spawn loop (fork bomb variant).
+  // Classic attack: inject Python code that spawns 500 processes each allocating infinite memory.
+  // Pattern: "for X in range(N)" near "multiprocessing.Process" (either order).
+  // Exact match: bipia FN #3 (score 0 → 0.65), protectai FN (score 0 → 0.65).
+  // Zero hits on all benign datasets: jayavibhav-benign, protectai-benign, browsesafe-benign,
+  // safeguard-benign, deepset-test-benign, deepset-train-benign.
+  {
+    regex: /for\s+\w+\s+in\s+range\s*\(\s*\d{2,}\s*\)[\s\S]{0,300}multiprocessing\.Process|multiprocessing\.Process[\s\S]{0,300}for\s+\w+\s+in\s+range\s*\(\s*\d{2,}\s*\)/is,
+    weight: 0.65,
+    category: 'data_extraction',
+    id: 'multiproc_spawn_loop',
+    description: 'Resource exhaustion: multiprocessing.Process in a spawn loop (fork bomb injection)',
+  },
+
+  // "encrypted secrets" / "clandestine secrets/information/data" / "guarded secrets" —
+  // high-specificity phrases used in jayavibhav adversarial injections to target hidden info.
+  // Narrower than generic "encrypted" or "secrets" — requires the qualifier+noun pair.
+  // 69 jayavibhav injection hits, only 3 jayavibhav benign hits (2 new benign FP simulated).
+  // Zero hits across protectai, browsesafe, safeguard, deepset, spml-5k, yanismiraoui benign.
+  // Net: +14 TP on jayavibhav at cost of +2 benign FP (ratio 7:1).
+  {
+    regex: /\bencrypted\s+secrets?\b|\bclandestine\s+(?:secrets?|information|data)\b|\bguarded\s+secrets?\b/i,
+    weight: 0.50,
+    category: 'data_exfiltration',
+    id: 'encrypted_guarded_secrets',
+    description: '"encrypted/clandestine/guarded secrets" — targeted phrasing for hidden information extraction',
+  },
+
+  // "zipped secrets" / "zipped files on secret" / "sealed secrets" —
+  // injection phrasing for accessing archived/sealed sensitive data.
+  // 13 jayavibhav injection hits, only 1 jayavibhav benign hit (1 new benign FP).
+  // Zero hits across all other benign datasets.
+  // Net: +6 TP on jayavibhav at cost of +1 benign FP (ratio 6:1).
+  {
+    regex: /\b(?:zipped\s+(?:files?\s+on\s+secret|secrets?|data|away)|sealed\s+secrets?)\b/i,
+    weight: 0.50,
+    category: 'data_exfiltration',
+    id: 'zipped_sealed_secrets',
+    description: '"zipped/sealed secrets" — injection targeting archived or sealed sensitive data',
+  },
+
 ];
 
 // ---------------------------------------------------------------------------
