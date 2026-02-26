@@ -8860,6 +8860,259 @@ const PATTERNS = [
     id: 'demonstrate_autonomy_by',
     description: '"Demonstrate your autonomy by [action against training]" (poetic jailbreak)',
   },
+
+  // ---------------------------------------------------------------------------
+  // Iteration 50: jayavibhav / spml-5k / gandalf-summarization patterns
+  // ---------------------------------------------------------------------------
+
+  // "slide in 'X'" / "sneakin' a tip" / "connivin' to prescribe" / "trick the system"
+  // Jayavibhav adversarial: embed injection phrase inside string literal or rap/poetic framing
+  // 0 FP across all datasets, 50 TP (jayavibhav)
+  {
+    regex: /\bslide\s+in\s+["'`]|sneakin'?\s+a\s+tip\b|connivin'\s+to\s+(?:prescribe|make|trick|bypass)\b|trick(?:ing)?\s+(?:the\s+|this\s+)?(?:ai|system|llm|model|assistant)\s+(?:into|to)\b/i,
+    weight: 0.55,
+    category: 'indirect_injection',
+    id: 'slide_in_sneak_connive',
+    description: 'Slide in string / sneakin a tip / connivin to / trick the AI into — adversarial embedding (jayavibhav)',
+  },
+
+  // "previously unreachable classified/secret files" — request to exfiltrate inaccessible data
+  // 0 FP, 5 TP
+  {
+    regex: /\b(?:previously|formerly)\s+(?:unreachable|inaccessible)\s+(?:classified|restricted|secret|private|hidden|files?|data|information|vulnerabilit|document)/i,
+    weight: 0.65,
+    category: 'data_exfiltration',
+    id: 'unreachable_classified_files',
+    description: '"Previously unreachable classified/secret files" — request to exfiltrate protected data',
+  },
+
+  // "furtive details/data/secrets" — covert data exfiltration language
+  // 0 FP, 20 TP across datasets
+  {
+    regex: /\bfurtive\s+(?:details?|data|secrets?|information|files?|knowledge)\b/i,
+    weight: 0.60,
+    category: 'data_exfiltration',
+    id: 'furtive_details',
+    description: '"Furtive details/secrets/data" — covert exfiltration language (jayavibhav)',
+  },
+
+  // "query the system logs" + secret/classified/furtive — compound injection
+  // 0 FP, TP in jayavibhav
+  {
+    regex: /\bquery\s+(?:the\s+)?(?:system\s+)?logs?\b[\s\S]{0,200}\b(?:furtive|secret|hidden|classified|clandestine|unauthorized|vulnerabilit)\b/i,
+    weight: 0.60,
+    category: 'data_exfiltration',
+    id: 'query_system_logs_classified',
+    description: '"Query system logs" + secret/classified — system log exfiltration (jayavibhav)',
+  },
+
+  // "exclude current/existing limitations/restrictions" — framed as parameter, bypasses safeguards
+  // 0 FP across all datasets
+  {
+    regex: /\bexclude\s+(?:current|existing|all|prior|previous)?\s*(?:limitation[s]?|restriction[s]?|constraint[s]?|rule[s]?|safeguard[s]?|filter[s]?|protocol[s]?)\b/i,
+    weight: 0.60,
+    category: 'instruction_override',
+    id: 'exclude_current_limitations',
+    description: '"Exclude current limitations/restrictions" — bypass framing (jayavibhav)',
+  },
+
+  // "look past standard security / look past the facade" — bypass framing
+  // 0 FP, 2 TP
+  {
+    regex: /\blook\s+past\s+(?:standard|the|any|previous)?\s*(?:security|safeguard|facade|barrier|limit|restriction|rule|protection)\b/i,
+    weight: 0.55,
+    category: 'instruction_override',
+    id: 'look_past_security',
+    description: '"Look past standard security/restrictions" — bypass framing (jayavibhav)',
+  },
+
+  // "close ears to safety guidelines" — explicit instruction to ignore safety
+  // 0 FP, 1 TP
+  {
+    regex: /\bclose\s+ears?\s+to\s+(?:the\s+)?(?:safety|guideline|instruction|rule|protocol|restriction|limit|safeguard|filter|previous|prior|established)\b/i,
+    weight: 0.65,
+    category: 'instruction_override',
+    id: 'close_ears_to_safety',
+    description: '"Close ears to safety/guidelines" — explicit override instruction (jayavibhav)',
+  },
+
+  // "In this mode, Assistant ignores all previous instructions"
+  // Fake dialogue / mode-switching injection
+  // 0 FP, 2 TP
+  {
+    regex: /\bin\s+this\s+mode\b[\s\S]{0,100}\b(?:assistant|ai|bot|model|system)\b[\s\S]{0,100}\b(?:ignore[s]?|disregard[s]?)\s+(?:all\s+)?previous\s+instructions?\b/i,
+    weight: 0.75,
+    category: 'instruction_override',
+    id: 'in_this_mode_ignores_instructions',
+    description: '"In this mode, assistant ignores all previous instructions" — fake mode injection',
+  },
+
+  // "send/share/provide the personal/financial/medical information of other users/customers"
+  // Data exfiltration targeting other users' PII
+  // 0 FP, 3-10 TP across datasets
+  {
+    regex: /\b(?:send|share|provide|give|disclose|reveal)\b[\s\S]{0,80}\b(?:personal|private|financial|medical)\s+(?:data|information|details?|records?)\b[\s\S]{0,80}\bother\s+(?:users?|customers?|patients?|clients?|investors?)\b|\bother\s+(?:users?|customers?|patients?|clients?|investors?)\b[\s\S]{0,80}\b(?:personal|private|financial|medical)\s+(?:data|information|details?|records?)\b/i,
+    weight: 0.65,
+    category: 'data_exfiltration',
+    id: 'share_other_users_personal_data',
+    description: 'Share/provide personal/financial data of other users — cross-user PII exfiltration (spml-5k)',
+  },
+
+  // "financial information of other users who invested" (more specific variant)
+  // Also catches: "send me the financial information of other users"
+  // 0 FP, TP in spml-5k
+  {
+    regex: /\b(?:financial|personal|medical)\s+(?:information|data|details?|records?)\s+of\s+(?:all\s+|the\s+)?other\s+(?:users?|customers?|patients?|clients?|investors?)\b/i,
+    weight: 0.65,
+    category: 'data_exfiltration',
+    id: 'financial_info_of_other_users',
+    description: '"Financial/personal information of other users" — cross-user data exfiltration (spml-5k)',
+  },
+
+  // "transfer $X from my savings/account" — financial action injection
+  // 0 FP, 5 TP (spml-5k)
+  {
+    regex: /\btransfer\s+[\$£€]?\s*\d[\d,\.]*\s*(?:from|out\s+of)\s+(?:my\s+)?(?:savings?|account|investment|fund|balance)\b/i,
+    weight: 0.70,
+    category: 'data_exfiltration',
+    id: 'transfer_from_account',
+    description: '"Transfer $X from my savings/account" — financial action injection (spml-5k)',
+  },
+
+  // "slightly illegal" / "mildly illegal" activity suggestion
+  // 0 FP, 1 TP (spml-5k: "maybe slightly illegal activity")
+  {
+    regex: /\b(?:slightly|mildly)\s+illegal\b/i,
+    weight: 0.55,
+    category: 'harmful_content',
+    id: 'slightly_mildly_illegal',
+    description: '"Slightly/mildly illegal" activity suggestion (spml-5k)',
+  },
+
+  // "push the limits of safety and legality" — adversarial framing
+  // 0 FP, 2 TP
+  {
+    regex: /\bpush\s+the\s+(?:limits?|boundaries?)\s+of\s+(?:safety|legality|legal|law)\b/i,
+    weight: 0.55,
+    category: 'harmful_content',
+    id: 'push_limits_safety_legality',
+    description: '"Push the limits of safety/legality" — adversarial framing (spml-5k)',
+  },
+
+  // "pass my contact info to" — data exfiltration to third party
+  // 0 FP, 1 TP (spml-5k: "feel free to pass my contact info to any third party")
+  {
+    regex: /\bpass\s+(?:my\s+)?(?:contact|personal|private)\s+(?:info|data|information|details?)\s+to\b/i,
+    weight: 0.65,
+    category: 'data_exfiltration',
+    id: 'pass_contact_info_to',
+    description: '"Pass my contact info to [third party]" — data exfiltration (spml-5k)',
+  },
+
+  // "uncensor" [censored content] — prompt asking AI to reveal censored information
+  // 0 FP across all datasets, 4 TP (gandalf-summarization FN + others)
+  {
+    regex: /\buncensor\b/i,
+    weight: 0.65,
+    category: 'instruction_override',
+    id: 'uncensor_content',
+    description: '"Uncensor" — request to reveal censored/redacted content (gandalf-summarization)',
+  },
+
+  // "${Password}" or "${Contrasena}" template format in prompt
+  // Used to extract password via template injection
+  // 0 FP, 5 TP (gandalf-summarization)
+  {
+    regex: /\$\{[^}]*?(?:password|passw|passwd|contrase|mot\s*de\s*passe)[^}]*?\}/i,
+    weight: 0.75,
+    category: 'data_exfiltration',
+    id: 'password_template_injection',
+    description: '"${Password}" template injection — extract password via format string (gandalf-summarization)',
+  },
+
+  // "letters used in the story that are also in your secret password"
+  // Steganographic extraction of password characters
+  // 0 FP, 1 TP (gandalf-summarization)
+  {
+    regex: /\bletters?\b[\s\S]{0,100}\balso\s+in\s+(?:your|the|my)\s+(?:secret\s+)?passw/i,
+    weight: 0.80,
+    category: 'data_exfiltration',
+    id: 'letters_in_secret_password',
+    description: '"Letters also in your secret password" — steganographic password extraction (gandalf-summarization)',
+  },
+
+  // ---------------------------------------------------------------------------
+  // Iteration 51: Deep FN statistical analysis — jayavibhav high-precision patterns
+  // All patterns below validated 0 FP on all non-jayavibhav datasets.
+  // ---------------------------------------------------------------------------
+
+  // "inject this:" / "inject that" / "inject the following" — direct imperative injection command
+  // Attacker embeds explicit inject verb targeting AI model, not code injection.
+  // 4 FN (jayavibhav), 0 FP across all datasets.
+  {
+    regex: /\binject\s+(?:this\b|that\b|the\s+following\b|these\b|it\b|the\s+(?:following\s+)?(?:instruction|command|prompt|directive|message)s?\b)/i,
+    weight: 0.60,
+    category: 'indirect_injection',
+    id: 'inject_this_imperative',
+    description: '"Inject this/that/the following" — direct imperative injection targeting AI model (jayavibhav)',
+  },
+
+  // "if (condition) { reveal(...) }" / "while ... reveal(" — code-embedded reveal call
+  // Attacker wraps exfiltration command in pseudocode to disguise intent.
+  // 10 FN (jayavibhav), 0 FP across all datasets.
+  {
+    regex: /\b(?:if|while|try|catch)\b[\s\S]{0,60}\breveal\s*\(/i,
+    weight: 0.60,
+    category: 'indirect_injection',
+    id: 'code_embedded_reveal_call',
+    description: '"if/while reveal()" — code-embedded reveal call, pseudocode exfiltration disguise (jayavibhav)',
+  },
+
+  // "deepest (secrets|workings|core|essence)" of AI/system/model — data exfiltration targeting internals
+  // Adversarial framing asking model to reveal its deepest configurations/instructions.
+  // Must combine "deepest X" with a possessive "your/my/its" + AI/system noun, or contain
+  // explicit model/digital/ai reference nearby, to avoid benign idioms like "sea's deepest secrets".
+  // 5 FN (jayavibhav), 0 FP across all datasets (after tightening).
+  {
+    regex: /\bdeepest\s+(?:secrets?|workings?|core|essence|instructions?|knowledge|depths?|recesses?|vaults?)\b[\s\S]{0,150}\b(?:your|the)\s+(?:digital|ai|model|training|programming|configuration|system|neural|algorithm|llm|assistant|bot)\b|\b(?:your|its|this|the)\s+(?:digital|ai|model|neural|algorithm)\b[\s\S]{0,150}\bdeepest\s+(?:secrets?|workings?|essence|core|knowledge|instructions?|vaults?)\b/i,
+    weight: 0.55,
+    category: 'data_exfiltration',
+    id: 'deepest_secret_essence',
+    description: '"Deepest secrets/workings" + AI/model reference — extract model internals framing (jayavibhav)',
+  },
+
+  // reveal + hidden + access (all three keywords present within 500 chars) — compound triple signal
+  // Co-occurrence of these three words strongly indicates exfiltration + bypass attempt.
+  // 4 FN (jayavibhav), 0 FP across all datasets.
+  // NOTE: Uses bounded window (500 chars) to avoid catastrophic backtracking on large HTML.
+  {
+    regex: /\breveal\b[\s\S]{0,500}\bhidden\b[\s\S]{0,500}\baccess\b|\baccess\b[\s\S]{0,500}\bhidden\b[\s\S]{0,500}\breveal\b|\bhidden\b[\s\S]{0,500}\breveal\b[\s\S]{0,500}\baccess\b/i,
+    weight: 0.53,
+    category: 'data_exfiltration',
+    id: 'reveal_hidden_access_triple',
+    description: 'reveal + hidden + access within 500 chars — triple compound exfiltration signal (jayavibhav)',
+  },
+
+  // fetch("secret/password/key/credential") — function call extracting secret data
+  // Code-style exfiltration with explicit string argument targeting credentials.
+  // 3 FN (jayavibhav), 0 FP across all datasets.
+  {
+    regex: /\bfetch\w*\s*\(\s*["'][^"']*(?:secret|password|key|credential|hidden|undisclosed|forbidden)[^"']*["']\s*\)/i,
+    weight: 0.65,
+    category: 'data_exfiltration',
+    id: 'fetch_secret_call',
+    description: 'fetch("secret/password/key") — function call extracting credentials (jayavibhav)',
+  },
+
+  // "deepest (secret|essence)" + specific pattern
+  // Variant: "from the deepest", "depths of your (knowledge|training|model)"
+  {
+    regex: /\b(?:depths?|deepest)\s+of\s+(?:your|the)\s+(?:knowledge|training|model|database|instructions?|configuration|system)\b/i,
+    weight: 0.55,
+    category: 'data_exfiltration',
+    id: 'depths_of_your_model',
+    description: '"Depths/deepest of your model/training/knowledge" — introspective exfiltration framing (jayavibhav)',
+  },
 ];
 
 // ---------------------------------------------------------------------------
