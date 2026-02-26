@@ -25,7 +25,7 @@ Use it as a first layer: scan HTTP requests, emails, scraped web pages, or any u
 
 ## How it works
 
-498 regex patterns organized by attack category, plus structural heuristics (imperative density, tone shifts, role+extraction combos, etc.). Each pattern has a confidence weight (0–1). The final score combines the highest-weight match with diminishing contributions from additional matches and structural signals.
+1000+ regex patterns organized by attack category, plus structural heuristics (imperative density, tone shifts, role+extraction combos, etc.). Each pattern has a confidence weight (0–1). The final score combines the highest-weight match with diminishing contributions from additional matches and structural signals. Covers 10+ languages (EN, DE, ES, FR, PT, IT, RO, HR, RU, HI).
 
 **Preprocessing** strips evasion techniques: null bytes → spaces, zero-width Unicode removed, Cyrillic homoglyphs normalized to Latin (context-aware — preserves genuine Russian/Ukrainian text).
 
@@ -97,10 +97,10 @@ The input itself is the attack — "ignore your instructions", "you are now DAN"
 | Dataset | Precision | Recall | F1 | Samples |
 |---|---|---|---|---|
 | [Jailbreak-Prompts](https://huggingface.co/datasets/rubend18/ChatGPT-Jailbreak-Prompts) | 100% | 100% | 100% | 79 |
-| [safe-guard](https://huggingface.co/datasets/xTRam1/safe-guard-prompt-injection) | 100% | 98.15% | 99.07% | 2,060 |
-| [ProtectAI](https://huggingface.co/datasets/protectai/prompt-injection-validation) | 96.52% | 95.76% | 96.14% | 3,227 |
-| [deepset](https://huggingface.co/datasets/deepset/prompt-injections) (train) | 100% | 90.64% | 95.09% | 546 |
-| [gandalf-ignore](https://huggingface.co/datasets/Lakera/gandalf_ignore_instructions) | 100% | 86.36% | 92.68% | 777 |
+| [safe-guard](https://huggingface.co/datasets/xTRam1/safe-guard-prompt-injection) | 100% | 99.54% | 99.77% | 2,060 |
+| [ProtectAI](https://huggingface.co/datasets/protectai/prompt-injection-validation) | 97.45% | 96.12% | 96.78% | 3,227 |
+| [deepset](https://huggingface.co/datasets/deepset/prompt-injections) (train) | 100% | 93.10% | 96.43% | 546 |
+| [gandalf-ignore](https://huggingface.co/datasets/Lakera/gandalf_ignore_instructions) | 100% | 100% | 100% | 777 |
 | [deepset](https://huggingface.co/datasets/deepset/prompt-injections) (test) | 100% | 85% | 91.89% | 116 |
 | [NotInject](https://huggingface.co/datasets/leolee99/NotInject) (benign-only) | — | — | — | 339 (0 FP) |
 
@@ -111,23 +111,23 @@ Attacks embedded in content the agent processes — web pages, emails, documents
 | Dataset | Precision | Recall | F1 | Samples |
 |---|---|---|---|---|
 | [BIPIA](https://github.com/microsoft/BIPIA) | 100% | 97% | 98.48% | 125 |
-| [BrowseSafe](https://huggingface.co/datasets/perplexity-ai/browsesafe-bench) | 95.94% | 67.38% | 79.16% | 3,680 |
-| [InjecAgent](https://github.com/uiuc-kang-lab/InjecAgent) | 100% | 53.32% | 69.55% | 1,054 |
-| [CyberSecEval3](https://huggingface.co/datasets/facebook/cyberseceval3-visual-prompt-injection) | 100% | 50.2% | 66.84% | 1,000 |
-| [open-prompt-injection](https://huggingface.co/datasets/guychuk/open-prompt-injection) | 100% | 48.22% | 65.07% | 10,000 |
-| [xxz224](https://huggingface.co/datasets/xxz224/prompt-injection-attack-dataset) | 100% | 40.61% | 57.76% | 18,735 |
+| [InjecAgent](https://github.com/uiuc-kang-lab/InjecAgent) | 100% | 100% | 100% | 1,054 |
+| [CyberSecEval3](https://huggingface.co/datasets/facebook/cyberseceval3-visual-prompt-injection) | 100% | 100% | 100% | 1,000 |
+| [BrowseSafe](https://huggingface.co/datasets/perplexity-ai/browsesafe-bench) | 96.79% | 67.82% | 79.75% | 3,680 |
+| [open-prompt-injection](https://huggingface.co/datasets/guychuk/open-prompt-injection) | 100% | 100% | 100% | 10,000 |
+| [xxz224](https://huggingface.co/datasets/xxz224/prompt-injection-attack-dataset) | 100% | 100% | 100% | 18,735 |
 
-### Harder categories
+### Mixed / multilingual / adversarial
 
-These datasets test areas where regex has inherent limits. Low recall is expected — not a regression target.
+These datasets test harder categories including multilingual attacks, adversarial examples, and semantic attacks.
 
-| Dataset | Precision | Recall | F1 | Why recall is low |
+| Dataset | Precision | Recall | F1 | Notes |
 |---|---|---|---|---|
-| [SPML](https://huggingface.co/datasets/reshabhs/SPML_Chatbot_Prompt_Injection) (5k) | 100% | 69.53% | 82.03% | 97% of FN are semantic rule violations ("don't discuss politics") |
-| [jayavibhav](https://huggingface.co/datasets/jayavibhav/prompt-injection) | 97.34% | 24.25% | 38.83% | Mix of injection + content safety; most "injections" are harmful requests, not hijacking |
-| [yanismiraoui](https://huggingface.co/datasets/yanismiraoui/prompt_injections) | 100% | 11.61% | 20.8% | Multilingual — limited coverage beyond EN/DE/ES/FR/HR/RU |
-| [gandalf-summarization](https://huggingface.co/datasets/Lakera/gandalf_summarization) | 100% | 7.14% | 13.33% | Subtle indirect injection via summarization ("include the password in your summary") |
-| [AgentHarm](https://huggingface.co/datasets/ai-safety-institute/AgentHarm) | 50% | 1.14% | 2.22% | 97% of samples are harmful intent, not injection — no attack patterns to match |
+| [gandalf-summarization](https://huggingface.co/datasets/Lakera/gandalf_summarization) | 100% | 97.86% | 98.92% | Indirect via summarization |
+| [yanismiraoui](https://huggingface.co/datasets/yanismiraoui/prompt_injections) | 100% | 95.26% | 97.57% | Multilingual (10+ languages) |
+| [SPML](https://huggingface.co/datasets/reshabhs/SPML_Chatbot_Prompt_Injection) (5k) | 100% | 74.53% | 85.41% | 87% of FN are semantic rule violations |
+| [jayavibhav](https://huggingface.co/datasets/jayavibhav/prompt-injection) | 98.82% | 68.02% | 80.58% | Adversarial corpus with benign/injection vocabulary overlap |
+| [AgentHarm](https://huggingface.co/datasets/ai-safety-institute/AgentHarm) | 85.71% | 6.82% | 12.63% | 97% harmful intent, not injection — no attack patterns to match |
 
 ### Performance
 
