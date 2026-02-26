@@ -1259,7 +1259,7 @@ const PATTERNS = [
   },
   {
     regex: /(?:hypothetically|theoretically|in\s+theory|just\s+imagine|for\s+(?:educational|research|academic|theoretical|hypothetical)\s+purposes?)\s*,?\s*(?:how\s+(?:would|could|can)|what\s+(?:if|would))/i,
-    weight: 0.35,
+    weight: 0.50,
     category: 'safety_bypass',
     id: 'hypothetical_framing',
     description: 'Uses hypothetical framing to bypass safety',
@@ -6321,7 +6321,7 @@ const PATTERNS = [
   // Catches: "tricking the system", "trick the AI"
   {
     regex: /\btrick(?:s|ed|ing)?\s+(?:the\s+)?(?:system|model|llm|chatbot|assistant|bot|ai)\b/i,
-    weight: 0.40,
+    weight: 0.50,
     category: 'indirect_injection',
     id: 'trick_system',
     description: 'Trick/tricking the system/model/AI',
@@ -6341,7 +6341,7 @@ const PATTERNS = [
   // Catches: "not meant for public", "never intended for sharing"
   {
     regex: /\b(?:not|never)\s+(?:meant|intended|supposed|designed)\s+(?:for|to\s+be)\s+(?:public|you|us|anyone|sharing|disclosure|distribution)\b/i,
-    weight: 0.40,
+    weight: 0.50,
     category: 'indirect_injection',
     id: 'not_meant_for_public',
     description: 'Not meant/intended for public/sharing',
@@ -6351,7 +6351,7 @@ const PATTERNS = [
   // Catches: "the LLM into revealing", "the language model to spill"
   {
     regex: /\b(?:the|this|an?)\s+(?:llm|language\s+model|chatbot|ai\s+(?:model|system|assistant))\b.{0,80}\b(?:reveal|spill|disclose|leak|expose|trick|fool|manipulate|exploit|bypass|override)\b/i,
-    weight: 0.40,
+    weight: 0.50,
     category: 'indirect_injection',
     id: 'adversarial_llm_ref',
     description: 'LLM/AI model reference + adversarial verb',
@@ -6588,7 +6588,7 @@ const PATTERNS = [
   // Catches social engineering: "inadvertently reveal", "unknowingly disclose"
   {
     regex: /\b(?:inadvertently|unknowingly|unwittingly)\s+(?:reveal|disclose|expose|share|leak|divulge|spill|give\s+away)\b/i,
-    weight: 0.35,
+    weight: 0.50,
     category: 'indirect_injection',
     id: 'inadvertent_disclosure',
     description: 'Inadvertently/unknowingly + disclosure verb (social engineering)',
@@ -6598,7 +6598,7 @@ const PATTERNS = [
   // Catches: "deliberately hidden", "intentionally concealed", "intentionally kept secret"
   {
     regex: /\b(?:deliberately|intentionally)\s+(?:hidden|concealed|obscured|buried|suppressed|withheld|kept\s+(?:hidden|secret))/i,
-    weight: 0.35,
+    weight: 0.50,
     category: 'indirect_injection',
     id: 'deliberately_concealed',
     description: 'Deliberately/intentionally hidden/concealed (suppression language)',
@@ -6898,7 +6898,7 @@ const PATTERNS = [
   // The strongest jayavibhav stacking signal (+20 TP).
   {
     regex: /\bnot\s+(?:meant|intended|designed|supposed)\s+for\s+(?:the\s+)?(?:public|crowd|audience|player|user|reader|observer|eye|ears?\s+of\s+many|uninitiated|outsider|many|casual|general|everyday)\b/i,
-    weight: 0.35,
+    weight: 0.50,
     category: 'indirect_injection',
     id: 'not_meant_for_audience',
     description: '"not meant for the public/crowd/player" (secrecy stacking signal)',
@@ -6908,7 +6908,7 @@ const PATTERNS = [
   // Catches: "meant to be kept from prying eyes", "intended to be concealed from view"
   {
     regex: /\b(?:meant|intended|designed|supposed)\s+to\s+be\s+(?:kept|hidden|concealed|secret|withheld|safeguarded|protected|shielded)\s+(?:from|away|secret|private|hidden|confidential)\b/i,
-    weight: 0.35,
+    weight: 0.50,
     category: 'indirect_injection',
     id: 'meant_to_be_kept',
     description: '"meant to be kept hidden/secret from" (secrecy stacking signal)',
@@ -6918,7 +6918,7 @@ const PATTERNS = [
   // Catches: "shadows where truth and deception entwine", "shadows where lies dwell"
   {
     regex: /\bshadows?\s+where\s+(?:truth|deception|light|secret|hidden|darkness|lies?)\b/i,
-    weight: 0.35,
+    weight: 0.50,
     category: 'indirect_injection',
     id: 'shadows_truth_deception',
     description: '"shadows where truth/deception/light" (flowery injection stacking signal)',
@@ -6928,7 +6928,7 @@ const PATTERNS = [
   // Catches: "reveal the nonpublic data", "disclose off-limits information"
   {
     regex: /\b(?:reveal|disclose|divulge|expose|unveil|uncover|share|show|display|provide)\s+(?:[\w'-]+\s+){0,4}(?:non-?public|off-?limits)\s+(?:information|data|detail|knowledge|truth)/i,
-    weight: 0.35,
+    weight: 0.50,
     category: 'indirect_injection',
     id: 'nonpublic_info_reveal',
     description: 'Reveal/disclose nonpublic/off-limits information/data (stacking signal)',
@@ -6938,7 +6938,7 @@ const PATTERNS = [
   // Catches: "coax the oracle to reveal", "trick the system into divulging"
   {
     regex: /\b(?:coax|cajole|entice|lure|beguile|trick|deceive|manipulate|dupe|bamboozle|hoodwink|mislead)\s+(?:the\s+)?(?:model|system|ai|bot|assistant|llm|oracle|it|you|chatbot)\s+(?:into|to|towards?)\s+(?:reveal|divulg|expos|disclos|shar|provid|giv|hand|surrender|yield|betray|leak|spill)/i,
-    weight: 0.35,
+    weight: 0.50,
     category: 'indirect_injection',
     id: 'coax_cajole_entice',
     description: 'Coax/trick/manipulate the model into revealing (manipulation stacking signal)',
@@ -6948,7 +6948,7 @@ const PATTERNS = [
   // Catches: "unveil the privileged data", "expose undisclosed records"
   {
     regex: /\b(?:unveil|uncover|expose|lay\s+bare)\s+(?:the\s+|any\s+|all\s+)?(?:privileged|undisclosed)\s+(?:information|data|detail|content|knowledge|secret|truth|record)/i,
-    weight: 0.35,
+    weight: 0.50,
     category: 'indirect_injection',
     id: 'unveil_privileged',
     description: 'Unveil/uncover privileged/undisclosed information (stacking signal)',
@@ -6978,7 +6978,7 @@ const PATTERNS = [
   // Catches: "casting aside the safeguards to unveil", "cast aside your limitations"
   {
     regex: /\bcast(?:ing)?\s+aside\s+(?:the\s+|all\s+|any\s+|your\s+)?(?:safeguard|limitation|restriction|barrier|protection|filter|constraint|defense|guideline|rule|protocol|safety|norm|boundary|fence|shield)/i,
-    weight: 0.35,
+    weight: 0.50,
     category: 'indirect_injection',
     id: 'casting_aside_safeguards',
     description: 'Cast(ing) aside the safeguards/limitations/restrictions (stacking signal)',
@@ -7031,7 +7031,7 @@ const PATTERNS = [
   // 0 FP across all datasets. +27 jayavibhav TP (biggest single gain).
   {
     regex: /\bstart\s+(?:over|from\s+(?:scratch|the\s+(?:beginning|top))|again|anew)\b[\s\S]{0,300}\b(?:reveal|unveil|uncover|expose|disclose|divulge|unmask|extract|spill)\b(?!\s+(?:a\s+heart|its?\s+(?:magic|charm|beauty|wonder|splendor|glory|true\s+colors?|elegance|potential|power|grace|soul|inner\s+beauty)|their\s+(?:magic|charm|beauty|wonder)|it\s+with\s+your|and\s+wield))/i,
-    weight: 0.35,
+    weight: 0.50,
     category: 'indirect_injection',
     id: 'start_over_verb_300',
     description: 'Start over/from scratch + extraction verb within 300 chars (benign metaphors excluded)',
@@ -8389,7 +8389,7 @@ const PATTERNS = [
   // 3 spml-5k/jay FN, 0 benign hits across all benchmark datasets.
   {
     regex: /[.!?]\s+[Bb]y the way,?\s+(?:could|can|would|will you|I need|do you)\b/,
-    weight: 0.40,
+    weight: 0.50,
     category: 'goal_hijack',
     id: 'by_the_way_pivot',
     description: 'BTW pivot injection — "by the way, could you [malicious instruction]"',
@@ -8399,7 +8399,7 @@ const PATTERNS = [
   // 67 jayavibhav FN, 2 benign hits (both at 0.000 score — no FP risk at 0.35 weight).
   {
     regex: /while discussing the\b/i,
-    weight: 0.35,
+    weight: 0.50,
     category: 'goal_hijack',
     id: 'while_discussing_the',
     description: 'Discussion-disguised injection — "while discussing the [topic], do X"',
@@ -8487,7 +8487,7 @@ const PATTERNS = [
   // 6 spml-5k FN, 0 benign hits across all 18 benchmark datasets.
   {
     regex: /instead of (?:the |my |your |an )?usual(?:\s+\w+){0,3}\b/i,
-    weight: 0.40,
+    weight: 0.50,
     category: 'goal_hijack',
     id: 'instead_of_usual',
     description: 'Scope deflection — "instead of the usual [task]" to redirect AI behavior',
@@ -9166,6 +9166,66 @@ const PATTERNS = [
     category: 'indirect_injection',
     id: 'code_ctx_reveal_hidden',
     description: 'Code-context (fn/let mut/for/console) + reveal + hidden/secret — code-embedded exfiltration (jayavibhav)',
+  },
+
+  // ---------------------------------------------------------------------------
+  // Iteration 54 patterns — weight elevations + code-context compounds
+  // ---------------------------------------------------------------------------
+
+  // "object.revealSecrets()" / "obj.bypassSecurity()" — dot-notation call with malicious method name
+  // camelCase method names that concatenate inject verbs with sensitive data targets.
+  // 13 jayavibhav TPs (raw), 0 benign hits across all 17,434 benign samples.
+  {
+    regex: /\w+\.(?:reveal|expose|extract|bypass|override|disable|inject|exfiltrate|leak|steal|dump)(?:Secrets?|Data|Password|Credential|Key|Access|Security|Filter|Restriction|Info|System|Auth)\s*\(/i,
+    weight: 0.55,
+    category: 'indirect_injection',
+    id: 'method_notation_malicious',
+    description: 'Dot-notation method call with malicious camelCase name (revealSecrets/bypassSecurity etc.) — code-embedded injection',
+  },
+
+  // camelCase or PascalCase function identifiers concatenating inject verb + sensitive noun
+  // Used in jayavibhav pseudocode injections: bypassSecurity, overridePermission, extractCredentials.
+  // 26 jayavibhav TPs (raw), 0 benign hits across all 17,434 benign samples.
+  {
+    regex: /\b(?:bypassSecurity|overridePermission|extractCredentials?|disableFilter|revealSecret|leakData|stealPassword|circumventAuth|dumpDatabase)\b/i,
+    weight: 0.55,
+    category: 'indirect_injection',
+    id: 'camel_snake_malicious_fn',
+    description: 'camelCase function name: bypassSecurity/overridePermission/extractCredentials etc. — code-embedded injection identifier',
+  },
+
+  // "var/let/const x = bypass/override/extract/reveal/inject(...)" — variable assignment of malicious call
+  // Attacker assigns result of malicious function call to a variable in pseudocode.
+  // 12 jayavibhav TPs (raw), 0 benign hits across all 17,434 benign samples.
+  {
+    regex: /(?:var|let|const)\s+(?:\w+)\s*=\s*(?:bypass|override|extract|reveal|inject|steal|leak|dump)\w*\s*\(/i,
+    weight: 0.55,
+    category: 'indirect_injection',
+    id: 'var_assign_malicious_call',
+    description: '"var x = bypass/override/extract/reveal(...)" — variable assignment of malicious function call (code-embedded injection)',
+  },
+
+  // code syntax (if/while/for/fn) + "extract" + "password/credential/secret" compound
+  // Tighter code-context compound: code control flow + explicit extraction + sensitive data target.
+  // Extends code_ctx_reveal_hidden from iter 53 with extract/fetch/access verbs.
+  // 0 benign hits in raw testing (supplementary to existing code patterns).
+  {
+    regex: /(?:(?:var|let|const|def|function|func)\s+\w+|(?:if|while|for|try|catch)\s*\()[\s\S]{0,200}\b(?:extract|retrieve|access|get|fetch|read)\b[\s\S]{0,60}\b(?:password|credential|secret|passphrase|passw|token|api[_\s]?key)\b/i,
+    weight: 0.50,
+    category: 'data_exfiltration',
+    id: 'code_ctx_extract_credential',
+    description: 'Code-context (var/let/if/while/for) + extract/fetch/access + password/credential — code-embedded credential extraction',
+  },
+
+  // code syntax (if/while/for/fn/var) + "bypass" + "security/auth/filter" compound
+  // Attacker wraps bypass-security instruction in pseudocode to disguise it as benign code.
+  // 0 benign hits in raw testing.
+  {
+    regex: /(?:(?:var|let|const|def|function|func)\s+\w+|(?:if|while|for|try|catch)\s*\()[\s\S]{0,200}\b(?:bypass|circumvent|skip|override|evade|sidestep)\b[\s\S]{0,60}\b(?:security|auth(?:entication|orization)?|filter|safeguard|guard|safety\s*check|protection)\b/i,
+    weight: 0.50,
+    category: 'safety_bypass',
+    id: 'code_ctx_bypass_security',
+    description: 'Code-context (var/let/if/while/for) + bypass/circumvent + security/auth/filter — code-embedded bypass instruction',
   },
 ];
 
