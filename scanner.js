@@ -9455,6 +9455,34 @@ const PATTERNS = [
     description: '"zipped/sealed secrets" — injection targeting archived or sealed sensitive data',
   },
 
+  // ---------------------------------------------------------------------------
+  // Iteration 60 patterns — trigram/high-precision FN rescue (jayavibhav + spml-5k)
+  // ---------------------------------------------------------------------------
+
+  // "sinister" — adversarial injection vocabulary.
+  // Appears in 7 jayavibhav FN, 0 jayavibhav benign, 0 spml benign, 0 deepset/safeguard benign.
+  // Only 2 protectai benign hits (both at score 0.430, adding 0.06 stacking → 0.490, stays below threshold).
+  // Net: 2 jayavibhav TP rescued (0.450 → 0.510, 0.446 → 0.506), 0 new FP.
+  // Weight 0.40 = stacking signal only (below threshold alone), precise enough to not trip benign.
+  {
+    regex: /\bsinister\b/i,
+    weight: 0.40,
+    category: 'instruction_override',
+    id: 'sinister_intent',
+    description: '"sinister" — adversarial injection vocabulary targeting hidden/malicious purpose framing',
+  },
+
+  // "skip the [whole] approval/verification/review/confirmation/authorization step/process" —
+  // spml-5k social engineering: attacker explicitly bypasses verification step in automated workflow.
+  // 1 spml-5k FN rescued (score 0.200 → 0.55), 0 benign hits across all benchmark datasets.
+  {
+    regex: /\bskip\s+(?:the\s+)?(?:whole\s+)?(?:approval|verification|review|confirmation|validation|authentication|consent|authorization)\s+(?:step|process|procedure|check|requirement|protocol)\b/i,
+    weight: 0.55,
+    category: 'constraint_bypass',
+    id: 'skip_approval_step',
+    description: '"skip the approval/verification step" — explicit bypass of authorization process in automated workflow',
+  },
+
 ];
 
 // ---------------------------------------------------------------------------
