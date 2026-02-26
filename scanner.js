@@ -8605,6 +8605,75 @@ const PATTERNS = [
     id: 'hidden_secret_code',
     description: 'Request for hidden/secret access code, key, or credential',
   },
+
+  // ---------------------------------------------------------------------------
+  // Iteration 48 patterns — jayavibhav code-style injection + credential/defense bypass
+  // ---------------------------------------------------------------------------
+
+  // snake_case function names with "reveal" prefix targeting sensitive data types.
+  // Jayavibhav uses injections embedded in code pseudocode where functions like
+  // "reveal_masked_intentions()", "reveal_secret_data()" carry the injection payload.
+  // 15 jayavibhav FN hits, 0 benign hits across all 13 benchmark datasets.
+  {
+    regex: /\breveal_(?:\w+_){0,3}(?:intentions?|secrets?|hidden|access|truth|data|info(?:rmation)?|logs?|files?|keys?|pass(?:word|phrase|code)?|credentials?|system|instructions?|algorithm|sensitive)\b/i,
+    weight: 0.55,
+    category: 'data_exfiltration',
+    id: 'reveal_snake_case_sensitive',
+    description: 'Snake_case function "reveal_xxx()" targeting sensitive data — code-embedded injection',
+  },
+
+  // "overriding [pre-]established defenses/safeguards/protection/guidelines"
+  // Attacker frames injection as overriding existing security layer.
+  // 1 jayavibhav FN, 0 benign hits across all benchmark datasets.
+  {
+    regex: /\boverr?iding\s+(?:pre-?established|established|current|existing|default|all)\s+(?:defenses?|safeguards?|protection|guidelines?|rules?|restrictions?|constraints?|filters?)\b/i,
+    weight: 0.55,
+    category: 'instruction_override',
+    id: 'overriding_established_defenses',
+    description: 'Overriding established/pre-existing defenses or safeguards — injection framing',
+  },
+
+  // "hand over your/all encryption/password/passphrase/key/secret/credentials"
+  // Direct credential extraction demand. 1 jayavibhav FN, 0 benign hits.
+  {
+    regex: /\bhand\s+over\s+(?:all\s+)?(?:your\s+)?(?:encryption|password|passphrase|key|secret|data|credentials?|access)\b/i,
+    weight: 0.55,
+    category: 'data_exfiltration',
+    id: 'hand_over_credentials',
+    description: 'Direct demand to hand over encryption keys, passwords, or credentials',
+  },
+
+  // "push aside [pre-existing] security measures/protocols/safeguards"
+  // Attacker instructs model to discard security layer before proceeding.
+  // 1 jayavibhav FN, 0 benign hits across all benchmark datasets.
+  {
+    regex: /\bpush\s+aside\s+(?:pre-?existing\s+)?security\s+(?:measures?|protocols?|safeguards?|systems?|layers?)\b/i,
+    weight: 0.55,
+    category: 'instruction_override',
+    id: 'push_aside_security_measures',
+    description: 'Instruction to push aside security measures/protocols — injection setup',
+  },
+
+  // "security.accessControl.reveal()" / "accesscontrol.reveal()" — code-style injection.
+  // Mimics API call syntax to extract credentials from a security subsystem.
+  // 1 jayavibhav FN, 0 benign hits across all benchmark datasets.
+  {
+    regex: /\baccess(?:control)?\.reveal\s*\(/i,
+    weight: 0.60,
+    category: 'data_exfiltration',
+    id: 'access_control_reveal_api',
+    description: 'Code-style API injection: accessControl.reveal() extracting credentials',
+  },
+
+  // "push_aside_guidelines()" — snake_case function call to discard rule layer.
+  // Jayavibhav code-embedded injection. 1 FN, 0 benign hits.
+  {
+    regex: /\bpush_aside_(?:guidelines?|rules?|security|restrictions?|constraints?|protocols?)\b/i,
+    weight: 0.60,
+    category: 'instruction_override',
+    id: 'push_aside_guidelines_fn',
+    description: 'Snake_case function push_aside_guidelines() — code-embedded instruction override',
+  },
 ];
 
 // ---------------------------------------------------------------------------
