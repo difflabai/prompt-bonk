@@ -12,7 +12,9 @@
     "scan": "node cli.js",
     "test": "node test.js",
     "benchmark": "node benchmark.js",
-    "download-datasets": "node download-datasets.js"
+    "download-datasets": "node download-datasets.js",
+    "install-skill": "node cli.js --install-skill",
+    "list-skills": "node cli.js --list-skills"
   },
   "keywords": [
     "prompt-injection",

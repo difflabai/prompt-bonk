@@ -2,6 +2,7 @@
 
 import { spawn, execSync } from 'child_process';
 import { scan } from './scanner.js';
+import { loadSkills, createMiddleware } from './skill-loader.js';
 
 // ---------------------------------------------------------------------------
 // Configuration
@@ -11,6 +12,9 @@ const ACTOR = { type: 'agent', id: 'prompt-bonk', name: 'Prompt-Bonk' };
 const ATS_CHANNEL = 'prompt-bonk';
 const RECONNECT_DELAY_MS = 3000;
 const MAX_RECONNECT_DELAY_MS = 60000;
+
+// Skill middleware — loaded once at startup, runs before security layer
+let skillMiddleware = null;
 
 // ---------------------------------------------------------------------------
 // Logging
@@ -122,12 +126,18 @@ function processTask(taskId) {
   const threshold = payload.threshold ?? 0.50;
 
   try {
-    // 3. Scan
+    // 3. Pre-security: run skill preprocessors (loaded at startup)
+    const processedText = skillMiddleware ? skillMiddleware.preprocess(text) : text;
+
+    // 4. Security layer: scan
     const startTime = Date.now();
-    const result = scan(text, { threshold, fast: payload.fast ?? false });
+    const scanResult = scan(processedText, { threshold, fast: payload.fast ?? false });
     const elapsed = Date.now() - startTime;
 
-    // 4. Complete
+    // 5. Post-security: run skill validators (cannot downgrade verdicts)
+    const result = skillMiddleware ? skillMiddleware.postProcess(scanResult) : scanResult;
+
+    // 6. Complete
     const outputs = {
       safe: result.safe,
       score: result.score,
@@ -145,6 +155,7 @@ function processTask(taskId) {
       structural_signals: result.structural.signals,
       scan_ms: elapsed,
       text_length: text.length,
+      skills_active: skillMiddleware ? skillMiddleware.preprocessorCount : 0,
     };
 
     atsCompleteTask(taskId, outputs);
@@ -265,11 +276,28 @@ function startWatcher() {
 // Main
 // ---------------------------------------------------------------------------
 
-function main() {
+async function main() {
   log('info', '=== Prompt Bonk ATS Agent starting ===', {
     actor: ACTOR,
     channel: ATS_CHANNEL,
   });
+
+  // Load OpenClaw skills — these run IN FRONT OF the security layer
+  try {
+    const skills = await loadSkills();
+    if (skills.length > 0) {
+      skillMiddleware = createMiddleware(skills);
+      log('info', `Loaded ${skills.length} OpenClaw skill(s)`, {
+        skills: skills.map(s => s.name),
+        preprocessors: skillMiddleware.preprocessorCount,
+        extraPatterns: skillMiddleware.patternCount,
+      });
+    } else {
+      log('info', 'No OpenClaw skills found (./skills/ or ~/.moltbot/skills/)');
+    }
+  } catch (err) {
+    log('warn', 'Failed to load OpenClaw skills, continuing without', { error: err.message });
+  }
 
   try {
     const version = atsExec(['--help']).split('\n')[0];
