@@ -4541,4 +4541,27 @@ export function isInjection(text, threshold = 0.50) {
   return !scan(text, { threshold, fast: true }).safe;
 }
 
+/**
+ * Create a scan function with a pre-scan pipeline injected in front.
+ * Skills run BEFORE the security scanner — they can transform, normalize,
+ * or enrich text before pattern matching occurs.
+ *
+ * @param {function(string): { text: string, skillMeta: Array }} preScanPipeline
+ * @returns {{ scan: function, isInjection: function }}
+ */
+export function createPipeline(preScanPipeline) {
+  function pipelineScan(text, options = {}) {
+    const { text: processed, skillMeta } = preScanPipeline(text);
+    const result = scan(processed, options);
+    result.skills = skillMeta;
+    return result;
+  }
+
+  function pipelineIsInjection(text, threshold = 0.50) {
+    return !pipelineScan(text, { threshold, fast: true }).safe;
+  }
+
+  return { scan: pipelineScan, isInjection: pipelineIsInjection };
+}
+
 export { PATTERNS };
