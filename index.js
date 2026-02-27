@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
 import { spawn, execSync } from 'child_process';
-import { scan } from './scanner.js';
+import { scan as _baseScan, createPipeline } from './scanner.js';
+import { loadSkills, buildPreScanPipeline } from './skills.js';
 
 // ---------------------------------------------------------------------------
 // Configuration
@@ -82,6 +83,28 @@ function atsFailTask(taskId, reason) {
 
 function shellQuote(s) {
   return "'" + s.replace(/'/g, "'\\''") + "'";
+}
+
+// ---------------------------------------------------------------------------
+// Skill pipeline — loaded once at startup, runs BEFORE the security scanner
+// ---------------------------------------------------------------------------
+
+const SKILLS_DIR = process.env.PROMPT_BONK_SKILLS_DIR || './skills';
+
+let scan = _baseScan;
+
+function initSkillPipeline() {
+  const skills = loadSkills(SKILLS_DIR);
+  if (skills.length > 0) {
+    const pipeline = buildPreScanPipeline(skills);
+    const pipelined = createPipeline(pipeline);
+    scan = pipelined.scan;
+    log('info', `Loaded ${skills.length} openclaw skill(s) into pre-scan pipeline`, {
+      skills: skills.map(s => s.name),
+    });
+  } else {
+    log('info', 'No openclaw skills found, using base scanner');
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -278,6 +301,9 @@ function main() {
     log('error', 'ATS CLI not available - is ats installed and configured?', { error: err.message });
     process.exit(1);
   }
+
+  // Load openclaw skills into pre-scan pipeline (runs BEFORE security scanner)
+  initSkillPipeline();
 
   startWatcher();
 
